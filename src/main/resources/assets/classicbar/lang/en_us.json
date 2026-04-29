@@ -84,6 +84,12 @@
   "classicbar.config.general.withered_fractions.tooltip": "Fraction breakpoints used by the withered health gradient. Values must stay between 0 and 1.",
   "classicbar.config.general.frozen_health_color": "Frozen health color",
   "classicbar.config.general.frozen_health_color.tooltip": "Health color used when the player is fully frozen.",
+  "classicbar.config.general.health_poison_overlay_color": "Poison overlay color",
+  "classicbar.config.general.health_poison_overlay_color.tooltip": "Overlay tint applied to the health bar while poisoned. #RRGGBB for opaque, #AARRGGBB for alpha.",
+  "classicbar.config.general.health_wither_overlay_color": "Wither overlay color",
+  "classicbar.config.general.health_wither_overlay_color.tooltip": "Overlay tint applied to the health bar while withered. #RRGGBB for opaque, #AARRGGBB for alpha.",
+  "classicbar.config.general.health_frozen_overlay_color": "Frozen overlay color",
+  "classicbar.config.general.health_frozen_overlay_color.tooltip": "Overlay tint applied to the health bar while frozen. #RRGGBB for opaque, #AARRGGBB for alpha.",
 
   "classicbar.config.layout.left_order": "Left overlay order",
   "classicbar.config.layout.left_order.tooltip": "Overlay ids rendered on the left side. Unknown ids are ignored and duplicates are removed.",

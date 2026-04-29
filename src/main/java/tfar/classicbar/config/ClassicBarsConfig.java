@@ -74,6 +74,9 @@ public class ClassicBarsConfig {
   public static ModConfigSpec.ConfigValue<List<? extends Double>> witheredFractions;
   static ModConfigSpec.ConfigValue<List<? extends String>> witheredColors;
   public static ModConfigSpec.ConfigValue<String> frozenHealthColor;
+  public static ModConfigSpec.ConfigValue<String> healthPoisonOverlayColor;
+  public static ModConfigSpec.ConfigValue<String> healthWitherOverlayColor;
+  public static ModConfigSpec.ConfigValue<String> healthFrozenOverlayColor;
   public static ModConfigSpec.ConfigValue<String> lavaBarColor;
   public static ModConfigSpec.ConfigValue<String> flightBarColor;
 
@@ -86,133 +89,142 @@ public class ClassicBarsConfig {
     FALLBACK_SETTINGS.clear();
 
     builder.translation(sectionKey("general"))
-            .comment("Client-only ClassicBar general settings.")
+
             .push("general");
     displayIcons = builder.translation(generalKey("display_icons"))
-            .comment("Whether to show ClassicBar's independent icon textures next to each bar.")
+
             .define("display_icons", true);
     displayToughnessBar = builder.translation(generalKey("display_toughness_bar"))
-            .comment("Whether to show the armor toughness bar.")
+
             .define("display_toughness_bar", true);
     fullAbsorptionBar = builder.translation(generalKey("full_absorption_bar"))
-            .comment("Whether the absorption bar should always use the full ClassicBar width.")
+
             .define("full_absorption_bar", false);
     fullArmorBar = builder.translation(generalKey("full_armor_bar"))
-            .comment("Whether the armor bar should always use the full ClassicBar width.")
+
             .define("full_armor_bar", false);
     fullToughnessBar = builder.translation(generalKey("full_toughness_bar"))
-            .comment("Whether the armor toughness bar should always use the full ClassicBar width.")
+
             .define("full_toughness_bar", false);
     lowArmorWarning = builder.translation(generalKey("display_low_armor_warning"))
-            .comment("Whether to flash the armor bar when equipped armor is nearly broken.")
+
             .define("display_low_armor_warning", true);
     showSaturationBar = builder.translation(generalKey("show_saturation_bar"))
-            .comment("Whether the food bar should also render the saturation overlay.")
+
             .define("show_saturation_bar", true);
     showHydrationBar = builder.translation(generalKey("show_hydration_bar"))
-            .comment("Reserved for quarantined mod compatibility; has no effect until compat is restored.")
+
             .define("show_hydration_bar", true);
     showHeldFoodOverlay = builder.translation(generalKey("show_held_food_overlay"))
-            .comment("Reserved for quarantined mod compatibility; has no effect until compat is restored.")
+
             .define("show_held_food_overlay", true);
     showHeldDrinkOverlay = builder.translation(generalKey("show_held_drink_overlay"))
-            .comment("Reserved for quarantined mod compatibility; has no effect until compat is restored.")
+
             .define("show_held_drink_overlay", true);
     showExhaustionOverlay = builder.translation(generalKey("show_exhaustion_overlay"))
-            .comment("Reserved for quarantined mod compatibility; has no effect until compat is restored.")
+
             .define("show_exhaustion_overlay", true);
     showThirstExhaustionOverlay = builder.translation(generalKey("show_thirst_exhaustion_overlay"))
-            .comment("Reserved for quarantined mod compatibility; has no effect until compat is restored.")
+
             .define("show_thirst_exhaustion_overlay", true);
     transitionSpeed = builder.translation(generalKey("transition_speed"))
-            .comment("Animation speed used by reserved compatibility overlays when that work returns.")
+
             .defineInRange("transition_speed", 3.0D, 0.0D, Double.MAX_VALUE);
 
     hungerBarColor = builder.translation(generalKey("hunger_bar_color"))
-            .comment("Base hunger bar color.")
+
             .define("hunger_bar_color", "#B34D00", ClassicBarsConfig::isValidHexColor);
     hungerBarDebuffColor = builder.translation(generalKey("hunger_bar_debuff_color"))
-            .comment("Hunger bar color while the Hunger debuff is active.")
+
             .define("hunger_bar_debuff_color", "#249016", ClassicBarsConfig::isValidHexColor);
     thirstBarColor = builder.translation(generalKey("thirst_bar_color"))
-            .comment("Reserved for quarantined thirst compatibility. Replaces the legacy misspelled thirstr_bar_color key.")
+
             .define("thirst_bar_color", "#1C5EE4", ClassicBarsConfig::isValidHexColor);
     thirstBarDebuffColor = builder.translation(generalKey("thirst_bar_debuff_color"))
-            .comment("Reserved for quarantined thirst compatibility while a thirst debuff is active.")
+
             .define("thirst_bar_debuff_color", "#5A891C", ClassicBarsConfig::isValidHexColor);
     airBarColor = builder.translation(generalKey("air_bar_color"))
-            .comment("Base air bar color.")
+
             .define("air_bar_color", "#00E6E6", ClassicBarsConfig::isValidHexColor);
     saturationBarColor = builder.translation(generalKey("saturation_bar_color"))
-            .comment("Base saturation overlay color.")
+
             .define("saturation_bar_color", "#FFCC00", ClassicBarsConfig::isValidHexColor);
     saturationBarDebuffColor = builder.translation(generalKey("saturation_bar_debuff_color"))
-            .comment("Saturation overlay color while the Hunger debuff is active.")
+
             .define("saturation_bar_debuff_color", "#87BC00", ClassicBarsConfig::isValidHexColor);
     hydrationBarColor = builder.translation(generalKey("hydration_bar_color"))
-            .comment("Reserved for quarantined hydration compatibility.")
+
             .define("hydration_bar_color", "#00A3E2", ClassicBarsConfig::isValidHexColor);
     hydrationBarDebuffColor = builder.translation(generalKey("hydration_bar_debuff_color"))
-            .comment("Reserved for quarantined hydration compatibility while a debuff is active.")
+
             .define("hydration_bar_debuff_color", "#85CF25", ClassicBarsConfig::isValidHexColor);
     lavaBarColor = builder.translation(generalKey("lava_bar_color"))
-            .comment("Reserved for quarantined compatibility overlays.")
+
             .define("lava_bar_color", "#FF8000", ClassicBarsConfig::isValidHexColor);
     flightBarColor = builder.translation(generalKey("flight_bar_color"))
-            .comment("Reserved for quarantined compatibility overlays.")
+
             .define("flight_bar_color", "#FFFFFF", ClassicBarsConfig::isValidHexColor);
 
     armorColors = builder.translation(generalKey("armor_color_values"))
-            .comment("Gradient colors used by the armor bar.")
+
             .defineList("armor_color_values", Lists.newArrayList("#AAAAAA", "#FF5500", "#FFC747", "#27FFE3", "#00FF00", "#7F00FF"), ClassicBarsConfig::isValidHexColor);
     armorToughnessColors = builder.translation(generalKey("armor_toughness_color_values"))
-            .comment("Gradient colors used by the armor toughness bar.")
+
             .defineList("armor_toughness_color_values", Lists.newArrayList("#AAAAAA", "#FF5500", "#FFC747", "#27FFE3", "#00FF00", "#7F00FF"), ClassicBarsConfig::isValidHexColor);
     absorptionColors = builder.translation(generalKey("absorption_color_values"))
-            .comment("Gradient colors used by the absorption bar.")
+
             .defineList("absorption_color_values", Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"), ClassicBarsConfig::isValidHexColor);
     absorptionPoisonColors = builder.translation(generalKey("absorption_poison_color_values"))
-            .comment("Gradient colors used by the absorption bar while poisoned.")
+
             .defineList("absorption_poison_color_values", Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"), ClassicBarsConfig::isValidHexColor);
     absorptionWitherColors = builder.translation(generalKey("absorption_wither_color_values"))
-            .comment("Gradient colors used by the absorption bar while withered.")
+
             .defineList("absorption_wither_color_values", Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"), ClassicBarsConfig::isValidHexColor);
     normalColors = builder.translation(generalKey("normal_colors"))
-            .comment("Health gradient colors for the normal health state.")
+
             .defineList("normal_colors", Lists.newArrayList("#FF0000", "#FFFF00", "#00FF00"), ClassicBarsConfig::isValidHexColor);
     normalFractions = builder.translation(generalKey("normal_fractions"))
-            .comment("Health gradient breakpoints for the normal health state.")
+
             .defineList("normal_fractions", Lists.newArrayList(.25D, .5D, .75D), ClassicBarsConfig::isValidUnitFraction);
     poisonedColors = builder.translation(generalKey("poisoned_colors"))
-            .comment("Health gradient colors for the poisoned health state.")
+
             .defineList("poisoned_colors", Lists.newArrayList("#00FF00", "#55FF55", "#00FF00"), ClassicBarsConfig::isValidHexColor);
     poisonedFractions = builder.translation(generalKey("poisoned_fractions"))
-            .comment("Health gradient breakpoints for the poisoned health state.")
+
             .defineList("poisoned_fractions", Lists.newArrayList(.25D, .5D, .75D), ClassicBarsConfig::isValidUnitFraction);
     witheredColors = builder.translation(generalKey("withered_colors"))
-            .comment("Health gradient colors for the withered health state.")
+
             .defineList("withered_colors", Lists.newArrayList("#555555", "#AAAAAA", "#555555"), ClassicBarsConfig::isValidHexColor);
     witheredFractions = builder.translation(generalKey("withered_fractions"))
-            .comment("Health gradient breakpoints for the withered health state.")
+
             .defineList("withered_fractions", Lists.newArrayList(.25D, .5D, .75D), ClassicBarsConfig::isValidUnitFraction);
     frozenHealthColor = builder.translation(generalKey("frozen_health_color"))
-            .comment("Health color used when the player is fully frozen.")
+
             .define("frozen_health_color", "#7FAFFF", ClassicBarsConfig::isValidHexColor);
+    healthPoisonOverlayColor = builder
+            .translation("classicbar.config.general.health_poison_overlay_color")
+            .define("health_poison_overlay_color", "#80800080", ClassicBarsConfig::isValidHexColor);
+    healthWitherOverlayColor = builder
+            .translation("classicbar.config.general.health_wither_overlay_color")
+            .define("health_wither_overlay_color", "#80595959", ClassicBarsConfig::isValidHexColor);
+    healthFrozenOverlayColor = builder
+            .translation("classicbar.config.general.health_frozen_overlay_color")
+            .define("health_frozen_overlay_color", "#804D80FF", ClassicBarsConfig::isValidHexColor);
     builder.pop();
 
     builder.translation(sectionKey("layout"))
-            .comment("Left and right column order for active ClassicBar overlays. Unknown ids are ignored and duplicates are collapsed.")
+
             .push("layout");
     leftorder = builder.translation(layoutKey("left_order"))
-            .comment("Overlay ids rendered on the left side. Unknown ids are ignored and duplicates are removed.")
+
             .defineList("left_order", Lists.newArrayList("health", "armor", "absorption"), ClassicBarsConfig::isValidActiveBarId);
     rightorder = builder.translation(layoutKey("right_order"))
-            .comment("Overlay ids rendered on the right side. Unknown ids are ignored and duplicates are removed.")
+
             .defineList("right_order", Lists.newArrayList("health_mount", "food", "armor_toughness", "air"), ClassicBarsConfig::isValidActiveBarId);
     builder.pop();
 
     builder.translation(sectionKey("bars"))
-            .comment("Per-bar HUD settings for active ClassicBar overlays.")
+
             .push("bars");
     registerBarConfig(builder, "health", BarIcons.HEALTH, true);
     registerBarConfig(builder, "armor", BarIcons.ARMOR, true);
@@ -224,7 +236,7 @@ public class ClassicBarsConfig {
     builder.pop();
 
     builder.translation(sectionKey("mod_support"))
-            .comment("Reserved compatibility toggles. These switches do not restore quarantined compat code by themselves.")
+
             .push("mod_support");
     registerReservedModSupport(builder, "toughasnails");
     registerReservedModSupport(builder, "vampirism");
@@ -269,10 +281,8 @@ public class ClassicBarsConfig {
 
   private static void registerReservedModSupport(ModConfigSpec.Builder builder, String modId) {
     builder.translation(modSupportSectionKey(modId))
-            .comment("Reserved compatibility toggle for " + modId + ". No active effect in this build.")
             .push(modId);
     MOD_SUPPORT_ENABLED.put(modId, builder.translation(modSupportKey(modId, "enabled"))
-            .comment("Reserved for future compatibility work. No active effect in this build.")
             .define("enabled", false));
     builder.pop();
   }
@@ -383,19 +393,14 @@ public class ClassicBarsConfig {
 
     private static ConfiguredBarSettings create(ModConfigSpec.Builder builder, String name, ResourceLocation defaultIcon, boolean defaultShowText) {
       builder.translation(barSectionKey(name))
-              .comment("Per-bar settings for the " + name + " overlay.")
               .push(name);
       ModConfigSpec.BooleanValue showText = builder.translation(barKey(name, "show_text"))
-              .comment("Whether to show numeric text next to this bar.")
               .define("show_text", defaultShowText);
       ModConfigSpec.ConfigValue<String> icon = builder.translation(barKey(name, "icon"))
-              .comment("ClassicBar icon resource. Must stay inside classicbar:textures/gui/icons/*.png.")
               .define("icon", defaultIcon.toString(), ClassicBarsConfig::isValidIconValue);
       ModConfigSpec.EnumValue<BarMode> mode = builder.translation(barKey(name, "mode"))
-              .comment("How this ClassicBar overlay interacts with the vanilla HUD: OVERRIDE, COMPAT, or DISABLED.")
               .defineEnum("mode", BarMode.OVERRIDE);
       ModConfigSpec.ConfigValue<String> colorOverlay = builder.translation(barKey(name, "color_overlay"))
-              .comment("Color overlay applied to this bar. Use #RRGGBB for a full override or #AARRGGBB for alpha-blended tinting.")
               .define("color_overlay", BarColorOverlay.DEFAULT_CONFIG_VALUE, ClassicBarsConfig::isValidHexColor);
       builder.pop();
       return new ConfiguredBarSettings(name, defaultIcon, showText, icon, mode, colorOverlay);

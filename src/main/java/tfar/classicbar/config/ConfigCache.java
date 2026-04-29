@@ -30,6 +30,12 @@ public class ConfigCache {
     public static List<Color> absorptionPoison = new ArrayList<>();
     public static List<Color> absorptionWither = new ArrayList<>();
     public static Color frozenHealth;
+    public static Color healthPoisonOverlay;
+    public static float healthPoisonOverlayAlpha;
+    public static Color healthWitherOverlay;
+    public static float healthWitherOverlayAlpha;
+    public static Color healthFrozenOverlay;
+    public static float healthFrozenOverlayAlpha;
     private static Set<String> activeLayoutOverlays = Set.of();
 
     private static void clear() {
@@ -73,6 +79,36 @@ public class ConfigCache {
         hydrationDebuff = ColorUtils.hex2Color(ClassicBarsConfig.hydrationBarDebuffColor.get());
         air = ColorUtils.hex2Color(ClassicBarsConfig.airBarColor.get());
         frozenHealth = ColorUtils.hex2Color(ClassicBarsConfig.frozenHealthColor.get());
+
+        // 健康覆盖层颜色（从 #AARRGGBB 配置读取）
+        ColorUtils.ParsedHexColor parsed;
+
+        parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthPoisonOverlayColor.get());
+        if (parsed != null) {
+            healthPoisonOverlay = parsed.color();
+            healthPoisonOverlayAlpha = parsed.alphaAsFloat();
+        } else {
+            healthPoisonOverlay = Color.BLACK;
+            healthPoisonOverlayAlpha = 1.0f;
+        }
+
+        parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthWitherOverlayColor.get());
+        if (parsed != null) {
+            healthWitherOverlay = parsed.color();
+            healthWitherOverlayAlpha = parsed.alphaAsFloat();
+        } else {
+            healthWitherOverlay = Color.BLACK;
+            healthWitherOverlayAlpha = 1.0f;
+        }
+
+        parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthFrozenOverlayColor.get());
+        if (parsed != null) {
+            healthFrozenOverlay = parsed.color();
+            healthFrozenOverlayAlpha = parsed.alphaAsFloat();
+        } else {
+            healthFrozenOverlay = Color.BLACK;
+            healthFrozenOverlayAlpha = 1.0f;
+        }
     }
 
     private static void cacheList(ModConfigSpec.ConfigValue<List<? extends String>> config, List<Color> cache) {

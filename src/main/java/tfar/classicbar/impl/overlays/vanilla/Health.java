@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
+import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.util.ColorUtils;
 import tfar.classicbar.util.HealthEffect;
 import tfar.classicbar.util.ModUtils;
@@ -85,19 +86,19 @@ public class Health extends BarOverlayImpl {
     //draw portion of bar based on health remaining
     renderPartialBar(graphics,f + 2, yStart + 2, barWidth);
     if (effect == HealthEffect.POISON) {
-      //draw poison overlay
-      RenderSystem.setShaderColor(0, .5f, 0, .5f);
-      ModUtils.drawTexturedModalRect(graphics,f + 1, yStart + 1, 1, 36, barWidth, 7);
+      Color c = ConfigCache.healthPoisonOverlay;
+      RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthPoisonOverlayAlpha);
+      ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
       Color.reset();
     } else if (effect == HealthEffect.WITHER) {
-      //draw wither overlay
-      RenderSystem.setShaderColor(.35f, .35f, .35f, .5f);  // TODO: tune color
-      ModUtils.drawTexturedModalRect(graphics,f + 1, yStart + 1, 1, 36, barWidth, 7);
+      Color c = ConfigCache.healthWitherOverlay;
+      RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthWitherOverlayAlpha);
+      ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
       Color.reset();
     } else if (effect == HealthEffect.FROZEN) {
-      //draw frozen overlay
-      RenderSystem.setShaderColor(.3f, .5f, 1f, .5f);  // TODO: tune color
-      ModUtils.drawTexturedModalRect(graphics,f + 1, yStart + 1, 1, 36, barWidth, 7);
+      Color c = ConfigCache.healthFrozenOverlay;
+      RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthFrozenOverlayAlpha);
+      ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
       Color.reset();
     }
   }

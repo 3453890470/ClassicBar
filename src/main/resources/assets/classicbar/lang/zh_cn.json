@@ -84,6 +84,12 @@
   "classicbar.config.general.withered_fractions.tooltip": "凋零生命渐变使用的断点，数值必须位于 0 到 1 之间。",
   "classicbar.config.general.frozen_health_color": "冻结生命颜色",
   "classicbar.config.general.frozen_health_color.tooltip": "玩家完全冻结时使用的生命颜色。",
+  "classicbar.config.general.health_poison_overlay_color": "中毒覆盖层颜色",
+  "classicbar.config.general.health_poison_overlay_color.tooltip": "玩家中毒时生命条上的叠加色调。#RRGGBB为不透明，#AARRGGBB带透明度。",
+  "classicbar.config.general.health_wither_overlay_color": "凋零覆盖层颜色",
+  "classicbar.config.general.health_wither_overlay_color.tooltip": "玩家凋零时生命条上的叠加色调。#RRGGBB为不透明，#AARRGGBB带透明度。",
+  "classicbar.config.general.health_frozen_overlay_color": "冰冻覆盖层颜色",
+  "classicbar.config.general.health_frozen_overlay_color.tooltip": "玩家冰冻时生命条上的叠加色调。#RRGGBB为不透明，#AARRGGBB带透明度。",
 
   "classicbar.config.layout.left_order": "左侧状态栏顺序",
   "classicbar.config.layout.left_order.tooltip": "渲染在左侧的状态栏 id 列表。未知 id 会被忽略，重复项会被移除。",
