@@ -3,7 +3,7 @@ package tfar.classicbar.api;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ModUtils;
@@ -11,10 +11,11 @@ import tfar.classicbar.util.ModUtils;
 public interface BarOverlay {
 
   void setBarSettings(BarSettings barSettings);
+  boolean shouldRender(Player player);
   boolean rightHandSide();
   BarOverlay setSide(boolean right);
 
-  void render(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset);
+  void render(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset);
 
   ResourceLocation getIconRL();
   default void bindIconTexture() {

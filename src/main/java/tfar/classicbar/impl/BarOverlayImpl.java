@@ -4,11 +4,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
 import tfar.classicbar.ClassicBar;
-import tfar.classicbar.EventHandler;
 import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
+import tfar.classicbar.client.HudRenderContext;
+import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.HealthEffect;
@@ -21,9 +21,9 @@ public abstract class BarOverlayImpl implements BarOverlay {
     public static final int HEIGHT = 5;
     public static final int BAR_U = 2;
     public static final int BAR_V = 11;
-    public static final ResourceLocation ICON_BAR = new ResourceLocation(ClassicBar.MODID, "textures/gui/health.png");
+    public static final ResourceLocation ICON_BAR = ResourceLocation.fromNamespaceAndPath(ClassicBar.MODID, "textures/gui/health.png");
 
-    public static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
+    public static final ResourceLocation GUI_ICONS_LOCATION = BarIcons.FALLBACK;
     protected String name;
     protected boolean side;
     protected BarSettings barSettings;
@@ -53,23 +53,33 @@ public abstract class BarOverlayImpl implements BarOverlay {
     }
 
     @Override
-    public void render(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+    public void render(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+        if (barSettings == null || !barSettings.rendersClassicBar()) {
+            return;
+        }
+
         if (shouldRender(player)) {
-            gui.setupOverlayRenderState(true, false);
-            bindBarTexture();
-            renderBar(gui, graphics, player, screenWidth, screenHeight, vOffset);
-            if (shouldRenderText()) {
-                renderText(graphics, player, screenWidth, screenHeight, vOffset);
+            context.setupOverlayRenderState();
+            try {
+                bindBarTexture();
+                renderBar(context, graphics, player, screenWidth, screenHeight, vOffset);
+                if (shouldRenderText()) {
+                    Color.reset();
+                    renderText(graphics, player, screenWidth, screenHeight, vOffset);
+                }
+                if (ConfigCache.icons) {
+                    Color.reset();
+                    bindIconTexture();
+                    renderIcon(graphics, player, screenWidth, screenHeight, vOffset);
+                }
+            } finally {
+                Color.reset();
             }
-            if (ConfigCache.icons) {
-                bindIconTexture();
-                renderIcon(graphics, player, screenWidth, screenHeight, vOffset);
-            }
-            EventHandler.increment(gui, rightHandSide(), 10);
+            context.increment(rightHandSide(), 10);
         }
     }
 
-    public abstract void renderBar(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset);
+    public abstract void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset);
 
     protected boolean shouldFlash(Player player) {
         return false;
@@ -82,6 +92,18 @@ public abstract class BarOverlayImpl implements BarOverlay {
     public abstract void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset);
 
     public abstract void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset);
+
+    protected final void applyConfiguredBarColor(Color baseColor) {
+        barSettings.color_overlay.color2Gl(baseColor);
+    }
+
+    protected final void applyConfiguredBarColor(Color baseColor, float alpha) {
+        barSettings.color_overlay.color2Gla(baseColor, alpha);
+    }
+
+    protected final int getConfiguredTextColor(Color baseColor) {
+        return barSettings.color_overlay.applyTo(baseColor).colorToText();
+    }
 
     public int getHOffset() {
         return rightHandSide() ? 10 : -91;

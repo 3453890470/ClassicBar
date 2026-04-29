@@ -3,7 +3,7 @@ package tfar.classicbar.impl.overlays.vanilla;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
@@ -22,7 +22,7 @@ public class ArmorToughness extends BarOverlayImpl {
     }
 
     @Override
-    public void renderBar(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+    public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
         //armor toughness stuff
         double armorToughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue();
         double barWidth = getBarWidth(player);
@@ -37,7 +37,7 @@ public class ArmorToughness extends BarOverlayImpl {
         Color.reset();
         renderBarBackground(graphics, player, screenWidth, screenHeight, vOffset);
         if (index == 0) {
-            primary.color2Gl();
+            applyConfiguredBarColor(primary);
             //draw portion of bar based on armor toughness amount
             renderPartialBar(graphics, xStart + 2, yStart + 2, barWidth);
         } else {
@@ -47,18 +47,18 @@ public class ArmorToughness extends BarOverlayImpl {
             if (index < size && armorToughness % 20 != 0) {
                 Color secondary = getSecondaryBarColor(index - 1, player);
                 //draw complete first bar
-                secondary.color2Gl();
+                applyConfiguredBarColor(secondary);
                 renderFullBar(graphics, xStart + 2, yStart + 2);
                 //draw partial second bar
 
                 double w = ModUtils.getWidth(armorToughness % 20, 20);
 
-                primary.color2Gl();
+                applyConfiguredBarColor(primary);
                 double f = xStart + (rightHandSide() ? WIDTH - w : 0);
                 renderPartialBar(graphics, f + 2, yStart + 2, w);
             } else { //case 2, bar is a multiple of 20, or it is capped
                 //draw complete second bar
-                primary.color2Gl();
+                applyConfiguredBarColor(primary);
                 renderFullBar(graphics, xStart + 2, yStart + 2);
             }
         }
@@ -90,7 +90,7 @@ public class ArmorToughness extends BarOverlayImpl {
         int yStart = height - vOffset;
         double armorToughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue();
         int index = (int) Math.min(Math.ceil(armorToughness / 20) - 1, ConfigCache.armor_toughness.size() - 1);
-        int c = getPrimaryBarColor(index, player).colorToText();
+        int c = getConfiguredTextColor(getPrimaryBarColor(index, player));
         //draw armor toughness amount
         textHelper(graphics, xStart, yStart, armorToughness, c);
     }
@@ -99,7 +99,6 @@ public class ArmorToughness extends BarOverlayImpl {
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        //Draw armor toughness icon
-        ModUtils.drawTexturedModalRect(graphics, xStart, yStart, 83, 0, 9, 9);
+        ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
     }
 }

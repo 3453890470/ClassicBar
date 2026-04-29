@@ -9,11 +9,47 @@ import java.util.List;
 
 public class ColorUtils {
     public static Color hex2Color(String s) {
-        int i1 = Integer.decode(s);
-        int r = i1 >> 16 & 0xFF;
-        int g = i1 >> 8 & 0xFF;
-        int b = i1 & 0xFF;
-        return Color.from(r, g, b);
+        ParsedHexColor parsedHexColor = parseHexColor(s);
+        return parsedHexColor != null ? parsedHexColor.color() : Color.BLACK;
+    }
+
+    public static ParsedHexColor parseHexColor(String s) {
+        if (s == null) {
+            return null;
+        }
+
+        String normalized = s.trim();
+        if (normalized.startsWith("#")) {
+            normalized = normalized.substring(1);
+        }
+
+        if (normalized.length() != 6 && normalized.length() != 8) {
+            return null;
+        }
+
+        try {
+            long value = Long.parseLong(normalized, 16);
+            int alpha;
+            int red;
+            int green;
+            int blue;
+
+            if (normalized.length() == 6) {
+                alpha = 0xFF;
+                red = (int) ((value >> 16) & 0xFF);
+                green = (int) ((value >> 8) & 0xFF);
+                blue = (int) (value & 0xFF);
+            } else {
+                alpha = (int) ((value >> 24) & 0xFF);
+                red = (int) ((value >> 16) & 0xFF);
+                green = (int) ((value >> 8) & 0xFF);
+                blue = (int) (value & 0xFF);
+            }
+
+            return new ParsedHexColor(Color.from(red, green, blue), alpha);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
     }
 
     public static Color calculateScaledColor(double d1, double d2, HealthEffect effect) {
@@ -54,4 +90,11 @@ public class ColorUtils {
         double d4 = Mth.inverseLerp(d3,colorFractions.get(i3-1),colorFractions.get(i3));
         return c1.colorBlend(c2, (float) d4);
     }
+
+    public record ParsedHexColor(Color color, int alpha) {
+        public float alphaAsFloat() {
+            return alpha / 255.0F;
+        }
+    }
+
 }

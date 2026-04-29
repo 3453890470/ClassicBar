@@ -1,11 +1,13 @@
 package tfar.classicbar.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ColorUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ConfigCache {
 
@@ -21,16 +23,15 @@ public class ConfigCache {
     public static Color hydration;
     public static Color hydrationDebuff;
     public static Color air;
-    //public static ForgeConfigSpec.ConfigValue<List<? extends Double>> normalFractions;
     public static List<Color> normal = new ArrayList<>();
-    //public static ForgeConfigSpec.ConfigValue<List<? extends Double>> poisonedFractions;
     public static List<Color> poison = new ArrayList<>();
-    //public static ForgeConfigSpec.ConfigValue<List<? extends Double>> witheredFractions;
     public static List<Color> wither = new ArrayList<>();
     public static List<Color> absorption = new ArrayList<>();
     public static List<Color> absorptionPoison = new ArrayList<>();
     public static List<Color> absorptionWither = new ArrayList<>();
     public static Color frozenHealth;
+    private static Set<String> activeLayoutOverlays = Set.of();
+
     private static void clear() {
         armor.clear();
         armor_toughness.clear();
@@ -41,18 +42,27 @@ public class ConfigCache {
         absorptionPoison.clear();
         absorptionWither.clear();
     }
+
+    public static void setActiveLayoutOverlays(Set<String> overlayIds) {
+        activeLayoutOverlays = Set.copyOf(new LinkedHashSet<>(overlayIds));
+    }
+
+    public static boolean isOverlayActiveInLayout(String overlayId) {
+        return activeLayoutOverlays.contains(overlayId);
+    }
+
     public static void bake() {
         clear();
         icons = ClassicBarsConfig.displayIcons.get();
 
-        cacheList(ClassicBarsConfig.armorColors,armor);
-        cacheList(ClassicBarsConfig.armorToughnessColors,armor_toughness);
-        cacheList(ClassicBarsConfig.normalColors,normal);
-        cacheList(ClassicBarsConfig.poisonedColors,poison);
-        cacheList(ClassicBarsConfig.witheredColors,wither);
-        cacheList(ClassicBarsConfig.absorptionColors,absorption);
-        cacheList(ClassicBarsConfig.absorptionPoisonColors,absorptionPoison);
-        cacheList(ClassicBarsConfig.absorptionWitherColors,absorptionWither);
+        cacheList(ClassicBarsConfig.armorColors, armor);
+        cacheList(ClassicBarsConfig.armorToughnessColors, armor_toughness);
+        cacheList(ClassicBarsConfig.normalColors, normal);
+        cacheList(ClassicBarsConfig.poisonedColors, poison);
+        cacheList(ClassicBarsConfig.witheredColors, wither);
+        cacheList(ClassicBarsConfig.absorptionColors, absorption);
+        cacheList(ClassicBarsConfig.absorptionPoisonColors, absorptionPoison);
+        cacheList(ClassicBarsConfig.absorptionWitherColors, absorptionWither);
         hunger = ColorUtils.hex2Color(ClassicBarsConfig.hungerBarColor.get());
         hungerDebuff = ColorUtils.hex2Color(ClassicBarsConfig.hungerBarDebuffColor.get());
         saturation = ColorUtils.hex2Color(ClassicBarsConfig.saturationBarColor.get());
@@ -65,7 +75,7 @@ public class ConfigCache {
         frozenHealth = ColorUtils.hex2Color(ClassicBarsConfig.frozenHealthColor.get());
     }
 
-    private static void cacheList(ForgeConfigSpec.ConfigValue<List<? extends String>> config, List<Color> cache) {
+    private static void cacheList(ModConfigSpec.ConfigValue<List<? extends String>> config, List<Color> cache) {
         for (String s : config.get()) {
             cache.add(ColorUtils.hex2Color(s));
         }

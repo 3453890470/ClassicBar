@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="Unlicense"
+issueTrackerURL="https://github.com/Tfarcenim/ClassicBar/issues"
+
+[[mods]]
+modId="classicbar"
+version="${project_version}"
+displayName="Classic Bar"
+authors="Tfarecnim"
+description='''
+Status icons are bars now
+'''
+
+[[dependencies.classicbar]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.228,)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.classicbar]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+ordering="NONE"
+side="CLIENT"

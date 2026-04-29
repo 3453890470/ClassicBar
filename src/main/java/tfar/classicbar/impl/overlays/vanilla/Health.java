@@ -4,12 +4,14 @@ package tfar.classicbar.impl.overlays.vanilla;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ColorUtils;
 import tfar.classicbar.util.HealthEffect;
 import tfar.classicbar.util.ModUtils;
+import tfar.classicbar.resources.BarIcons;
+import net.minecraft.resources.ResourceLocation;
 
 public class Health extends BarOverlayImpl {
 
@@ -27,8 +29,8 @@ public class Health extends BarOverlayImpl {
   }
 
   @Override
-  public void renderBar(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
-    int updateCounter = gui.getGuiTicks();
+  public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+    int updateCounter = context.getGuiTicks();
 
     double health = player.getHealth();
     double barWidth = getBarWidth(player);
@@ -79,13 +81,24 @@ public class Health extends BarOverlayImpl {
     }
     //calculate bar color
     Color primary = getPrimaryBarColor(0,player);
-    primary.color2Gl();
+    applyConfiguredBarColor(primary);
     //draw portion of bar based on health remaining
     renderPartialBar(graphics,f + 2, yStart + 2, barWidth);
     if (effect == HealthEffect.POISON) {
       //draw poison overlay
       RenderSystem.setShaderColor(0, .5f, 0, .5f);
       ModUtils.drawTexturedModalRect(graphics,f + 1, yStart + 1, 1, 36, barWidth, 7);
+      Color.reset();
+    } else if (effect == HealthEffect.WITHER) {
+      //draw wither overlay
+      RenderSystem.setShaderColor(.35f, .35f, .35f, .5f);  // TODO: tune color
+      ModUtils.drawTexturedModalRect(graphics,f + 1, yStart + 1, 1, 36, barWidth, 7);
+      Color.reset();
+    } else if (effect == HealthEffect.FROZEN) {
+      //draw frozen overlay
+      RenderSystem.setShaderColor(.3f, .5f, 1f, .5f);  // TODO: tune color
+      ModUtils.drawTexturedModalRect(graphics,f + 1, yStart + 1, 1, 36, barWidth, 7);
+      Color.reset();
     }
   }
 
@@ -109,21 +122,26 @@ public class Health extends BarOverlayImpl {
     double health = player.getHealth();
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    textHelper(graphics,xStart,yStart,health,getPrimaryBarColor(0,player).colorToText());
+    textHelper(graphics,xStart,yStart,health,getConfiguredTextColor(getPrimaryBarColor(0,player)));
   }
 
   @Override
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    HealthEffect effect = getHealthEffect(player);
-
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    int i5 = (player.level().getLevelData().isHardcore()) ? 5 : 0;
-    //Draw health icon
-    //heart background
-    Color.reset();
-    ModUtils.drawTexturedModalRect(graphics,xStart, yStart, 16, 9 * i5, 9, 9);
-    //heart
-    ModUtils.drawTexturedModalRect(graphics,xStart, yStart, 36 + effect.i, 9 * i5, 9, 9);
+    HealthEffect effect = getHealthEffect(player);
+    ResourceLocation saved = ModUtils.CURRENT_TEXTURE;
+    try {
+      if (effect == HealthEffect.POISON) {
+        ModUtils.CURRENT_TEXTURE = BarIcons.HEALTH_POISON;
+      } else if (effect == HealthEffect.WITHER) {
+        ModUtils.CURRENT_TEXTURE = BarIcons.HEALTH_WITHER;
+      } else if (effect == HealthEffect.FROZEN) {
+        ModUtils.CURRENT_TEXTURE = BarIcons.HEALTH_FROZEN;
+      }
+      ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
+    } finally {
+      ModUtils.CURRENT_TEXTURE = saved;
+    }
   }
 }

@@ -1,7 +1,6 @@
 package tfar.classicbar.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.util.Mth;
 
 public record Color(int r,int g,int b) {
     public static final Color BLACK = Color.from(0,0,0);
@@ -20,9 +19,9 @@ public record Color(int r,int g,int b) {
         color2Gla(1);
     }
     public Color colorBlend(Color c2, float d) {
-        int r = Mth.lerpInt(d,this.r,c2.r);
-        int g = Mth.lerpInt(d,this.g,c2.g);
-        int b = Mth.lerpInt(d,this.b,c2.b);
+        int r = lerpInt(d, this.r, c2.r);
+        int g = lerpInt(d, this.g, c2.g);
+        int b = lerpInt(d, this.b, c2.b);
         return Color.from(r, g, b);
     }
     public int colorToText(){
@@ -37,5 +36,9 @@ public record Color(int r,int g,int b) {
     }
     public static void reset() {
         RenderSystem.setShaderColor(1,1,1,1);
+    }
+
+    private static int lerpInt(float delta, int start, int end) {
+        return start + (int) Math.floor(delta * (end - start));
     }
 }

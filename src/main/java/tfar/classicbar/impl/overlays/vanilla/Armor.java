@@ -5,7 +5,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
@@ -27,7 +27,7 @@ public class Armor extends BarOverlayImpl {
     }
 
     @Override
-    public void renderBar(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+    public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
         double armor = calculateArmorValue(player);
         double barWidth = getBarWidth(player);
 
@@ -48,7 +48,7 @@ public class Armor extends BarOverlayImpl {
 
         if (index == 0) {
             //calculate bar color
-            primary.color2Gla(armorAlpha);
+            applyConfiguredBarColor(primary, armorAlpha);
             //draw portion of bar based on armor
             renderPartialBar(graphics, xStart + 2, yStart + 2, barWidth);
         } else {
@@ -58,10 +58,10 @@ public class Armor extends BarOverlayImpl {
             if (armor % 20 != 0) {
                 Color secondary = getSecondaryBarColor(index - 1, player);
                 //draw complete first bar
-                secondary.color2Gla(armorAlpha);
+                applyConfiguredBarColor(secondary, armorAlpha);
                 renderFullBar(graphics, xStart + 2, yStart + 2);
                 //draw partial second bar
-                primary.color2Gl();
+                applyConfiguredBarColor(primary);
                 double w = ModUtils.getWidth(armor % 20, 20);
                 double f = xStart + (rightHandSide() ? WIDTH - w : 0);
                 renderPartialBar(graphics, f + 2, yStart + 2, w);
@@ -69,13 +69,13 @@ public class Armor extends BarOverlayImpl {
             //case 2, bar is a multiple of 20, or it is capped
             else {
                 //draw complete second bar
-                primary.color2Gla(armorAlpha);
+                applyConfiguredBarColor(primary, armorAlpha);
                 renderFullBar(graphics, xStart + 2, yStart + 2);
             }
             // now handle the low armor warning
             if (warn) {
                 //draw one bar
-                primary.color2Gla(armorAlpha);
+                applyConfiguredBarColor(primary, armorAlpha);
                 renderPartialBar(graphics, xStart + 2, yStart + 2, ModUtils.getWidth(armor - index * 20, 20));
             }
         }
@@ -131,7 +131,7 @@ public class Armor extends BarOverlayImpl {
         double armor = calculateArmorValue(player);
         //draw armor amount
         int index = (int) Math.min(Math.ceil(armor / 20), ConfigCache.armor.size()) - 1;
-        int c = getPrimaryBarColor(index, player).colorToText();
+        int c = getConfiguredTextColor(getPrimaryBarColor(index, player));
         textHelper(graphics, xStart, yStart, armor, c);
     }
 
@@ -139,8 +139,7 @@ public class Armor extends BarOverlayImpl {
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        //Draw armor icon
-        ModUtils.drawTexturedModalRect(graphics, xStart, yStart, 43, 9, 9, 9);
+        ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
     }
 
     private static int calculateArmorValue(Player player) {

@@ -2,7 +2,7 @@ package tfar.classicbar.impl.overlays.vanilla;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
@@ -22,7 +22,7 @@ public class Absorption extends BarOverlayImpl {
     }
 
     @Override
-    public void renderBar(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+    public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
 
         double absorb = player.getAbsorptionAmount();
         double barWidth = getBarWidth(player);
@@ -43,19 +43,19 @@ public class Absorption extends BarOverlayImpl {
         renderBarBackground(graphics, player, screenWidth, screenHeight, vOffset);
         if (index == 0) {//no wrapping
             //background
-            primary.color2Gl();
+            applyConfiguredBarColor(primary);
             //bar
             renderPartialBar(graphics, xStart + 2, yStart + 2, barWidth);
         } else {
             //we have wrapped, draw 2 bars
             //draw first full bar
             Color secondary = getSecondaryBarColor(index - 1, player);
-            secondary.color2Gl();
+            applyConfiguredBarColor(secondary);
             renderFullBar(graphics, xStart + 2, yStart + 2);
             //is it on the edge or capped already?
             if (absorb % maxHealth != 0 && index < ConfigCache.absorption.size() - 1) {
                 //draw second partial bar
-                primary.color2Gl();
+                applyConfiguredBarColor(primary);
                 renderPartialBar(graphics, xStart + 2, yStart + 2, ModUtils.getWidth(absorb % maxHealth, maxHealth));
             }
         }
@@ -99,17 +99,13 @@ public class Absorption extends BarOverlayImpl {
         // handle the text
         int index = Math.min((int) Math.ceil(absorb / maxHealth), ConfigCache.absorption.size()) - 1;
         Color c = getPrimaryBarColor(index, player);
-        textHelper(graphics, xStart, yStart, absorb, c.colorToText());
+        textHelper(graphics, xStart, yStart, absorb, getConfiguredTextColor(c));
     }
 
     @Override
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-
-        int i5 = (player.level().getLevelData().isHardcore()) ? 5 : 0;
-        //draw absorption icon
-        ModUtils.drawTexturedModalRect(graphics, xStart, yStart, 16, 9 * i5, 9, 9);
-        ModUtils.drawTexturedModalRect(graphics, xStart, yStart, 160, 0, 9, 9);
+        ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
     }
 }
