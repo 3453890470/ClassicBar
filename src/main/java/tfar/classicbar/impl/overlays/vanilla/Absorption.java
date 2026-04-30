@@ -71,19 +71,7 @@ public class Absorption extends BarOverlayImpl {
 
     @Override
     public Color getPrimaryBarColor(int index, Player player) {
-        HealthEffect effect = getHealthEffect(player);
-        switch (effect) {
-            case NONE -> {
-                return ConfigCache.absorption.get(index);
-            }
-            case POISON -> {
-                return ConfigCache.absorptionPoison.get(index);
-            }
-            case WITHER -> {
-                return ConfigCache.absorptionWither.get(index);
-            }
-        }
-        return super.getPrimaryBarColor(index, player);
+        return ConfigCache.absorption.get(index);
     }
 
     @Override

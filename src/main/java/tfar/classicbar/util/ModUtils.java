@@ -31,7 +31,7 @@ public class ModUtils {
                                         ResourceLocation normal, ResourceLocation blinking,
                                         boolean flashing, int guiTicks) {
     ResourceLocation prev = CURRENT_TEXTURE;
-    if (flashing && (guiTicks / 3) % 2 == 0) {
+    if (flashing && (guiTicks / 2) % 2 == 0) {
       CURRENT_TEXTURE = blinking;
     } else {
       CURRENT_TEXTURE = normal;

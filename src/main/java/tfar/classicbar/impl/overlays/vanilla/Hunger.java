@@ -38,7 +38,7 @@ public class Hunger extends BarOverlayImpl {
     // Detect hunger decrease
     int updateCounter = context.getGuiTicks();
     if (hunger < lastFoodLevel) {
-      foodUpdateCounter = updateCounter + 20;
+      foodUpdateCounter = updateCounter + 10;
     }
     lastFoodLevel = hunger;
 

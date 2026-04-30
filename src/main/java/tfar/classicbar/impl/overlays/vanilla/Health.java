@@ -39,10 +39,10 @@ public class Health extends BarOverlayImpl {
 
     // Detect health decrease (always)
     if (health < playerHealth) {
-      healthUpdateCounter = updateCounter + 20;
+      healthUpdateCounter = updateCounter + 10;
       lastPlayerHealth = playerHealth;
     } else if (health > playerHealth && player.invulnerableTime > 0) {
-      healthUpdateCounter = updateCounter + 10;
+      healthUpdateCounter = updateCounter + 6;
     }
     playerHealth = health;
     double displayHealth = health + (lastPlayerHealth - health) * ((double) player.invulnerableTime / player.invulnerableDuration);
