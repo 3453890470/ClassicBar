@@ -12,6 +12,7 @@ import java.util.Set;
 public class ConfigCache {
 
     public static boolean icons;
+    public static boolean showFoodPreview;
     public static List<Color> armor = new ArrayList<>();
     public static List<Color> armor_toughness = new ArrayList<>();
     public static Color hunger;
@@ -60,6 +61,7 @@ public class ConfigCache {
     public static void bake() {
         clear();
         icons = ClassicBarsConfig.displayIcons.get();
+        showFoodPreview = ClassicBarsConfig.showFoodPreview.get();
 
         cacheList(ClassicBarsConfig.armorColors, armor);
         cacheList(ClassicBarsConfig.armorToughnessColors, armor_toughness);

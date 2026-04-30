@@ -52,6 +52,7 @@ public class ClassicBarsConfig {
   public static ModConfigSpec.BooleanValue showHeldDrinkOverlay;
   public static ModConfigSpec.BooleanValue showExhaustionOverlay;
   public static ModConfigSpec.BooleanValue showThirstExhaustionOverlay;
+  public static ModConfigSpec.BooleanValue showFoodPreview;
 
   public static ModConfigSpec.DoubleValue transitionSpeed;
   static ModConfigSpec.ConfigValue<String> hungerBarColor;
@@ -128,6 +129,9 @@ public class ClassicBarsConfig {
     showThirstExhaustionOverlay = builder.translation(generalKey("show_thirst_exhaustion_overlay"))
 
             .define("show_thirst_exhaustion_overlay", true);
+    showFoodPreview = builder.translation(generalKey("show_food_preview"))
+
+            .define("show_food_preview", true);
     transitionSpeed = builder.translation(generalKey("transition_speed"))
 
             .defineInRange("transition_speed", 3.0D, 0.0D, Double.MAX_VALUE);
