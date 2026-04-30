@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4] — 2026-04-30
+- **新增**：图标闪烁变种——生命值减少、饱食度减少、缺氧时图标在 normal/blinking 纹理间切换闪烁
+- **新增**：7 个闪烁变种贴图（health/poison/wither/frozen/food/food_hunger/air 的 blinking 变种）
+- **重构**：闪烁机制从 alpha 透明度改为纹理替换（`ModUtils.drawIconWithFlash`）
+- **修复**：生命值减少闪烁不再依赖 invulnerableTime，所有伤害类型均触发
+- **版本号** 1.0.3 → 1.0.4
+
 ## [1.0.3] — 2026-04-30
 - **新增**：食物预览——手持食物时在饱食度/饱和度条上显示呼吸闪烁的预览增量条，叠加预览覆盖层
 - **新增**：饥饿状态图标变种——饥饿效果时饱食度图标切换为暗绿色变种 (`food_hunger.png`)

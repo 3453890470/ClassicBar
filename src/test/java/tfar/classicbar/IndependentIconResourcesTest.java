@@ -135,7 +135,8 @@ class IndependentIconResourcesTest {
       assertFalse(renderIconBody.isBlank(), overlayName + " should still define renderIcon");
       boolean usesDirectCall = renderIconBody.contains("ModUtils.drawStandaloneIcon");
       boolean usesWrappedCall = renderIconBody.contains("ModUtils.drawIconWithTexture");
-      assertTrue(usesDirectCall || usesWrappedCall, overlayName + " should draw the standalone ClassicBar icon texture");
+      boolean usesFlashCall = renderIconBody.contains("ModUtils.drawIconWithFlash");
+      assertTrue(usesDirectCall || usesWrappedCall || usesFlashCall, overlayName + " should draw the standalone ClassicBar icon texture");
 
       for (String forbiddenReference : FORBIDDEN_ICON_REFERENCES) {
         assertFalse(renderIconBody.contains(forbiddenReference), overlayName + " renderIcon should not use " + forbiddenReference);

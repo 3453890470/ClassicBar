@@ -59,6 +59,8 @@ public class Air extends BarOverlayImpl {
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, BarIcons.AIR);
+        int guiTicks = ModUtils.getGuiTicks();
+        boolean flashing = player.getAirSupply() < player.getMaxAirSupply();
+        ModUtils.drawIconWithFlash(graphics, xStart, yStart, 9, BarIcons.AIR, BarIcons.AIR_BLINKING, flashing, guiTicks);
     }
 }

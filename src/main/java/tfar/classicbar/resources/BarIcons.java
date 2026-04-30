@@ -12,7 +12,14 @@ public final class BarIcons {
     public static final ResourceLocation HEALTH_FROZEN = icon("health_frozen");
     public static final ResourceLocation ARMOR = icon("armor");
     public static final ResourceLocation FOOD = icon("food");
+    public static final ResourceLocation FOOD_BLINKING = icon("food_blinking");
     public static final ResourceLocation FOOD_HUNGER = icon("food_hunger");
+    public static final ResourceLocation HEALTH_BLINKING = icon("health_blinking");
+    public static final ResourceLocation HEALTH_POISON_BLINKING = icon("health_poison_blinking");
+    public static final ResourceLocation HEALTH_WITHER_BLINKING = icon("health_wither_blinking");
+    public static final ResourceLocation HEALTH_FROZEN_BLINKING = icon("health_frozen_blinking");
+    public static final ResourceLocation FOOD_HUNGER_BLINKING = icon("food_hunger_blinking");
+    public static final ResourceLocation AIR_BLINKING = icon("air_blinking");
     public static final ResourceLocation AIR = icon("air");
     public static final ResourceLocation ABSORPTION = icon("absorption");
     public static final ResourceLocation ARMOR_TOUGHNESS = icon("armor_toughness");

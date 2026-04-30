@@ -27,6 +27,23 @@ public class ModUtils {
     CURRENT_TEXTURE = prev;
   }
 
+  public static void drawIconWithFlash(GuiGraphics stack, int x, int y, int size,
+                                        ResourceLocation normal, ResourceLocation blinking,
+                                        boolean flashing, int guiTicks) {
+    ResourceLocation prev = CURRENT_TEXTURE;
+    if (flashing && (guiTicks / 3) % 2 == 0) {
+      CURRENT_TEXTURE = blinking;
+    } else {
+      CURRENT_TEXTURE = normal;
+    }
+    drawStandaloneIcon(stack, x, y, size);
+    CURRENT_TEXTURE = prev;
+  }
+
+  public static int getGuiTicks() {
+    return Minecraft.getInstance().gui.getGuiTicks();
+  }
+
   public static double getWidth(double d1, double d2) {
     double ratio = BarOverlayImpl.WIDTH * d1 / d2;
     return Math.ceil(ratio);

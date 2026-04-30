@@ -37,13 +37,12 @@ public class Health extends BarOverlayImpl {
     double barWidth = getBarWidth(player);
     boolean highlight = healthUpdateCounter > (long) updateCounter && (healthUpdateCounter - (long) updateCounter) / 3 % 2 == 1;
 
-    //player is damaged and resistant
-    if (health < playerHealth && player.invulnerableTime > 0) {
+    // Detect health decrease (always)
+    if (health < playerHealth) {
       healthUpdateCounter = updateCounter + 20;
       lastPlayerHealth = playerHealth;
     } else if (health > playerHealth && player.invulnerableTime > 0) {
       healthUpdateCounter = updateCounter + 10;
-      /* lastPlayerHealth = playerHealth;*/
     }
     playerHealth = health;
     double displayHealth = health + (lastPlayerHealth - health) * ((double) player.invulnerableTime / player.invulnerableDuration);
@@ -131,17 +130,23 @@ public class Health extends BarOverlayImpl {
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
+    int guiTicks = ModUtils.getGuiTicks();
     HealthEffect effect = getHealthEffect(player);
-    ResourceLocation icon;
+    ResourceLocation normal, blinking;
     if (effect == HealthEffect.POISON) {
-      icon = BarIcons.HEALTH_POISON;
+      normal = BarIcons.HEALTH_POISON;
+      blinking = BarIcons.HEALTH_POISON_BLINKING;
     } else if (effect == HealthEffect.WITHER) {
-      icon = BarIcons.HEALTH_WITHER;
+      normal = BarIcons.HEALTH_WITHER;
+      blinking = BarIcons.HEALTH_WITHER_BLINKING;
     } else if (effect == HealthEffect.FROZEN) {
-      icon = BarIcons.HEALTH_FROZEN;
+      normal = BarIcons.HEALTH_FROZEN;
+      blinking = BarIcons.HEALTH_FROZEN_BLINKING;
     } else {
-      icon = BarIcons.HEALTH;
+      normal = BarIcons.HEALTH;
+      blinking = BarIcons.HEALTH_BLINKING;
     }
-    ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, icon);
+    boolean flashing = healthUpdateCounter > (long) guiTicks;
+    ModUtils.drawIconWithFlash(graphics, xStart, yStart, 9, normal, blinking, flashing, guiTicks);
   }
 }

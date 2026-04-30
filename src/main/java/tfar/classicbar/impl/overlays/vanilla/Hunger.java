@@ -20,6 +20,9 @@ public class Hunger extends BarOverlayImpl {
     super("food");
   }
 
+  private double lastFoodLevel = 0;
+  private long foodUpdateCounter = 0;
+
   @Override
   public boolean shouldRender(Player player) {
     return true;
@@ -31,7 +34,14 @@ public class Hunger extends BarOverlayImpl {
     double maxHunger = 20;//HungerHelper.getMaxHunger(player);
     
     double barWidthH = getBarWidth(player);
-    
+
+    // Detect hunger decrease
+    int updateCounter = context.getGuiTicks();
+    if (hunger < lastFoodLevel) {
+      foodUpdateCounter = updateCounter + 20;
+    }
+    lastFoodLevel = hunger;
+
     double currentSat = player.getFoodData().getSaturationLevel();
     double maxSat = maxHunger;
     double barWidthS = getSatBarWidth(player);
@@ -198,7 +208,11 @@ public class Hunger extends BarOverlayImpl {
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    ResourceLocation icon = player.hasEffect(MobEffects.HUNGER) ? BarIcons.FOOD_HUNGER : BarIcons.FOOD;
-    ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, icon);
+    int guiTicks = ModUtils.getGuiTicks();
+    boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
+    ResourceLocation normal = hasHunger ? BarIcons.FOOD_HUNGER : BarIcons.FOOD;
+    ResourceLocation blinking = hasHunger ? BarIcons.FOOD_HUNGER_BLINKING : BarIcons.FOOD_BLINKING;
+    boolean flashing = foodUpdateCounter > (long) guiTicks || hasHunger;
+    ModUtils.drawIconWithFlash(graphics, xStart, yStart, 9, normal, blinking, flashing, guiTicks);
   }
 }
