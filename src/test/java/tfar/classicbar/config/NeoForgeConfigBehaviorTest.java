@@ -44,7 +44,6 @@ class NeoForgeConfigBehaviorTest {
           "classicbar.config.mod_support.feathers.enabled",
           "classicbar.config.mod_support.feathers.enabled.tooltip",
           "classicbar.config.enum.bar_mode.override",
-          "classicbar.config.enum.bar_mode.compat",
           "classicbar.config.enum.bar_mode.disabled"
   );
 
@@ -113,7 +112,7 @@ class NeoForgeConfigBehaviorTest {
 
     assertTrue(barMode.contains("implements TranslatableEnum"), "BarMode should implement TranslatableEnum for config screen localization");
     assertTrue(barMode.contains("OVERRIDE"), "BarMode should include OVERRIDE");
-    assertTrue(barMode.contains("COMPAT"), "BarMode should include COMPAT");
+    assertFalse(barMode.contains("COMPAT"), "BarMode should no longer include COMPAT");
     assertTrue(barMode.contains("DISABLED"), "BarMode should include DISABLED");
     assertTrue(barMode.contains("Component.translatable"), "BarMode should override getTranslatedName with translatable components");
     assertTrue(barColorOverlay.contains("DEFAULT_CONFIG_VALUE = \"#00FFFFFF\""), "BarColorOverlay should define a no-op default overlay");

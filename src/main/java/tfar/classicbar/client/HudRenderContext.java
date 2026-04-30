@@ -7,8 +7,6 @@ public class HudRenderContext {
 
     private int leftHeight = 39;
     private int rightHeight = 39;
-    private int compatLeftOffset = 0;
-    private int compatRightOffset = 0;
 
     public void setupOverlayRenderState() {
         RenderSystem.enableBlend();
@@ -28,20 +26,6 @@ public class HudRenderContext {
     }
 
     public int getOffset(boolean right) {
-        int base = right ? rightHeight : leftHeight;
-        int compatOffset = right ? compatRightOffset : compatLeftOffset;
-        return base + compatOffset;
-    }
-
-    public void setCompatOffset(boolean right, int offset) {
-        if (right) {
-            compatRightOffset = offset;
-        } else {
-            compatLeftOffset = offset;
-        }
-    }
-
-    public boolean hasAnyCompatOffset() {
-        return compatLeftOffset != 0 || compatRightOffset != 0;
+        return right ? rightHeight : leftHeight;
     }
 }

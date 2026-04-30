@@ -68,10 +68,6 @@ neoForge {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-
-    // YAML Config — 编译时 API 可用，开发运行时（runClient）加载，最终 JAR 不声明依赖
-    compileOnly "maven.modrinth:L1FFB418:QyfpJeP3"
-    runtimeOnly "maven.modrinth:L1FFB418:QyfpJeP3"
 }
 
 tasks.named('test', Test).configure {

@@ -16,16 +16,6 @@ class EventHandlerCancellationBehaviorTest {
   }
 
   @Test
-  void healthOverrideAndAbsorptionCompatCancelSharedPlayerHealthWhenAbsorptionIsAbsent() throws Exception {
-    assertTrue(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "COMPAT", true, false), "If no absorption hearts are present, COMPAT absorption should not block normal Health OVERRIDE behavior");
-  }
-
-  @Test
-  void healthOverrideCancelsSharedPlayerHealthEvenWhenAbsorptionIsCompatAndPresent() throws Exception {
-    assertTrue(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "COMPAT", true, true), "Health OVERRIDE cancels entire PLAYER_HEALTH layer even when absorption is COMPAT with visible hearts; ClassicBar renders both bars");
-  }
-
-  @Test
   void sharedPlayerHealthCancelsOnlyWhenBothBarsOverrideAndRenderWhileAbsorptionIsPresent() throws Exception {
     assertTrue(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "OVERRIDE", true, true), "Visible absorption hearts may only disappear when both shared bars actively override and render");
   }
@@ -39,25 +29,6 @@ class EventHandlerCancellationBehaviorTest {
   void healthOverrideDoesNotCancelSharedPlayerHealthWhenVisibleAbsorptionMustBePreserved() throws Exception {
     assertFalse(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "DISABLED", true, true), "DISABLED absorption should keep visible vanilla absorption hearts on the shared PLAYER_HEALTH layer");
     assertFalse(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "OVERRIDE", false, true), "An absorption bar removed from layout should still preserve visible vanilla absorption hearts on the shared PLAYER_HEALTH layer");
-  }
-
-  @Test
-  void healthCompatOrDisabledDoNotCancelSharedPlayerHealthEvenIfAbsorptionOverrides() throws Exception {
-    assertFalse(shouldCancelSharedPlayerHealth("COMPAT", true, true, "OVERRIDE", true, true), "COMPAT health should keep the shared PLAYER_HEALTH vanilla layer visible");
-    assertFalse(shouldCancelSharedPlayerHealth("DISABLED", true, true, "OVERRIDE", true, true), "DISABLED health should keep the shared PLAYER_HEALTH vanilla layer visible");
-  }
-
-  @Test
-  void layoutRemovalPreventsIndependentVanillaCancellationEvenForOverrideMode() throws Exception {
-    assertFalse(shouldCancelIndependentVanillaLayer("OVERRIDE", false, true), "An override bar removed from layout should not cancel its vanilla layer");
-  }
-
-  @Test
-  void compatBarsStillRenderClassicBarButDoNotCancelVanilla() throws Exception {
-    for (String overlayId : new String[]{"food", "armor", "air"}) {
-      assertTrue(rendersClassicBar("COMPAT"), overlayId + " COMPAT should still render the ClassicBar overlay");
-      assertFalse(shouldCancelIndependentVanillaLayer("COMPAT", true, true), overlayId + " COMPAT should not cancel vanilla");
-    }
   }
 
   @Test

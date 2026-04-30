@@ -5,7 +5,6 @@ import net.neoforged.neoforge.common.TranslatableEnum;
 
 public enum BarMode implements TranslatableEnum {
     OVERRIDE("classicbar.config.enum.bar_mode.override"),
-    COMPAT("classicbar.config.enum.bar_mode.compat"),
     DISABLED("classicbar.config.enum.bar_mode.disabled");
 
     private final String translationKey;
