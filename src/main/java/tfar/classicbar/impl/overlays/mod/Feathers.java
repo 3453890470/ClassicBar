@@ -43,11 +43,12 @@ public class Feathers extends BarOverlayImpl {
 	@Override
 	public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
 		//draw feathers amount
-		double feathers = 0;//FeathersHelper.getFeatherLevel(Minecraft.getInstance().player);
+		double feathers = FeathersHelper.getFeathers();
+		double maxFeathers = FeathersHelper.getMaxFeathers();
 		int c = Integer.decode("#22a5f0");
 		int xStart = width / 2 + getIconOffset();
 		int yStart = height - vOffset;
-		textHelper(graphics,xStart,yStart,feathers,c);
+		textHelper(graphics, xStart, yStart, feathers, maxFeathers, c, barSettings.textFormat);
 	}
 	@Override
 	public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {

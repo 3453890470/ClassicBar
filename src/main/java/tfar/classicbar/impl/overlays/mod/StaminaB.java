@@ -57,15 +57,17 @@ public class StaminaB extends BarOverlayImpl {
         return Color.YELLOW;
     }
 
-    @Override
-    public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-        //draw stamina amount
-        int stamina = IStamina.get(player).get();
-        int xStart = width / 2 + getIconOffset();
-        int yStart = height - vOffset;
-        Color color = getPrimaryBarColor(0, player);
-        textHelper(graphics, xStart, yStart, stamina/20, color.colorToText());
-    }
+	@Override
+	public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+		//draw stamina amount
+		IStamina staminaCap = IStamina.get(player);
+		int stamina = staminaCap.get();
+		int maxStamina = staminaCap.getMaxStamina();
+		int xStart = width / 2 + getIconOffset();
+		int yStart = height - vOffset;
+		Color color = getPrimaryBarColor(0, player);
+		textHelper(graphics, xStart, yStart, stamina, maxStamina, color.colorToText(), barSettings.textFormat);
+	}
 
     @Override
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {

@@ -241,7 +241,7 @@ class NeoForgeConfigBehaviorTest {
       }
     }
     for (String barId : ACTIVE_BAR_CONSTANTS.keySet()) {
-      for (String suffix : List.of("show_text", "show_text.tooltip", "icon", "icon.tooltip", "mode", "mode.tooltip", "color_overlay", "color_overlay.tooltip")) {
+      for (String suffix : List.of("show_text", "show_text.tooltip", "icon", "icon.tooltip", "mode", "mode.tooltip", "color_overlay", "color_overlay.tooltip", "text_format", "text_format.tooltip")) {
         String key = "classicbar.config.bars." + barId + "." + suffix;
         if (!langJson.contains("\"" + key + "\"")) {
           missingKeys.add(key);

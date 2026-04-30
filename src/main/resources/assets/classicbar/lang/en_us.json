@@ -106,6 +106,8 @@
   "classicbar.config.bars.health.mode.tooltip": "Health and absorption share vanilla PLAYER_HEALTH. If there are no absorption hearts to preserve, Health OVERRIDE still hides vanilla hearts. If visible absorption hearts are present, ClassicBar only cancels PLAYER_HEALTH when both shared bars are OVERRIDE, active in layout, and currently rendering; otherwise the whole vanilla player health layer stays visible to preserve health and absorption info.",
   "classicbar.config.bars.health.color_overlay": "Health color overlay",
   "classicbar.config.bars.health.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide gradients and layered fills. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency, and health effect overlays can still render on top.",
+  "classicbar.config.bars.health.text_format": "Health text format",
+  "classicbar.config.bars.health.text_format.tooltip": "Controls how the health value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.bars.armor": "Armor bar",
   "classicbar.config.bars.armor.tooltip": "Settings for the armor overlay.",
@@ -117,6 +119,8 @@
   "classicbar.config.bars.armor.mode.tooltip": "OVERRIDE hides vanilla armor, COMPAT shows both, DISABLED turns off the ClassicBar armor overlay.",
   "classicbar.config.bars.armor.color_overlay": "Armor color overlay",
   "classicbar.config.bars.armor.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide gradient detail. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.armor.text_format": "Armor text format",
+  "classicbar.config.bars.armor.text_format.tooltip": "Controls how the armor value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.bars.absorption": "Absorption bar",
   "classicbar.config.bars.absorption.tooltip": "Settings for the absorption overlay.",
@@ -128,6 +132,8 @@
   "classicbar.config.bars.absorption.mode.tooltip": "Absorption also shares vanilla PLAYER_HEALTH with health. If there are no visible absorption hearts, Health OVERRIDE can still hide vanilla hearts on its own. When visible absorption hearts are present, ClassicBar only cancels PLAYER_HEALTH if both health and absorption are OVERRIDE, active in layout, and currently rendering; COMPAT, DISABLED, or layout removal keeps the whole vanilla player health layer visible.",
   "classicbar.config.bars.absorption.color_overlay": "Absorption color overlay",
   "classicbar.config.bars.absorption.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide gradients and layered absorption fills. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.absorption.text_format": "Absorption text format",
+  "classicbar.config.bars.absorption.text_format.tooltip": "Controls how the absorption value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.bars.food": "Food bar",
   "classicbar.config.bars.food.tooltip": "Settings for the food overlay.",
@@ -139,6 +145,8 @@
   "classicbar.config.bars.food.mode.tooltip": "OVERRIDE hides vanilla food, COMPAT shows both, DISABLED turns off the ClassicBar food overlay.",
   "classicbar.config.bars.food.color_overlay": "Food color overlay",
   "classicbar.config.bars.food.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, including the saturation pass, which can hide vanilla-style layering. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.food.text_format": "Food text format",
+  "classicbar.config.bars.food.text_format.tooltip": "Controls how the food value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.bars.armor_toughness": "Armor toughness bar",
   "classicbar.config.bars.armor_toughness.tooltip": "Settings for the armor toughness overlay.",
@@ -150,6 +158,8 @@
   "classicbar.config.bars.armor_toughness.mode.tooltip": "OVERRIDE and COMPAT both render ClassicBar armor toughness because vanilla has no matching layer. DISABLED turns it off.",
   "classicbar.config.bars.armor_toughness.color_overlay": "Armor toughness color overlay",
   "classicbar.config.bars.armor_toughness.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide gradient detail. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.armor_toughness.text_format": "Armor toughness text format",
+  "classicbar.config.bars.armor_toughness.text_format.tooltip": "Controls how the armor toughness value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.bars.health_mount": "Mount health bar",
   "classicbar.config.bars.health_mount.tooltip": "Settings for the mount health overlay.",
@@ -161,6 +171,8 @@
   "classicbar.config.bars.health_mount.mode.tooltip": "OVERRIDE hides vanilla mount health, COMPAT shows both, DISABLED turns off the ClassicBar mount health overlay.",
   "classicbar.config.bars.health_mount.color_overlay": "Mount health color overlay",
   "classicbar.config.bars.health_mount.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide gradients and layered fills. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.health_mount.text_format": "Mount health text format",
+  "classicbar.config.bars.health_mount.text_format.tooltip": "Controls how the mount health value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.bars.air": "Air bar",
   "classicbar.config.bars.air.tooltip": "Settings for the air overlay.",
@@ -172,6 +184,8 @@
   "classicbar.config.bars.air.mode.tooltip": "OVERRIDE hides vanilla air, COMPAT shows both, DISABLED turns off the ClassicBar air overlay.",
   "classicbar.config.bars.air.color_overlay": "Air color overlay",
   "classicbar.config.bars.air.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide layered fill detail. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.air.text_format": "Air text format",
+  "classicbar.config.bars.air.text_format.tooltip": "Controls how the air value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.mod_support.toughasnails": "Tough As Nails",
   "classicbar.config.mod_support.toughasnails.tooltip": "Reserved compatibility section for Tough As Nails. No active effect in this build.",
@@ -192,5 +206,9 @@
 
   "classicbar.config.enum.bar_mode.override": "Override vanilla",
   "classicbar.config.enum.bar_mode.compat": "Show alongside vanilla",
-  "classicbar.config.enum.bar_mode.disabled": "Disable ClassicBar"
+  "classicbar.config.enum.bar_mode.disabled": "Disable ClassicBar",
+
+  "classicbar.config.enum.text_format.current_only": "Current only",
+  "classicbar.config.enum.text_format.current_max": "Current / Max",
+  "classicbar.config.enum.text_format.percent_max": "Percent / Max"
 }

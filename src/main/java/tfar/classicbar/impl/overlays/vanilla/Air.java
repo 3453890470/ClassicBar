@@ -45,12 +45,13 @@ public class Air extends BarOverlayImpl {
   }
   @Override
   public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    //draw air amount
-    int air = player.getAirSupply();
+    double air = player.getAirSupply();
+    double maxAir = player.getMaxAirSupply();
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    Color color = getPrimaryBarColor(0,player);
-    textHelper(graphics,xStart,yStart,air/20,getConfiguredTextColor(color));
+    // 统一使用秒值显示（tick / 20）
+    textHelper(graphics, xStart, yStart, air / 20, maxAir / 20,
+               getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
   }
   @Override
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {

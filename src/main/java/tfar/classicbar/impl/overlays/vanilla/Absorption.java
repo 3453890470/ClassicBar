@@ -91,15 +91,11 @@ public class Absorption extends BarOverlayImpl {
 
     @Override
     public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-
         double absorb = player.getAbsorptionAmount();
-        double maxHealth = player.getMaxHealth();
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        // handle the text
-        int index = Math.min((int) Math.ceil(absorb / maxHealth), ConfigCache.absorption.size()) - 1;
-        Color c = getPrimaryBarColor(index, player);
-        textHelper(graphics, xStart, yStart, absorb, getConfiguredTextColor(c));
+        textHelper(graphics, xStart, yStart, absorb, player.getMaxHealth(),
+                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
     }
 
     @Override

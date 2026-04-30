@@ -86,13 +86,11 @@ public class ArmorToughness extends BarOverlayImpl {
 
     @Override
     public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+        double toughness = player.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        double armorToughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue();
-        int index = (int) Math.min(Math.ceil(armorToughness / 20) - 1, ConfigCache.armor_toughness.size() - 1);
-        int c = getConfiguredTextColor(getPrimaryBarColor(index, player));
-        //draw armor toughness amount
-        textHelper(graphics, xStart, yStart, armorToughness, c);
+        textHelper(graphics, xStart, yStart, toughness, 20,
+                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
     }
 
     @Override

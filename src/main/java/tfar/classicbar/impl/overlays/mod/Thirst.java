@@ -286,7 +286,7 @@ public class Thirst extends BarOverlayImpl {
         IThirst thirstData = ThirstHelper.getThirst(player);
         int thirst = thirstData.getThirst();
         int c = getSecondaryBarColor(0, player).colorToText();
-        textHelper(graphics, xStart, yStart, thirst, c);
+        textHelper(graphics, xStart, yStart, thirst, MAX_THIRST_LEVEL, c, barSettings.textFormat);
     }
 
     @Override

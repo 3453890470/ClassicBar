@@ -57,14 +57,13 @@ public class MountHealth extends BarOverlayImpl {
 
   @Override
   public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    int xStart = width / 2 + getIconOffset();
-    int yStart = height - vOffset;
-    LivingEntity mount = getMount(player);
-    if (mount == null) {
-      return;
+    if (player.getVehicle() instanceof LivingEntity mount) {
+      double mountHealth = mount.getHealth();
+      int xStart = width / 2 + getIconOffset();
+      int yStart = height - vOffset;
+      textHelper(graphics, xStart, yStart, mountHealth, mount.getMaxHealth(),
+                 getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
     }
-    double maxHealth = mount.getMaxHealth();
-    textHelper(graphics,xStart,yStart,mountHealth, getConfiguredTextColor(ColorUtils.calculateScaledColor(mountHealth, maxHealth, HealthEffect.NONE)));
   }
 
   @Override

@@ -106,6 +106,8 @@
   "classicbar.config.bars.health.mode.tooltip": "生命与伤害吸收共用原版 PLAYER_HEALTH。若当前没有原版吸收心需要保留，Health OVERRIDE 仍会隐藏原版红心。只要存在可见的原版吸收心，ClassicBar 就只有在生命与伤害吸收都为 OVERRIDE、都仍在当前 layout 中启用且当前都会渲染时，才会取消 PLAYER_HEALTH；否则会保留整层原版玩家生命条，避免生命或吸收信息被误伤。",
   "classicbar.config.bars.health.color_overlay": "生命颜色覆盖",
   "classicbar.config.bars.health.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住渐变与分层填充。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度；生命效果覆盖层仍可能继续叠加在上面。",
+  "classicbar.config.bars.health.text_format": "生命值显示格式",
+  "classicbar.config.bars.health.text_format.tooltip": "控制生命数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.bars.armor": "护甲条",
   "classicbar.config.bars.armor.tooltip": "护甲覆盖层设置。",
@@ -117,6 +119,8 @@
   "classicbar.config.bars.armor.mode.tooltip": "OVERRIDE 隐藏原版护甲，COMPAT 同时显示两者，DISABLED 关闭 ClassicBar 护甲条。",
   "classicbar.config.bars.armor.color_overlay": "护甲颜色覆盖",
   "classicbar.config.bars.armor.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住渐变细节。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.armor.text_format": "护甲值显示格式",
+  "classicbar.config.bars.armor.text_format.tooltip": "控制护甲数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.bars.absorption": "伤害吸收条",
   "classicbar.config.bars.absorption.tooltip": "伤害吸收覆盖层设置。",
@@ -128,6 +132,8 @@
   "classicbar.config.bars.absorption.mode.tooltip": "伤害吸收也与生命共用原版 PLAYER_HEALTH。若当前没有可见的原版吸收心，Health OVERRIDE 仍可单独隐藏原版红心；但只要还有原版吸收心需要保留，ClassicBar 就只有在生命与伤害吸收都为 OVERRIDE、都仍在当前 layout 中启用且当前都会渲染时，才会取消 PLAYER_HEALTH。COMPAT、DISABLED 或 layout 移除都会保留整层原版玩家生命条。",
   "classicbar.config.bars.absorption.color_overlay": "伤害吸收颜色覆盖",
   "classicbar.config.bars.absorption.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住渐变与伤害吸收分层填充。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.absorption.text_format": "伤害吸收值显示格式",
+  "classicbar.config.bars.absorption.text_format.tooltip": "控制伤害吸收数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.bars.food": "食物条",
   "classicbar.config.bars.food.tooltip": "食物覆盖层设置。",
@@ -139,6 +145,8 @@
   "classicbar.config.bars.food.mode.tooltip": "OVERRIDE 隐藏原版食物，COMPAT 同时显示两者，DISABLED 关闭 ClassicBar 食物条。",
   "classicbar.config.bars.food.color_overlay": "食物颜色覆盖",
   "classicbar.config.bars.food.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，包括饱和度填充层，可能遮住原本的分层效果。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.food.text_format": "食物值显示格式",
+  "classicbar.config.bars.food.text_format.tooltip": "控制食物数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.bars.armor_toughness": "护甲韧性条",
   "classicbar.config.bars.armor_toughness.tooltip": "护甲韧性覆盖层设置。",
@@ -150,6 +158,8 @@
   "classicbar.config.bars.armor_toughness.mode.tooltip": "由于原版没有对应 GUI 层，OVERRIDE 与 COMPAT 都会渲染 ClassicBar 护甲韧性条，DISABLED 则关闭它。",
   "classicbar.config.bars.armor_toughness.color_overlay": "护甲韧性颜色覆盖",
   "classicbar.config.bars.armor_toughness.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住渐变细节。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.armor_toughness.text_format": "护甲韧性值显示格式",
+  "classicbar.config.bars.armor_toughness.text_format.tooltip": "控制护甲韧性数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.bars.health_mount": "坐骑生命条",
   "classicbar.config.bars.health_mount.tooltip": "坐骑生命覆盖层设置。",
@@ -161,6 +171,8 @@
   "classicbar.config.bars.health_mount.mode.tooltip": "OVERRIDE 隐藏原版坐骑生命，COMPAT 同时显示两者，DISABLED 关闭 ClassicBar 坐骑生命条。",
   "classicbar.config.bars.health_mount.color_overlay": "坐骑生命颜色覆盖",
   "classicbar.config.bars.health_mount.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住渐变与分层填充。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.health_mount.text_format": "坐骑生命值显示格式",
+  "classicbar.config.bars.health_mount.text_format.tooltip": "控制坐骑生命数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.bars.air": "氧气条",
   "classicbar.config.bars.air.tooltip": "氧气覆盖层设置。",
@@ -172,6 +184,8 @@
   "classicbar.config.bars.air.mode.tooltip": "OVERRIDE 隐藏原版氧气，COMPAT 同时显示两者，DISABLED 关闭 ClassicBar 氧气条。",
   "classicbar.config.bars.air.color_overlay": "氧气颜色覆盖",
   "classicbar.config.bars.air.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住分层填充细节。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.air.text_format": "氧气值显示格式",
+  "classicbar.config.bars.air.text_format.tooltip": "控制氧气数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.mod_support.toughasnails": "Tough As Nails",
   "classicbar.config.mod_support.toughasnails.tooltip": "为 Tough As Nails 兼容功能预留。本版本中没有实际效果。",
@@ -192,5 +206,9 @@
 
   "classicbar.config.enum.bar_mode.override": "覆盖原版",
   "classicbar.config.enum.bar_mode.compat": "与原版同时显示",
-  "classicbar.config.enum.bar_mode.disabled": "禁用 ClassicBar"
+  "classicbar.config.enum.bar_mode.disabled": "禁用 ClassicBar",
+
+  "classicbar.config.enum.text_format.current_only": "仅当前值",
+  "classicbar.config.enum.text_format.current_max": "当前值 / 最大值",
+  "classicbar.config.enum.text_format.percent_max": "百分比 / 最大值"
 }

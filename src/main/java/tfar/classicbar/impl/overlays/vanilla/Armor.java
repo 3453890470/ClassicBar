@@ -126,13 +126,11 @@ public class Armor extends BarOverlayImpl {
 
     @Override
     public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+        double armor = player.getArmorValue();
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        double armor = calculateArmorValue(player);
-        //draw armor amount
-        int index = (int) Math.min(Math.ceil(armor / 20), ConfigCache.armor.size()) - 1;
-        int c = getConfiguredTextColor(getPrimaryBarColor(index, player));
-        textHelper(graphics, xStart, yStart, armor, c);
+        textHelper(graphics, xStart, yStart, armor, 20,
+                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
     }
 
     @Override

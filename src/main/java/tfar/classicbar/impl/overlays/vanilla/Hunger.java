@@ -82,12 +82,11 @@ public class Hunger extends BarOverlayImpl {
 
   @Override
   public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+    double hunger = player.getFoodData().getFoodLevel();
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    //draw hunger amount
-    double hunger = player.getFoodData().getFoodLevel();
-    int c = getConfiguredTextColor(getSecondaryBarColor(0,player));
-    textHelper(graphics,xStart,yStart,hunger,c);
+    textHelper(graphics, xStart, yStart, hunger, 20,
+               getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
   }
 
   @Override

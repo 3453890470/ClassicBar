@@ -123,7 +123,8 @@ public class Health extends BarOverlayImpl {
     double health = player.getHealth();
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    textHelper(graphics,xStart,yStart,health,getConfiguredTextColor(getPrimaryBarColor(0,player)));
+    textHelper(graphics, xStart, yStart, health, player.getMaxHealth(),
+               getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
   }
 
   @Override

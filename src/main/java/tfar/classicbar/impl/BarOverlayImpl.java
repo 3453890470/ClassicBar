@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import tfar.classicbar.ClassicBar;
 import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
+import tfar.classicbar.api.TextFormats;
 import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.config.ConfigCache;
@@ -142,15 +143,30 @@ public abstract class BarOverlayImpl implements BarOverlay {
             ModUtils.drawTexturedModalRect(stack, (int) (x + barWidth + 2), y - 1, WIDTH + 2, 0, 2, 9);
         }
     }
-    public void textHelper(GuiGraphics graphics,int xStart,int yStart,double stat, int color) {
-        int i1 = (int) Math.floor(stat);
+    public void textHelper(GuiGraphics graphics, int xStart, int yStart, double stat, double maxStat, int color, String format) {
+        // 防止除零
+        if (maxStat <= 0) {
+            maxStat = 1;
+        }
+        String text;
+        switch (format) {
+            case TextFormats.CURRENT_MAX:
+                text = (int) Math.floor(stat) + " / " + (int) Math.floor(maxStat);
+                break;
+            case TextFormats.PERCENT_MAX:
+                int percent = (int) Math.round(stat / maxStat * 100);
+                text = percent + "% / " + (int) Math.floor(maxStat);
+                break;
+            default: // CURRENT_ONLY
+                text = (int) Math.floor(stat) + "";
+                break;
+        }
         int i2 = ConfigCache.icons ? 1 : 0;
-
         if (rightHandSide()) {
-            ModUtils.drawStringOnHUD(graphics, i1 + "", xStart + 9 * i2, yStart - 1, color);
+            ModUtils.drawStringOnHUD(graphics, text, xStart + 9 * i2, yStart - 3, color);
         } else {
-            int i3 = ModUtils.getStringLength(i1 + "");
-            ModUtils.drawStringOnHUD(graphics, i1 + "", xStart - 9 * i2 - i3 + 5, yStart - 1, color);
+            int i3 = ModUtils.getStringLength(text);
+            ModUtils.drawStringOnHUD(graphics, text, xStart - 9 * i2 - i3 + 5, yStart - 3, color);
         }
     }
     public void renderFullBarBackground(GuiGraphics matrices, int xStart, int yStart) {

@@ -10,6 +10,7 @@ import tfar.classicbar.ClassicBar;
 import tfar.classicbar.api.BarColorOverlay;
 import tfar.classicbar.api.BarMode;
 import tfar.classicbar.api.BarSettings;
+import tfar.classicbar.api.TextFormats;
 import tfar.classicbar.client.EventHandler;
 import tfar.classicbar.resources.BarIcons;
 
@@ -372,43 +373,48 @@ public class ClassicBarsConfig {
     return modSupportSectionKey(modId) + "." + name;
   }
 
-  private static final class ConfiguredBarSettings {
-    private final String name;
-    private final ResourceLocation fallbackIcon;
-    private final ModConfigSpec.BooleanValue showText;
-    private final ModConfigSpec.ConfigValue<String> icon;
-    private final ModConfigSpec.EnumValue<BarMode> mode;
-    private final ModConfigSpec.ConfigValue<String> colorOverlay;
+    private static final class ConfiguredBarSettings {
+        private final String name;
+        private final ResourceLocation fallbackIcon;
+        private final ModConfigSpec.BooleanValue showText;
+        private final ModConfigSpec.ConfigValue<String> icon;
+        private final ModConfigSpec.EnumValue<BarMode> mode;
+        private final ModConfigSpec.ConfigValue<String> colorOverlay;
+        private final ModConfigSpec.ConfigValue<String> textFormat;
 
-    private ConfiguredBarSettings(String name, ResourceLocation fallbackIcon, ModConfigSpec.BooleanValue showText,
-                                  ModConfigSpec.ConfigValue<String> icon, ModConfigSpec.EnumValue<BarMode> mode,
-                                  ModConfigSpec.ConfigValue<String> colorOverlay) {
-      this.name = name;
-      this.fallbackIcon = fallbackIcon;
-      this.showText = showText;
-      this.icon = icon;
-      this.mode = mode;
-      this.colorOverlay = colorOverlay;
-    }
+        private ConfiguredBarSettings(String name, ResourceLocation fallbackIcon, ModConfigSpec.BooleanValue showText,
+                                      ModConfigSpec.ConfigValue<String> icon, ModConfigSpec.EnumValue<BarMode> mode,
+                                      ModConfigSpec.ConfigValue<String> colorOverlay, ModConfigSpec.ConfigValue<String> textFormat) {
+            this.name = name;
+            this.fallbackIcon = fallbackIcon;
+            this.showText = showText;
+            this.icon = icon;
+            this.mode = mode;
+            this.colorOverlay = colorOverlay;
+            this.textFormat = textFormat;
+        }
 
-    private static ConfiguredBarSettings create(ModConfigSpec.Builder builder, String name, ResourceLocation defaultIcon, boolean defaultShowText) {
-      builder.translation(barSectionKey(name))
-              .push(name);
-      ModConfigSpec.BooleanValue showText = builder.translation(barKey(name, "show_text"))
-              .define("show_text", defaultShowText);
-      ModConfigSpec.ConfigValue<String> icon = builder.translation(barKey(name, "icon"))
-              .define("icon", defaultIcon.toString(), ClassicBarsConfig::isValidIconValue);
-      ModConfigSpec.EnumValue<BarMode> mode = builder.translation(barKey(name, "mode"))
-              .defineEnum("mode", BarMode.OVERRIDE);
-      ModConfigSpec.ConfigValue<String> colorOverlay = builder.translation(barKey(name, "color_overlay"))
-              .define("color_overlay", BarColorOverlay.DEFAULT_CONFIG_VALUE, ClassicBarsConfig::isValidHexColor);
-      builder.pop();
-      return new ConfiguredBarSettings(name, defaultIcon, showText, icon, mode, colorOverlay);
-    }
+        private static ConfiguredBarSettings create(ModConfigSpec.Builder builder, String name, ResourceLocation defaultIcon, boolean defaultShowText) {
+            builder.translation(barSectionKey(name))
+                    .push(name);
+            ModConfigSpec.BooleanValue showText = builder.translation(barKey(name, "show_text"))
+                    .define("show_text", defaultShowText);
+            ModConfigSpec.ConfigValue<String> icon = builder.translation(barKey(name, "icon"))
+                    .define("icon", defaultIcon.toString(), ClassicBarsConfig::isValidIconValue);
+            ModConfigSpec.EnumValue<BarMode> mode = builder.translation(barKey(name, "mode"))
+                    .defineEnum("mode", BarMode.OVERRIDE);
+            ModConfigSpec.ConfigValue<String> colorOverlay = builder.translation(barKey(name, "color_overlay"))
+                    .define("color_overlay", BarColorOverlay.DEFAULT_CONFIG_VALUE, ClassicBarsConfig::isValidHexColor);
+            ModConfigSpec.ConfigValue<String> textFormat = builder.translation(barKey(name, "text_format"))
+                    .define("text_format", "current_only",
+                            o -> o instanceof String s && (s.equals("current_only") || s.equals("current_max") || s.equals("percent_max")));
+            builder.pop();
+            return new ConfiguredBarSettings(name, defaultIcon, showText, icon, mode, colorOverlay, textFormat);
+        }
 
-    private BarSettings toBarSettings() {
-      BarMode resolvedMode = mode.get() == null ? BarMode.OVERRIDE : mode.get();
-      return new BarSettings(showText.get(), resolveConfiguredIcon(icon.get(), fallbackIcon), resolvedMode, resolveColorOverlay(colorOverlay.get(), name));
+        private BarSettings toBarSettings() {
+            BarMode resolvedMode = mode.get() == null ? BarMode.OVERRIDE : mode.get();
+            return new BarSettings(showText.get(), resolveConfiguredIcon(icon.get(), fallbackIcon), resolvedMode, resolveColorOverlay(colorOverlay.get(), name), textFormat.get());
+        }
     }
-  }
 }
