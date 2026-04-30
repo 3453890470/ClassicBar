@@ -3,6 +3,7 @@ package tfar.classicbar.impl.overlays.vanilla;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.impl.BarOverlayImpl;
@@ -39,10 +40,10 @@ public class Health extends BarOverlayImpl {
 
     // Detect health decrease (always)
     if (health < playerHealth) {
-      healthUpdateCounter = updateCounter + 10;
+      healthUpdateCounter = updateCounter + 2;
       lastPlayerHealth = playerHealth;
     } else if (health > playerHealth && player.invulnerableTime > 0) {
-      healthUpdateCounter = updateCounter + 6;
+      healthUpdateCounter = updateCounter + 2;
     }
     playerHealth = health;
     double displayHealth = health + (lastPlayerHealth - health) * ((double) player.invulnerableTime / player.invulnerableDuration);
@@ -84,21 +85,33 @@ public class Health extends BarOverlayImpl {
     applyConfiguredBarColor(primary);
     //draw portion of bar based on health remaining
     renderPartialBar(graphics,f + 2, yStart + 2, barWidth);
-    if (effect == HealthEffect.POISON) {
+    boolean hasPoison = player.hasEffect(MobEffects.POISON);
+    boolean hasWither = player.hasEffect(MobEffects.WITHER);
+    boolean hasFrozen = player.getTicksFrozen() > 0;
+    
+    if (hasPoison) {
       Color c = ConfigCache.healthPoisonOverlay;
-      RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthPoisonOverlayAlpha);
-      ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
-      Color.reset();
-    } else if (effect == HealthEffect.WITHER) {
+      if (c != null) {
+        RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthPoisonOverlayAlpha);
+        ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
+        Color.reset();
+      }
+    }
+    if (hasWither) {
       Color c = ConfigCache.healthWitherOverlay;
-      RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthWitherOverlayAlpha);
-      ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
-      Color.reset();
-    } else if (effect == HealthEffect.FROZEN) {
+      if (c != null) {
+        RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthWitherOverlayAlpha);
+        ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
+        Color.reset();
+      }
+    }
+    if (hasFrozen) {
       Color c = ConfigCache.healthFrozenOverlay;
-      RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthFrozenOverlayAlpha);
-      ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
-      Color.reset();
+      if (c != null) {
+        RenderSystem.setShaderColor(c.r()/255f, c.g()/255f, c.b()/255f, ConfigCache.healthFrozenOverlayAlpha);
+        ModUtils.drawTexturedModalRect(graphics, f + 1, yStart + 1, 1, 36, barWidth, 7);
+        Color.reset();
+      }
     }
   }
 
@@ -120,33 +133,96 @@ public class Health extends BarOverlayImpl {
   @Override
   public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
     double health = player.getHealth();
-    int xStart = width / 2 + getIconOffset();
+    int baseX = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    textHelper(graphics, xStart, yStart, health, player.getMaxHealth(),
-               getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
+    
+    boolean hasPoison = player.hasEffect(MobEffects.POISON);
+    boolean hasWither = player.hasEffect(MobEffects.WITHER);
+    boolean hasFrozen = player.getTicksFrozen() > 0;
+    int effectCount = 0;
+    if (hasPoison) effectCount++;
+    if (hasWither) effectCount++;
+    if (hasFrozen) effectCount++;
+    
+    int textX;
+    if (rightHandSide()) {
+      textX = baseX + effectCount * 4;   // textHelper 内部根据图标自动处理偏移
+    } else {
+      textX = baseX - effectCount * 4;   // textHelper 内部根据图标自动处理偏移
+    }
+    
+    textHelper(graphics, textX, yStart, health, player.getMaxHealth(),
+        getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
   }
 
   @Override
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    int xStart = width / 2 + getIconOffset();
+    int baseX = width / 2 + getIconOffset();
     int yStart = height - vOffset;
     int guiTicks = ModUtils.getGuiTicks();
-    HealthEffect effect = getHealthEffect(player);
-    ResourceLocation normal, blinking;
-    if (effect == HealthEffect.POISON) {
-      normal = BarIcons.HEALTH_POISON;
-      blinking = BarIcons.HEALTH_POISON_BLINKING;
-    } else if (effect == HealthEffect.WITHER) {
-      normal = BarIcons.HEALTH_WITHER;
-      blinking = BarIcons.HEALTH_WITHER_BLINKING;
-    } else if (effect == HealthEffect.FROZEN) {
-      normal = BarIcons.HEALTH_FROZEN;
-      blinking = BarIcons.HEALTH_FROZEN_BLINKING;
+    
+    boolean hasPoison = player.hasEffect(MobEffects.POISON);
+    boolean hasWither = player.hasEffect(MobEffects.WITHER);
+    boolean hasFrozen = player.getTicksFrozen() > 0;
+    
+    // 效果计数
+    int effectCount = 0;
+    if (hasPoison) effectCount++;
+    if (hasWither) effectCount++;
+    if (hasFrozen) effectCount++;
+    
+    final int OVERLAP = 4; // 露出4px，被盖5px
+    boolean baseFlashing = healthUpdateCounter > (long) guiTicks;
+    
+    if (rightHandSide()) {
+      // === 右侧图标：基础在最左（靠近条），效果向右延伸 ===
+      int startX = baseX + effectCount * OVERLAP;
+      int currentX = startX;
+      
+      // 从右到左绘制（底层→顶层）：冻伤→凋零→中毒→基础
+      if (hasFrozen) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING, baseFlashing, guiTicks);
+        currentX -= OVERLAP;
+      }
+      if (hasWither) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.HEALTH_WITHER, BarIcons.HEALTH_WITHER_BLINKING, baseFlashing, guiTicks);
+        currentX -= OVERLAP;
+      }
+      if (hasPoison) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING, baseFlashing, guiTicks);
+        currentX -= OVERLAP;
+      }
+      // 基础 HEALTH 图标（最左，顶层）
+      ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+          BarIcons.HEALTH, BarIcons.HEALTH_BLINKING, baseFlashing, guiTicks);
+      
     } else {
-      normal = BarIcons.HEALTH;
-      blinking = BarIcons.HEALTH_BLINKING;
+      // === 左侧图标：基础在最右（靠近条），效果向左延伸 ===
+      int startX = baseX - effectCount * OVERLAP;
+      int currentX = startX;
+      
+      // 从左到右绘制（底层→顶层）：冻伤→凋零→中毒→基础
+      if (hasFrozen) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING, baseFlashing, guiTicks);
+        currentX += OVERLAP;
+      }
+      if (hasWither) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.HEALTH_WITHER, BarIcons.HEALTH_WITHER_BLINKING, baseFlashing, guiTicks);
+        currentX += OVERLAP;
+      }
+      if (hasPoison) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING, baseFlashing, guiTicks);
+        currentX += OVERLAP;
+      }
+      // 基础 HEALTH 图标（最右，顶层）
+      ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+          BarIcons.HEALTH, BarIcons.HEALTH_BLINKING, baseFlashing, guiTicks);
     }
-    boolean flashing = healthUpdateCounter > (long) guiTicks;
-    ModUtils.drawIconWithFlash(graphics, xStart, yStart, 9, normal, blinking, flashing, guiTicks);
   }
 }

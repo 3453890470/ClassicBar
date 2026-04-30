@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CompatQuarantineBehaviorTest {
 
   private static final Set<String> EXPECTED_QUARANTINE_EXCLUDES = Set.of(
-          "tfar/classicbar/compat/**",
           "tfar/classicbar/impl/overlays/mod/**"
   );
   private static final List<String> ACTIVE_VANILLA_OVERLAYS = List.of(
@@ -32,9 +31,7 @@ class CompatQuarantineBehaviorTest {
           "Air"
   );
   private static final List<String> COMPAT_SOURCE_TOKENS = List.of(
-          "import tfar.classicbar.compat",
           "import tfar.classicbar.impl.overlays.mod",
-          "ModCompat",
           "VampirismHelper",
           "new Blood(",
           "new Thirst(",
@@ -58,12 +55,9 @@ class CompatQuarantineBehaviorTest {
   void buildGradleKeepsCompatSourcesQuarantinedAndDocumentsTheBoundary() throws IOException {
     String buildGradle = readProjectFile("build.gradle");
 
-    assertEquals(EXPECTED_QUARANTINE_EXCLUDES, extractSourceSetExcludes(buildGradle), "Active compile should keep compat and mod overlay sources quarantined");
+    assertEquals(EXPECTED_QUARANTINE_EXCLUDES, extractSourceSetExcludes(buildGradle), "Active compile should keep mod overlay sources quarantined");
     assertTrue(buildGradle.contains("TASK-04 compat quarantine"), "build.gradle should document that the quarantine is an intentional TASK-04 boundary");
     assertTrue(buildGradle.contains("separate recovery task"), "build.gradle should document that each compat restore remains a separate recovery task");
-
-    String brokenBuildGradle = buildGradle.replace("exclude 'tfar/classicbar/compat/**'", "");
-    assertTrue(findMissingQuarantineExcludes(brokenBuildGradle).contains("tfar/classicbar/compat/**"), "Quarantine verification should fail if the compat exclude disappears");
   }
 
   @Test
@@ -170,7 +164,7 @@ class CompatQuarantineBehaviorTest {
   }
 
   private static boolean isQuarantinedSource(String relativePath) {
-    return relativePath.startsWith("tfar/classicbar/compat/") || relativePath.startsWith("tfar/classicbar/impl/overlays/mod/");
+    return relativePath.startsWith("tfar/classicbar/impl/overlays/mod/");
   }
 
   private static List<String> validateThirdPartyDependencyBlocks(String metadata) {

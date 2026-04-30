@@ -28,6 +28,8 @@ public final class BarIcons {
     public static final ResourceLocation THIRST = icon("thirst");
     public static final ResourceLocation STAMINA = icon("stamina");
     public static final ResourceLocation FEATHERS = icon("feathers");
+    public static final ResourceLocation FOOD_NOURISHMENT = icon("food_nourishment");
+    public static final ResourceLocation FOOD_SATIATED_SHIELD = icon("food_satiated_shield");
 
     private BarIcons() {
     }

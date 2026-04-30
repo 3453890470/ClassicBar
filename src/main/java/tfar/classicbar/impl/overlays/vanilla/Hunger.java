@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import tfar.classicbar.client.HudRenderContext;
+import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
@@ -32,13 +33,17 @@ public class Hunger extends BarOverlayImpl {
   public void renderBar(HudRenderContext context, GuiGraphics matrices, Player player, int screenWidth, int screenHeight, int vOffset) {
     double hunger = player.getFoodData().getFoodLevel();
     double maxHunger = 20;//HungerHelper.getMaxHunger(player);
-    
+
+    // 检测第三方模组 buff 效果
+    boolean hasNourishment = ModCompat.hasNourishment(player);
+    boolean hasSatiatedShield = ModCompat.hasSatiatedShield(player);
+
     double barWidthH = getBarWidth(player);
 
     // Detect hunger decrease
     int updateCounter = context.getGuiTicks();
     if (hunger < lastFoodLevel) {
-      foodUpdateCounter = updateCounter + 10;
+      foodUpdateCounter = updateCounter + 2;
     }
     lastFoodLevel = hunger;
 
@@ -57,6 +62,9 @@ public class Hunger extends BarOverlayImpl {
 
     Color hungerColor = getSecondaryBarColor(0,player);
     Color satColor = getPrimaryBarColor(0,player);
+
+    // Buff 效果颜色（由 getPrimaryBarColor / getSecondaryBarColor 自行处理）
+    // 覆盖层在 renderBar 末尾叠加
 
     applyConfiguredBarColor(hungerColor);
     renderPartialBar(matrices,f + 2, yStart + 2,  barWidthH);
@@ -167,6 +175,25 @@ public class Hunger extends BarOverlayImpl {
         }
       }
     }
+
+    // === Buff 效果条覆盖层 ===
+    if (ConfigCache.enableNourishmentCompat && ConfigCache.enableSatiatedShieldCompat &&
+        (hasNourishment || hasSatiatedShield)) {
+      int coverX = xStart + 2;
+      int coverWidth = BarOverlayImpl.WIDTH;
+
+      if (hasNourishment && ConfigCache.enableNourishmentCompat) {
+        applyConfiguredBarColor(ConfigCache.nourishment, 0.20f);
+        renderPartialBar(matrices, coverX, yStart + 2, coverWidth);
+      }
+
+      if (hasSatiatedShield && ConfigCache.enableSatiatedShieldCompat) {
+        applyConfiguredBarColor(ConfigCache.satiatedShield, 0.20f);
+        renderPartialBar(matrices, coverX, yStart + 2, coverWidth);
+      }
+
+      Color.reset();
+    }
   }
 
   @Override
@@ -184,6 +211,12 @@ public class Hunger extends BarOverlayImpl {
   //saturation
   @Override
   public Color getPrimaryBarColor(int index, Player player) {
+    if (ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat) {
+      return ConfigCache.nourishment;
+    }
+    if (ModCompat.hasSatiatedShield(player) && ConfigCache.enableSatiatedShieldCompat) {
+      return ConfigCache.satiatedShield;
+    }
     boolean hunger = player.hasEffect(MobEffects.HUNGER);
     return hunger ? ConfigCache.saturationDebuff : ConfigCache.saturation;
   }
@@ -191,6 +224,12 @@ public class Hunger extends BarOverlayImpl {
   //hunger
   @Override
   public Color getSecondaryBarColor(int index, Player player) {
+    if (ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat) {
+      return ConfigCache.nourishment;
+    }
+    if (ModCompat.hasSatiatedShield(player) && ConfigCache.enableSatiatedShieldCompat) {
+      return ConfigCache.satiatedShield;
+    }
     boolean hunger = player.hasEffect(MobEffects.HUNGER);
     return hunger ? ConfigCache.hungerDebuff : ConfigCache.hunger;
   }
@@ -198,21 +237,103 @@ public class Hunger extends BarOverlayImpl {
   @Override
   public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
     double hunger = player.getFoodData().getFoodLevel();
-    int xStart = width / 2 + getIconOffset();
+    int baseX = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    textHelper(graphics, xStart, yStart, hunger, 20,
+
+    // 计算效果图标数量，以调整文字位置
+    boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
+    boolean hasNourishment = ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat;
+    boolean hasSatiatedShield = ModCompat.hasSatiatedShield(player) && ConfigCache.enableSatiatedShieldCompat;
+    int effectCount = 0;
+    if (hasHunger) effectCount++;
+    if (hasNourishment) effectCount++;
+    if (hasSatiatedShield) effectCount++;
+
+    // 文字跟随图标堆叠末端
+    int textX;
+    if (rightHandSide()) {
+      // 右侧图标：文字在最右侧效果图标的右边
+      textX = baseX + effectCount * 4;   // textHelper 内部根据图标自动处理偏移
+    } else {
+      // 左侧图标：文字在最左侧效果图标的左边
+      textX = baseX - effectCount * 4;   // textHelper 内部根据图标自动处理偏移
+    }
+
+    textHelper(graphics, textX, yStart, hunger, 20,
                getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
   }
 
   @Override
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    int xStart = width / 2 + getIconOffset();
+    int baseX = width / 2 + getIconOffset();
     int yStart = height - vOffset;
     int guiTicks = ModUtils.getGuiTicks();
+
     boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
-    ResourceLocation normal = hasHunger ? BarIcons.FOOD_HUNGER : BarIcons.FOOD;
-    ResourceLocation blinking = hasHunger ? BarIcons.FOOD_HUNGER_BLINKING : BarIcons.FOOD_BLINKING;
-    boolean flashing = foodUpdateCounter > (long) guiTicks || hasHunger;
-    ModUtils.drawIconWithFlash(graphics, xStart, yStart, 9, normal, blinking, flashing, guiTicks);
+    boolean hasNourishment = ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat;
+    boolean hasSatiatedShield = ModCompat.hasSatiatedShield(player) && ConfigCache.enableSatiatedShieldCompat;
+
+    // 效果计数（饥饿 + 滋养 + 饱腹代偿）
+    int effectCount = 0;
+    if (hasHunger) effectCount++;
+    if (hasNourishment) effectCount++;
+    if (hasSatiatedShield) effectCount++;
+
+    final int OVERLAP = 4;
+    boolean baseFlashing = foodUpdateCounter > (long) guiTicks;
+
+    // 基础 FOOD 图标始终在最靠近条的一侧（最上层）
+    if (rightHandSide()) {
+      // === 右侧：基础在最左，效果向右延伸 ===
+      // 绘制顺序从右到左（底层→顶层）：
+      // 饱腹代偿 → 滋养 → 饥饿 → 基础
+      int startX = baseX + effectCount * OVERLAP;
+      int currentX = startX;
+
+      if (hasSatiatedShield) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.FOOD_SATIATED_SHIELD, BarIcons.FOOD_SATIATED_SHIELD, false, guiTicks);
+        currentX -= OVERLAP;
+      }
+      if (hasNourishment) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.FOOD_NOURISHMENT, BarIcons.FOOD_NOURISHMENT, false, guiTicks);
+        currentX -= OVERLAP;
+      }
+      if (hasHunger) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.FOOD_HUNGER, BarIcons.FOOD_HUNGER_BLINKING, baseFlashing, guiTicks);
+        currentX -= OVERLAP;
+      }
+      // 基础 FOOD（最左，顶层）
+      ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+          BarIcons.FOOD, BarIcons.FOOD_BLINKING, baseFlashing, guiTicks);
+
+    } else {
+      // === 左侧：基础在最右，效果向左延伸 ===
+      // 绘制顺序从左到右（底层→顶层）：
+      // 饱腹代偿 → 滋养 → 饥饿 → 基础
+      int startX = baseX - effectCount * OVERLAP;
+      int currentX = startX;
+
+      if (hasSatiatedShield) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.FOOD_SATIATED_SHIELD, BarIcons.FOOD_SATIATED_SHIELD, false, guiTicks);
+        currentX += OVERLAP;
+      }
+      if (hasNourishment) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.FOOD_NOURISHMENT, BarIcons.FOOD_NOURISHMENT, false, guiTicks);
+        currentX += OVERLAP;
+      }
+      if (hasHunger) {
+        ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+            BarIcons.FOOD_HUNGER, BarIcons.FOOD_HUNGER_BLINKING, baseFlashing, guiTicks);
+        currentX += OVERLAP;
+      }
+      // 基础 FOOD（最右，顶层）
+      ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+          BarIcons.FOOD, BarIcons.FOOD_BLINKING, baseFlashing, guiTicks);
+    }
   }
 }

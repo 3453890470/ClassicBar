@@ -3,7 +3,7 @@
   "classicbar.config.section.general.tooltip": "Core ClassicBar client settings.",
   "classicbar.config.section.general.button": "Open General",
   "classicbar.config.section.layout": "Layout",
-  "classicbar.config.section.layout.tooltip": "Controls the left and right overlay order. Unknown ids are ignored and duplicates are collapsed.",
+  "classicbar.config.section.layout.tooltip": "Control the placement of each bar",
   "classicbar.config.section.layout.button": "Open Layout",
   "classicbar.config.section.bars": "Bars",
   "classicbar.config.section.bars.tooltip": "Per-bar ClassicBar settings for mode, icons, text, and color overlays.",
@@ -28,12 +28,23 @@
   "classicbar.config.general.show_saturation_bar.tooltip": "Render the saturation fill on top of the food bar.",
   "classicbar.config.general.show_hydration_bar": "Reserved hydration overlay",
   "classicbar.config.general.show_hydration_bar.tooltip": "Reserved for future compatibility work. No active effect in this build.",
+  "classicbar.config.general.nourishment_bar_color": "Nourishment Bar Color",
+  "classicbar.config.general.nourishment_bar_color.tooltip": "Bar color when Nourishment (FarmersDelight) is active",
+
+  "classicbar.config.general.satiated_shield_bar_color": "Satiated Shield Bar Color",
+  "classicbar.config.general.satiated_shield_bar_color.tooltip": "Bar color when Satiated Shield (Kaleidoscope Cookery) is active",
+
+  "classicbar.config.general.disable_fd_nourishment_overlay": "Disable FD Nourishment Overlay",
+  "classicbar.config.general.disable_fd_nourishment_overlay.tooltip": "Hides Farmer's Delight's golden nourishment overlay on the food bar to prevent overlapping with Classic Bar",
+
   "classicbar.config.general.show_held_food_overlay": "Reserved held food overlay",
   "classicbar.config.general.show_held_food_overlay.tooltip": "Reserved for future compatibility work. No active effect in this build.",
   "classicbar.config.general.show_held_drink_overlay": "Reserved held drink overlay",
   "classicbar.config.general.show_held_drink_overlay.tooltip": "Reserved for future compatibility work. No active effect in this build.",
   "classicbar.config.general.show_exhaustion_overlay": "Reserved exhaustion overlay",
   "classicbar.config.general.show_exhaustion_overlay.tooltip": "Reserved for future compatibility work. No active effect in this build.",
+  "classicbar.config.general.show_food_preview": "Show Food Preview",
+  "classicbar.config.general.show_food_preview.tooltip": "Display a preview of hunger and saturation restoration when holding food items",
   "classicbar.config.general.show_thirst_exhaustion_overlay": "Reserved thirst exhaustion overlay",
   "classicbar.config.general.show_thirst_exhaustion_overlay.tooltip": "Reserved for future compatibility work. No active effect in this build.",
   "classicbar.config.general.transition_speed": "Reserved transition speed",
@@ -91,10 +102,17 @@
   "classicbar.config.general.health_frozen_overlay_color": "Frozen overlay color",
   "classicbar.config.general.health_frozen_overlay_color.tooltip": "Overlay tint applied to the health bar while frozen. #RRGGBB for opaque, #AARRGGBB for alpha.",
 
-  "classicbar.config.layout.left_order": "Left overlay order",
-  "classicbar.config.layout.left_order.tooltip": "Overlay ids rendered on the left side. Unknown ids are ignored and duplicates are removed.",
-  "classicbar.config.layout.right_order": "Right overlay order",
-  "classicbar.config.layout.right_order.tooltip": "Overlay ids rendered on the right side. Unknown ids are ignored and duplicates are removed.",
+  "classicbar.config.layout.placement_health": "Health",
+  "classicbar.config.layout.placement_armor": "Armor",
+  "classicbar.config.layout.placement_absorption": "Absorption",
+  "classicbar.config.layout.placement_food": "Food",
+  "classicbar.config.layout.placement_armor_toughness": "Armor Toughness",
+  "classicbar.config.layout.placement_health_mount": "Mount Health",
+  "classicbar.config.layout.placement_air": "Air",
+
+  "classicbar.config.layout.placement_value": "Placement",
+
+  "classicbar.config.layout.priority_value": "Priority",
 
   "classicbar.config.bars.health": "Health bar",
   "classicbar.config.bars.health.tooltip": "Settings for the health overlay.",
@@ -204,10 +222,24 @@
   "classicbar.config.mod_support.feathers.enabled": "Reserved Feathers toggle",
   "classicbar.config.mod_support.feathers.enabled.tooltip": "Enabling this toggle does not restore Feathers support in this build. No compatible NeoForge 1.21.1 build is currently available.",
 
+  "classicbar.config.mod_support.farmersdelight": "FarmersDelight Compat",
+  "classicbar.config.mod_support.farmersdelight.tooltip": "FarmersDelight compatibility for Nourishment effect detection on the food bar.",
+  "classicbar.config.mod_support.farmersdelight.enabled": "FarmersDelight Compat",
+  "classicbar.config.mod_support.farmersdelight.enabled.tooltip": "Enable Nourishment effect detection for food bar rendering",
+
+  "classicbar.config.mod_support.kaleidoscope_cookery": "Kaleidoscope Cookery Compat",
+  "classicbar.config.mod_support.kaleidoscope_cookery.tooltip": "Kaleidoscope Cookery compatibility for Satiated Shield effect detection on the food bar.",
+  "classicbar.config.mod_support.kaleidoscope_cookery.enabled": "Kaleidoscope Cookery Compat",
+  "classicbar.config.mod_support.kaleidoscope_cookery.enabled.tooltip": "Enable Satiated Shield effect detection for food bar rendering",
+
   "classicbar.config.enum.bar_mode.override": "Override vanilla",
   "classicbar.config.enum.bar_mode.disabled": "Disable ClassicBar",
 
   "classicbar.config.enum.text_format.current_only": "Current only",
   "classicbar.config.enum.text_format.current_max": "Current / Max",
-  "classicbar.config.enum.text_format.percent_max": "Percent / Max"
+  "classicbar.config.enum.text_format.percent_max": "Percent / Max",
+
+  "classicbar.config.enum.barplacement.left": "Left",
+  "classicbar.config.enum.barplacement.right": "Right",
+  "classicbar.config.enum.barplacement.hidden": "Hidden"
 }

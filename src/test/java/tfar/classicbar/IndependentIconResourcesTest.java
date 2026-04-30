@@ -118,7 +118,6 @@ class IndependentIconResourcesTest {
     String barOverlay = readProjectFile("src/main/java/tfar/classicbar/api/BarOverlay.java");
     String barOverlayImpl = readProjectFile("src/main/java/tfar/classicbar/impl/BarOverlayImpl.java");
 
-    assertTrue(buildGradle.contains("exclude 'tfar/classicbar/compat/**'"), "compat quarantine should stay excluded from the active compile");
     assertTrue(buildGradle.contains("exclude 'tfar/classicbar/impl/overlays/mod/**'"), "mod overlay quarantine should stay excluded from the active compile");
     assertTrue(modUtils.contains("CURRENT_TEXTURE = BarIcons.FALLBACK"), "ModUtils should start from the ClassicBar fallback icon");
     assertTrue(modUtils.contains("drawStandaloneIcon"), "ModUtils should expose the standalone icon drawing helper");

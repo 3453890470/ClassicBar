@@ -3,7 +3,7 @@
   "classicbar.config.section.general.tooltip": "ClassicBar 客户端核心配置。",
   "classicbar.config.section.general.button": "打开通用",
   "classicbar.config.section.layout": "布局",
-  "classicbar.config.section.layout.tooltip": "控制左右两列状态栏顺序。未知 id 会被忽略，重复项会被折叠。",
+  "classicbar.config.section.layout.tooltip": "控制每个状态栏的放置位置",
   "classicbar.config.section.layout.button": "打开布局",
   "classicbar.config.section.bars": "状态栏",
   "classicbar.config.section.bars.tooltip": "每个状态栏的模式、图标、文字与颜色覆盖配置。",
@@ -28,12 +28,23 @@
   "classicbar.config.general.show_saturation_bar.tooltip": "在食物条上叠加渲染饱和度填充。",
   "classicbar.config.general.show_hydration_bar": "预留水分条",
   "classicbar.config.general.show_hydration_bar.tooltip": "为未来兼容功能预留。本版本中没有实际效果。",
+  "classicbar.config.general.nourishment_bar_color": "滋养效果条颜色",
+  "classicbar.config.general.nourishment_bar_color.tooltip": "农夫乐事·滋养效果激活时的饱食度条颜色",
+
+  "classicbar.config.general.satiated_shield_bar_color": "饱腹代偿条颜色",
+  "classicbar.config.general.satiated_shield_bar_color.tooltip": "森罗物语·饱腹代偿效果激活时的饱食度条颜色",
+
+  "classicbar.config.general.disable_fd_nourishment_overlay": "禁用农夫乐事滋养覆盖层",
+  "classicbar.config.general.disable_fd_nourishment_overlay.tooltip": "隐藏农夫乐事在饱食度栏上的金色滋养覆盖层，避免与 ClassicBar 重叠",
+
   "classicbar.config.general.show_held_food_overlay": "预留手持食物覆盖层",
   "classicbar.config.general.show_held_food_overlay.tooltip": "为未来兼容功能预留。本版本中没有实际效果。",
   "classicbar.config.general.show_held_drink_overlay": "预留手持饮料覆盖层",
   "classicbar.config.general.show_held_drink_overlay.tooltip": "为未来兼容功能预留。本版本中没有实际效果。",
   "classicbar.config.general.show_exhaustion_overlay": "预留饥饿耗尽覆盖层",
   "classicbar.config.general.show_exhaustion_overlay.tooltip": "为未来兼容功能预留。本版本中没有实际效果。",
+  "classicbar.config.general.show_food_preview": "显示食物预览",
+  "classicbar.config.general.show_food_preview.tooltip": "手持食物时预览可恢复的饱食度与饱和度",
   "classicbar.config.general.show_thirst_exhaustion_overlay": "预留口渴耗尽覆盖层",
   "classicbar.config.general.show_thirst_exhaustion_overlay.tooltip": "为未来兼容功能预留。本版本中没有实际效果。",
   "classicbar.config.general.transition_speed": "预留过渡速度",
@@ -91,10 +102,17 @@
   "classicbar.config.general.health_frozen_overlay_color": "冰冻覆盖层颜色",
   "classicbar.config.general.health_frozen_overlay_color.tooltip": "玩家冰冻时生命条上的叠加色调。#RRGGBB为不透明，#AARRGGBB带透明度。",
 
-  "classicbar.config.layout.left_order": "左侧状态栏顺序",
-  "classicbar.config.layout.left_order.tooltip": "渲染在左侧的状态栏 id 列表。未知 id 会被忽略，重复项会被移除。",
-  "classicbar.config.layout.right_order": "右侧状态栏顺序",
-  "classicbar.config.layout.right_order.tooltip": "渲染在右侧的状态栏 id 列表。未知 id 会被忽略，重复项会被移除。",
+  "classicbar.config.layout.placement_health": "生命值",
+  "classicbar.config.layout.placement_armor": "护甲值",
+  "classicbar.config.layout.placement_absorption": "伤害吸收",
+  "classicbar.config.layout.placement_food": "食物值",
+  "classicbar.config.layout.placement_armor_toughness": "护甲韧性",
+  "classicbar.config.layout.placement_health_mount": "坐骑生命",
+  "classicbar.config.layout.placement_air": "氧气值",
+
+  "classicbar.config.layout.placement_value": "位置",
+
+  "classicbar.config.layout.priority_value": "排序优先级",
 
   "classicbar.config.bars.health": "生命条",
   "classicbar.config.bars.health.tooltip": "生命覆盖层设置。",
@@ -204,10 +222,24 @@
   "classicbar.config.mod_support.feathers.enabled": "预留 Feathers 开关",
   "classicbar.config.mod_support.feathers.enabled.tooltip": "启用此开关也不会在当前版本中恢复 Feathers 支持。目前没有兼容的 NeoForge 1.21.1 构件。",
 
+  "classicbar.config.mod_support.farmersdelight": "农夫乐事兼容",
+  "classicbar.config.mod_support.farmersdelight.tooltip": "农夫乐事兼容，用于食物条上的滋养效果检测。",
+  "classicbar.config.mod_support.farmersdelight.enabled": "农夫乐事兼容",
+  "classicbar.config.mod_support.farmersdelight.enabled.tooltip": "启用农夫乐事·滋养效果检测以改变饱食度栏渲染",
+
+  "classicbar.config.mod_support.kaleidoscope_cookery": "森罗物语兼容",
+  "classicbar.config.mod_support.kaleidoscope_cookery.tooltip": "森罗物语兼容，用于食物条上的饱腹代偿效果检测。",
+  "classicbar.config.mod_support.kaleidoscope_cookery.enabled": "森罗物语兼容",
+  "classicbar.config.mod_support.kaleidoscope_cookery.enabled.tooltip": "启用森罗物语·饱腹代偿效果检测以改变饱食度栏渲染",
+
   "classicbar.config.enum.bar_mode.override": "覆盖原版",
   "classicbar.config.enum.bar_mode.disabled": "禁用 ClassicBar",
 
   "classicbar.config.enum.text_format.current_only": "仅当前值",
   "classicbar.config.enum.text_format.current_max": "当前值 / 最大值",
-  "classicbar.config.enum.text_format.percent_max": "百分比 / 最大值"
+  "classicbar.config.enum.text_format.percent_max": "百分比 / 最大值",
+
+  "classicbar.config.enum.barplacement.left": "左侧",
+  "classicbar.config.enum.barplacement.right": "右侧",
+  "classicbar.config.enum.barplacement.hidden": "隐藏"
 }

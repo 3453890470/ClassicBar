@@ -31,10 +31,10 @@ class NeoForgeConfigBehaviorTest {
           "classicbar.config.section.mod_support",
           "classicbar.config.section.mod_support.tooltip",
           "classicbar.config.section.mod_support.button",
-          "classicbar.config.layout.left_order",
-          "classicbar.config.layout.left_order.tooltip",
-          "classicbar.config.layout.right_order",
-          "classicbar.config.layout.right_order.tooltip",
+          "classicbar.config.layout.placement_value",
+          "classicbar.config.enum.barplacement.left",
+          "classicbar.config.enum.barplacement.right",
+          "classicbar.config.enum.barplacement.hidden",
           "classicbar.config.mod_support.toughasnails.enabled",
           "classicbar.config.mod_support.toughasnails.enabled.tooltip",
           "classicbar.config.mod_support.vampirism.enabled",
@@ -72,6 +72,7 @@ class NeoForgeConfigBehaviorTest {
     assertTrue(classicBarsConfig.contains("sectionKey(\"layout\")"), "ClassicBarsConfig should define the layout section translation key");
     assertTrue(classicBarsConfig.contains("sectionKey(\"bars\")"), "ClassicBarsConfig should define the bars section translation key");
     assertTrue(classicBarsConfig.contains("sectionKey(\"mod_support\")"), "ClassicBarsConfig should define the reserved mod_support section translation key");
+    assertTrue(classicBarsConfig.contains("List.of("), "ACTIVE_BAR_IDS should use List for stable ordering");
     assertTrue(classicBarsConfig.contains(".push(\"general\")"), "ClassicBarsConfig should define the general section");
     assertTrue(classicBarsConfig.contains(".push(\"layout\")"), "ClassicBarsConfig should define the layout section");
     assertTrue(classicBarsConfig.contains(".push(\"bars\")"), "ClassicBarsConfig should define the bars section");
@@ -115,6 +116,12 @@ class NeoForgeConfigBehaviorTest {
     assertFalse(barMode.contains("COMPAT"), "BarMode should no longer include COMPAT");
     assertTrue(barMode.contains("DISABLED"), "BarMode should include DISABLED");
     assertTrue(barMode.contains("Component.translatable"), "BarMode should override getTranslatedName with translatable components");
+    String barPlacement = readProjectFile("src/main/java/tfar/classicbar/api/BarPlacement.java");
+    assertTrue(barPlacement.contains("implements TranslatableEnum"), "BarPlacement should implement TranslatableEnum for config screen localization");
+    assertTrue(barPlacement.contains("LEFT"), "BarPlacement should include LEFT");
+    assertTrue(barPlacement.contains("RIGHT"), "BarPlacement should include RIGHT");
+    assertTrue(barPlacement.contains("HIDDEN"), "BarPlacement should include HIDDEN");
+
     assertTrue(barColorOverlay.contains("DEFAULT_CONFIG_VALUE = \"#00FFFFFF\""), "BarColorOverlay should define a no-op default overlay");
     assertTrue(barColorOverlay.contains("ColorUtils.parseHexColor"), "BarColorOverlay should reuse the shared hex parser");
     assertTrue(barColorOverlay.contains("applyTo"), "BarColorOverlay should expose tint application logic");
@@ -133,6 +140,11 @@ class NeoForgeConfigBehaviorTest {
     assertTrue(clientEventHandler.contains("overlay == null"), "layout application should ignore unknown ids without crashing");
     assertTrue(clientEventHandler.contains("settings.rendersClassicBar() && appliedOverlays.add(overlayId)"), "layout application should only stage overlays that still render through ClassicBar");
     assertTrue(clientEventHandler.contains("ConfigCache.setActiveLayoutOverlays(appliedOverlays);"), "layout application should cache the active layout overlay ids");
+    assertTrue(clientEventHandler.contains("ClassicBarsConfig.getLeftOrder()"), "layout application should use getLeftOrder() instead of direct field access");
+    assertTrue(clientEventHandler.contains("ClassicBarsConfig.getRightOrder()"), "layout application should use getRightOrder() instead of direct field access");
+    assertTrue(classicBarsConfig.contains("getLeftOrder()"), "ClassicBarsConfig should expose getLeftOrder()");
+    assertTrue(classicBarsConfig.contains("getRightOrder()"), "ClassicBarsConfig should expose getRightOrder()");
+    assertTrue(classicBarsConfig.contains("PLACEMENTS"), "ClassicBarsConfig should define the per-bar placement map");
     assertTrue(configCache.contains("setActiveLayoutOverlays"), "ConfigCache should expose the active layout overlay cache writer");
     assertTrue(configCache.contains("isOverlayActiveInLayout"), "ConfigCache should expose the active layout overlay cache reader");
     assertTrue(clientEventHandler.contains("shouldCancelSharedPlayerHealthLayer"), "PLAYER_HEALTH should use a dedicated shared-layer cancellation policy");
@@ -156,7 +168,6 @@ class NeoForgeConfigBehaviorTest {
     assertTrue(classicBarsConfig.contains("registerReservedModSupport(builder, \"parcool\")"), "Reserved ParCool toggle should exist");
     assertTrue(classicBarsConfig.contains("registerReservedModSupport(builder, \"feathers\")"), "Reserved Feathers toggle should exist");
     assertTrue(classicBarsConfig.contains("modSupportKey(modId, \"enabled\")"), "Reserved mod support entries should be localized through the helper key builder");
-    assertTrue(buildGradle.contains("exclude 'tfar/classicbar/compat/**'"), "compat quarantine should remain excluded from active compile");
     assertTrue(buildGradle.contains("exclude 'tfar/classicbar/impl/overlays/mod/**'"), "mod overlay quarantine should remain excluded from active compile");
   }
 
@@ -245,6 +256,13 @@ class NeoForgeConfigBehaviorTest {
         if (!langJson.contains("\"" + key + "\"")) {
           missingKeys.add(key);
         }
+      }
+    } // end per-bar bars loop
+    // 每个栏独立的 placement section 名称 + 统一字段翻译键
+    for (String barId : ACTIVE_BAR_CONSTANTS.keySet()) {
+      String key = "classicbar.config.layout.placement_" + barId;
+      if (!langJson.contains("\"" + key + "\"")) {
+        missingKeys.add(key);
       }
     }
     return missingKeys;

@@ -45,7 +45,7 @@ class PureClientConvergenceTest {
       clientSideDeclarations++;
     }
 
-    assertEquals(2, clientSideDeclarations, "NeoForge metadata should declare client-only dependencies for NeoForge and Minecraft");
+    assertEquals(4, clientSideDeclarations, "NeoForge metadata should declare client-only dependencies for NeoForge, Minecraft, farmersdelight, and kaleidoscope_cookery");
     assertFalse(metadata.contains("side=\"BOTH\""), "NeoForge metadata should not keep BOTH-side dependency declarations");
   }
 

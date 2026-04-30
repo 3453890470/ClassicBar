@@ -9,16 +9,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import tfar.classicbar.ClassicBar;
 import tfar.classicbar.api.BarColorOverlay;
 import tfar.classicbar.api.BarMode;
+import tfar.classicbar.api.BarPlacement;
 import tfar.classicbar.api.BarSettings;
-import tfar.classicbar.api.TextFormats;
+import tfar.classicbar.api.TextFormat;
 import tfar.classicbar.client.EventHandler;
 import tfar.classicbar.resources.BarIcons;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class ClassicBarsConfig {
@@ -27,10 +29,13 @@ public class ClassicBarsConfig {
   public static final ModConfigSpec CLIENT_SPEC;
 
   private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
-  private static final Set<String> ACTIVE_BAR_IDS = Set.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air");
+  private static final List<String> ACTIVE_BAR_IDS = List.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air");
 
   private static final Map<String, ConfiguredBarSettings> BAR_CONFIGS = new LinkedHashMap<>();
   private static final Map<String, ModConfigSpec.BooleanValue> MOD_SUPPORT_ENABLED = new LinkedHashMap<>();
+  // 布局放置（三态按钮替代列表）
+  public static final Map<String, ModConfigSpec.EnumValue<BarPlacement>> PLACEMENTS = new LinkedHashMap<>();
+  public static final Map<String, ModConfigSpec.IntValue> SORT_PRIORITIES = new LinkedHashMap<>();
   private static final Map<String, BarSettings> FALLBACK_SETTINGS = new HashMap<>();
   private static final BarSettings NULL_SETTINGS = new BarSettings(false, BarIcons.FALLBACK, BarMode.DISABLED, BarColorOverlay.none());
 
@@ -81,9 +86,9 @@ public class ClassicBarsConfig {
   public static ModConfigSpec.ConfigValue<String> healthFrozenOverlayColor;
   public static ModConfigSpec.ConfigValue<String> lavaBarColor;
   public static ModConfigSpec.ConfigValue<String> flightBarColor;
-
-  public static ModConfigSpec.ConfigValue<List<? extends String>> leftorder;
-  public static ModConfigSpec.ConfigValue<List<? extends String>> rightorder;
+  public static ModConfigSpec.ConfigValue<String> nourishmentBarColor;
+  public static ModConfigSpec.ConfigValue<String> satiatedShieldBarColor;
+  public static ModConfigSpec.BooleanValue disableFdNourishmentOverlay;
 
   public ClassicBarsConfig(ModConfigSpec.Builder builder) {
     BAR_CONFIGS.clear();
@@ -215,17 +220,30 @@ public class ClassicBarsConfig {
     healthFrozenOverlayColor = builder
             .translation("classicbar.config.general.health_frozen_overlay_color")
             .define("health_frozen_overlay_color", "#804D80FF", ClassicBarsConfig::isValidHexColor);
+
+    // === Nourishment (FarmersDelight) compat ===
+    nourishmentBarColor = builder.translation(generalKey("nourishment_bar_color"))
+            .define("nourishment_bar_color", "#F3B300", ClassicBarsConfig::isValidHexColor);
+    satiatedShieldBarColor = builder.translation(generalKey("satiated_shield_bar_color"))
+            .define("satiated_shield_bar_color", "#FF1313", ClassicBarsConfig::isValidHexColor);
+    disableFdNourishmentOverlay = builder.translation(generalKey("disable_fd_nourishment_overlay"))
+            .define("disable_fd_nourishment_overlay", true);
     builder.pop();
 
     builder.translation(sectionKey("layout"))
 
             .push("layout");
-    leftorder = builder.translation(layoutKey("left_order"))
-
-            .defineList("left_order", Lists.newArrayList("health", "armor", "absorption"), ClassicBarsConfig::isValidActiveBarId);
-    rightorder = builder.translation(layoutKey("right_order"))
-
-            .defineList("right_order", Lists.newArrayList("health_mount", "food", "armor_toughness", "air"), ClassicBarsConfig::isValidActiveBarId);
+    for (String barId : ACTIVE_BAR_IDS) {
+      BarPlacement defaultPlacement = getDefaultPlacement(barId);
+      int defaultPriority = getDefaultPriority(barId);
+      builder.translation(layoutKey("placement_" + barId))
+              .push(barId);
+      PLACEMENTS.put(barId, builder.translation(layoutKey("placement_value"))
+              .defineEnum("placement", defaultPlacement));
+      SORT_PRIORITIES.put(barId, builder.translation(layoutKey("priority_value"))
+              .defineInRange("sort_priority", defaultPriority, 1, 7));
+      builder.pop();
+    }
     builder.pop();
 
     builder.translation(sectionKey("bars"))
@@ -247,6 +265,8 @@ public class ClassicBarsConfig {
     registerReservedModSupport(builder, "vampirism");
     registerReservedModSupport(builder, "parcool");
     registerReservedModSupport(builder, "feathers");
+    registerReservedModSupport(builder, "farmersdelight", true);
+    registerReservedModSupport(builder, "kaleidoscope_cookery", true);
     builder.pop();
 
     registerFallbackBarSettings();
@@ -285,10 +305,14 @@ public class ClassicBarsConfig {
   }
 
   private static void registerReservedModSupport(ModConfigSpec.Builder builder, String modId) {
+    registerReservedModSupport(builder, modId, false);
+  }
+
+  private static void registerReservedModSupport(ModConfigSpec.Builder builder, String modId, boolean defaultValue) {
     builder.translation(modSupportSectionKey(modId))
             .push(modId);
     MOD_SUPPORT_ENABLED.put(modId, builder.translation(modSupportKey(modId, "enabled"))
-            .define("enabled", false));
+            .define("enabled", defaultValue));
     builder.pop();
   }
 
@@ -361,6 +385,46 @@ public class ClassicBarsConfig {
     return "classicbar.config.layout." + name;
   }
 
+  /** 根据原有布局分配默认放置 */
+  private static BarPlacement getDefaultPlacement(String barId) {
+    // 原左侧列表顺序：health, armor, absorption
+    if (barId.equals("health") || barId.equals("armor") || barId.equals("absorption")) {
+      return BarPlacement.LEFT;
+    }
+    // 原右侧列表顺序：health_mount, food, armor_toughness, air
+    return BarPlacement.RIGHT;
+  }
+
+  /** 根据 ACTIVE_BAR_IDS 顺序返回默认排序优先级 (1-7) */
+  private static int getDefaultPriority(String barId) {
+    int index = ACTIVE_BAR_IDS.indexOf(barId);
+    return index >= 0 ? index + 1 : 7;
+  }
+
+  /** 获取左侧栏的按优先级排序列表 */
+  public static List<String> getLeftOrder() {
+    List<String> left = new ArrayList<>();
+    for (String barId : ACTIVE_BAR_IDS) {
+      if (PLACEMENTS.containsKey(barId) && PLACEMENTS.get(barId).get() == BarPlacement.LEFT) {
+        left.add(barId);
+      }
+    }
+    left.sort(Comparator.comparingInt(id -> SORT_PRIORITIES.get(id).get()));
+    return left;
+  }
+
+  /** 获取右侧栏的按优先级排序列表 */
+  public static List<String> getRightOrder() {
+    List<String> right = new ArrayList<>();
+    for (String barId : ACTIVE_BAR_IDS) {
+      if (PLACEMENTS.containsKey(barId) && PLACEMENTS.get(barId).get() == BarPlacement.RIGHT) {
+        right.add(barId);
+      }
+    }
+    right.sort(Comparator.comparingInt(id -> SORT_PRIORITIES.get(id).get()));
+    return right;
+  }
+
   private static String barSectionKey(String barName) {
     return "classicbar.config.bars." + barName;
   }
@@ -384,11 +448,11 @@ public class ClassicBarsConfig {
         private final ModConfigSpec.ConfigValue<String> icon;
         private final ModConfigSpec.EnumValue<BarMode> mode;
         private final ModConfigSpec.ConfigValue<String> colorOverlay;
-        private final ModConfigSpec.ConfigValue<String> textFormat;
+        private final ModConfigSpec.EnumValue<TextFormat> textFormat;
 
         private ConfiguredBarSettings(String name, ResourceLocation fallbackIcon, ModConfigSpec.BooleanValue showText,
                                       ModConfigSpec.ConfigValue<String> icon, ModConfigSpec.EnumValue<BarMode> mode,
-                                      ModConfigSpec.ConfigValue<String> colorOverlay, ModConfigSpec.ConfigValue<String> textFormat) {
+                                      ModConfigSpec.ConfigValue<String> colorOverlay, ModConfigSpec.EnumValue<TextFormat> textFormat) {
             this.name = name;
             this.fallbackIcon = fallbackIcon;
             this.showText = showText;
@@ -409,9 +473,8 @@ public class ClassicBarsConfig {
                     .defineEnum("mode", BarMode.OVERRIDE);
             ModConfigSpec.ConfigValue<String> colorOverlay = builder.translation(barKey(name, "color_overlay"))
                     .define("color_overlay", BarColorOverlay.DEFAULT_CONFIG_VALUE, ClassicBarsConfig::isValidHexColor);
-            ModConfigSpec.ConfigValue<String> textFormat = builder.translation(barKey(name, "text_format"))
-                    .define("text_format", "current_only",
-                            o -> o instanceof String s && (s.equals("current_only") || s.equals("current_max") || s.equals("percent_max")));
+            ModConfigSpec.EnumValue<TextFormat> textFormat = builder.translation(barKey(name, "text_format"))
+                    .defineEnum("text_format", TextFormat.CURRENT_ONLY);
             builder.pop();
             return new ConfiguredBarSettings(name, defaultIcon, showText, icon, mode, colorOverlay, textFormat);
         }

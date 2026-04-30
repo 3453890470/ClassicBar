@@ -21,6 +21,11 @@ public class ConfigCache {
     public static Color saturationDebuff;
     public static Color thirst;
     public static Color thirstDebuff;
+    public static Color nourishment;
+    public static Color satiatedShield;
+    public static boolean disableFdNourishmentOverlay;
+    public static boolean enableNourishmentCompat;
+    public static boolean enableSatiatedShieldCompat;
     public static Color hydration;
     public static Color hydrationDebuff;
     public static Color air;
@@ -75,6 +80,11 @@ public class ConfigCache {
         hungerDebuff = ColorUtils.hex2Color(ClassicBarsConfig.hungerBarDebuffColor.get());
         saturation = ColorUtils.hex2Color(ClassicBarsConfig.saturationBarColor.get());
         saturationDebuff = ColorUtils.hex2Color(ClassicBarsConfig.saturationBarDebuffColor.get());
+        nourishment = ColorUtils.hex2Color(ClassicBarsConfig.nourishmentBarColor.get());
+        satiatedShield = ColorUtils.hex2Color(ClassicBarsConfig.satiatedShieldBarColor.get());
+        disableFdNourishmentOverlay = ClassicBarsConfig.disableFdNourishmentOverlay.get();
+        enableNourishmentCompat = ClassicBarsConfig.isReservedModSupportEnabled("farmersdelight");
+        enableSatiatedShieldCompat = ClassicBarsConfig.isReservedModSupportEnabled("kaleidoscope_cookery");
         thirst = ColorUtils.hex2Color(ClassicBarsConfig.thirstBarColor.get());
         thirstDebuff = ColorUtils.hex2Color(ClassicBarsConfig.thirstBarDebuffColor.get());
         hydration = ColorUtils.hex2Color(ClassicBarsConfig.hydrationBarColor.get());

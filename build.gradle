@@ -36,9 +36,9 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 sourceSets {
     main {
         java {
-            // TASK-04 compat quarantine: keep legacy third-party compat outside active compile.
-            // Each integration stays isolated until a separate recovery task proves the NeoForge port.
-            exclude 'tfar/classicbar/compat/**'
+            // TASK-04 compat quarantine: keep legacy mod overlays outside active compile.
+            // The compat/ package is no longer quarantined — farmersdelight and kaleidoscope_cookery support are now active.
+            // Each remaining integration stays isolated until a separate recovery task proves the NeoForge port.
             exclude 'tfar/classicbar/impl/overlays/mod/**'
         }
     }
@@ -68,6 +68,14 @@ neoForge {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // 模组兼容 - 编译期依赖
+    compileOnly "maven.modrinth:farmers-delight:1.21.1-1.3.1"
+    compileOnly "maven.modrinth:kaleidoscope-cookery:1.3.0-neoforge+mc1.21.1"
+
+    // 开发运行客户端时自动加载（localRuntime 仅开发环境生效，不传播到发布产物）
+    runtimeOnly "maven.modrinth:farmers-delight:1.21.1-1.3.1"
+    runtimeOnly "maven.modrinth:kaleidoscope-cookery:1.3.0-neoforge+mc1.21.1"
 }
 
 tasks.named('test', Test).configure {

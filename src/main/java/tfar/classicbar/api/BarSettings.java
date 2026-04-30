@@ -1,28 +1,28 @@
 package tfar.classicbar.api;
 
 import net.minecraft.resources.ResourceLocation;
-import tfar.classicbar.api.TextFormats;
+import tfar.classicbar.api.TextFormat;
 
 public class BarSettings {
     public boolean show_text;
     public ResourceLocation icon;
     public BarMode mode;
     public BarColorOverlay color_overlay;
-    public String textFormat;
+    public TextFormat textFormat;
 
     public BarSettings() {
-        this(false, null, BarMode.DISABLED, BarColorOverlay.none(), TextFormats.CURRENT_ONLY);
+        this(false, null, BarMode.DISABLED, BarColorOverlay.none(), TextFormat.CURRENT_ONLY);
     }
 
     public BarSettings(boolean showText, ResourceLocation icon) {
-        this(showText, icon, BarMode.OVERRIDE, BarColorOverlay.none(), TextFormats.CURRENT_ONLY);
+        this(showText, icon, BarMode.OVERRIDE, BarColorOverlay.none(), TextFormat.CURRENT_ONLY);
     }
 
     public BarSettings(boolean showText, ResourceLocation icon, BarMode mode, BarColorOverlay colorOverlay) {
-        this(showText, icon, mode, colorOverlay, TextFormats.CURRENT_ONLY);
+        this(showText, icon, mode, colorOverlay, TextFormat.CURRENT_ONLY);
     }
 
-    public BarSettings(boolean showText, ResourceLocation icon, BarMode mode, BarColorOverlay colorOverlay, String textFormat) {
+    public BarSettings(boolean showText, ResourceLocation icon, BarMode mode, BarColorOverlay colorOverlay, TextFormat textFormat) {
         this.show_text = showText;
         this.icon = icon;
         this.mode = mode;

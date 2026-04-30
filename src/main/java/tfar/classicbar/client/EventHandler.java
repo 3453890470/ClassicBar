@@ -99,8 +99,8 @@ public final class EventHandler {
     all.clear();
     registry.values().forEach(barOverlay -> barOverlay.setBarSettings(ClassicBarsConfig.getBarSettings(barOverlay.name())));
     Set<String> appliedOverlays = new LinkedHashSet<>();
-    applyConfiguredBars(ClassicBarsConfig.leftorder.get(), false, appliedOverlays);
-    applyConfiguredBars(ClassicBarsConfig.rightorder.get(), true, appliedOverlays);
+    applyConfiguredBars(ClassicBarsConfig.getLeftOrder(), false, appliedOverlays);
+    applyConfiguredBars(ClassicBarsConfig.getRightOrder(), true, appliedOverlays);
     ConfigCache.setActiveLayoutOverlays(appliedOverlays);
     all.removeAll(errored);
     ConfigCache.setActiveLayoutOverlays(collectRenderableLayoutOverlays());
@@ -150,6 +150,15 @@ public final class EventHandler {
     }
 
     if (VanillaGuiLayers.FOOD_LEVEL.equals(layerName) && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("food", player))) {
+      event.setCanceled(true);
+      return;
+    }
+
+    // 取消 FarmersDelight 的滋养覆盖层（由配置控制，默认不取消）
+    ResourceLocation fdNourishment = ResourceLocation.parse("farmersdelight:nourishment");
+    if (fdNourishment.equals(layerName)
+        && ConfigCache.disableFdNourishmentOverlay
+        && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("food", player))) {
       event.setCanceled(true);
       return;
     }
