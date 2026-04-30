@@ -109,6 +109,7 @@
   "classicbar.config.layout.placement_armor_toughness": "护甲韧性",
   "classicbar.config.layout.placement_health_mount": "坐骑生命",
   "classicbar.config.layout.placement_air": "氧气值",
+  "classicbar.config.layout.placement_blood": "血液",
 
   "classicbar.config.layout.placement_value": "位置",
 
@@ -204,6 +205,19 @@
   "classicbar.config.bars.air.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住分层填充细节。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
   "classicbar.config.bars.air.text_format": "氧气值显示格式",
   "classicbar.config.bars.air.text_format.tooltip": "控制氧气数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
+
+  "classicbar.config.bars.blood": "血液状态栏",
+  "classicbar.config.bars.blood.tooltip": "血液覆盖层配置。",
+  "classicbar.config.bars.blood.show_text": "显示血液数值",
+  "classicbar.config.bars.blood.show_text.tooltip": "在血液状态栏旁显示当前血液值。",
+  "classicbar.config.bars.blood.icon": "血液图标",
+  "classicbar.config.bars.blood.icon.tooltip": "血液覆盖层使用的 ClassicBar 图标资源，必须位于 classicbar:textures/gui/icons/*.png。",
+  "classicbar.config.bars.blood.mode": "血液模式",
+  "classicbar.config.bars.blood.mode.tooltip": "OVERRIDE 启用 ClassicBar 血液覆盖层（需要 Vampirism），DISABLED 关闭。",
+  "classicbar.config.bars.blood.color_overlay": "血液颜色覆盖",
+  "classicbar.config.bars.blood.color_overlay.tooltip": "#RRGGBB 会替换这个状态栏的所有填充层，可能遮住填充细节。#AARRGGBB 会与原始填充颜色做 alpha 混色，而不是修改渲染透明度。",
+  "classicbar.config.bars.blood.text_format": "血液值显示格式",
+  "classicbar.config.bars.blood.text_format.tooltip": "控制血液数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
   "classicbar.config.mod_support.toughasnails": "Tough As Nails",
   "classicbar.config.mod_support.toughasnails.tooltip": "为 Tough As Nails 兼容功能预留。本版本中没有实际效果。",

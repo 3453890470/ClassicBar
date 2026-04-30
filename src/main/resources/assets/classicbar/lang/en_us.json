@@ -109,6 +109,7 @@
   "classicbar.config.layout.placement_armor_toughness": "Armor Toughness",
   "classicbar.config.layout.placement_health_mount": "Mount Health",
   "classicbar.config.layout.placement_air": "Air",
+  "classicbar.config.layout.placement_blood": "Blood",
 
   "classicbar.config.layout.placement_value": "Placement",
 
@@ -204,6 +205,19 @@
   "classicbar.config.bars.air.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide layered fill detail. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
   "classicbar.config.bars.air.text_format": "Air text format",
   "classicbar.config.bars.air.text_format.tooltip": "Controls how the air value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
+
+  "classicbar.config.bars.blood": "Blood bar",
+  "classicbar.config.bars.blood.tooltip": "Settings for the blood overlay.",
+  "classicbar.config.bars.blood.show_text": "Show blood text",
+  "classicbar.config.bars.blood.show_text.tooltip": "Render the numeric blood value next to the blood bar.",
+  "classicbar.config.bars.blood.icon": "Blood icon",
+  "classicbar.config.bars.blood.icon.tooltip": "ClassicBar icon resource for the blood overlay. Must stay inside classicbar:textures/gui/icons/*.png.",
+  "classicbar.config.bars.blood.mode": "Blood mode",
+  "classicbar.config.bars.blood.mode.tooltip": "OVERRIDE enables the ClassicBar blood overlay (requires Vampirism), DISABLED turns it off.",
+  "classicbar.config.bars.blood.color_overlay": "Blood color overlay",
+  "classicbar.config.bars.blood.color_overlay.tooltip": "#RRGGBB replaces all fill passes for this bar, which can hide fill detail. #AARRGGBB alpha-blends with the original fill colors instead of changing render transparency.",
+  "classicbar.config.bars.blood.text_format": "Blood text format",
+  "classicbar.config.bars.blood.text_format.tooltip": "Controls how the blood value is displayed. current_only: 12, current_max: 12 / 20, percent_max: 60% / 20.",
 
   "classicbar.config.mod_support.toughasnails": "Tough As Nails",
   "classicbar.config.mod_support.toughasnails.tooltip": "Reserved compatibility section for Tough As Nails. No active effect in this build.",
