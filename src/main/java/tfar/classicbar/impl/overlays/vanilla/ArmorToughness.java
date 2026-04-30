@@ -12,6 +12,13 @@ import tfar.classicbar.util.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.resources.BarIcons;
 
+/**
+ * ClassicBar overlay for {@link net.minecraft.world.entity.player.Player} armor toughness.
+ * <p>
+ * Renders the player's armor toughness as a classic-style progress bar,
+ * wrapping at intervals of 20. Color comes from the
+ * {@link ConfigCache#armor_toughness} color list.
+ */
 public class ArmorToughness extends BarOverlayImpl {
 
     public ArmorToughness() {
@@ -66,6 +73,7 @@ public class ArmorToughness extends BarOverlayImpl {
         }
     }
 
+    @Override
     public double getBarWidth(Player player) {
         double armorToughness = player.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue();
         return Math.ceil(WIDTH * Math.min(20, armorToughness) / 20);//armor toughness can go above 20 in modded contexts!

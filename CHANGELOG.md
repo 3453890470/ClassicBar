@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.2.0] - 2026-05-01
+### Added
+- Vampirism 血液状态栏支持
+  - 独立的 Blood overlay 实现，深红/亮红双色进度条
+  - 吸血鬼状态下自动隐藏饱食度栏，血液栏占据其位置
+  - 自动取消 Vampirism 原生血条 HUD 叠加
+  - 完整的 `bars.blood.*` 配置项（模式/图标/文字/颜色）
+- 可拓展的位置锚点排序系统
+  - DEFAULT_PRIORITIES 映射表，互斥栏共用同一优先级序号
+  - 新增状态栏通过 `Map.of("id", priority)` 一行指定默认位置
+- CODING_RULES.md 项目代码规范文档（9 章 + 自审查清单）
+
+### Changed
+- 配置层互斥策略：`getBarSettings()` 中 blood 启用时自动禁用 food
+- 所有状态栏代码风格统一：4-space 缩进、英文注释、@Override 补全、类级 Javadoc
+- ACTIVE_BAR_IDS 纳入 blood，走统一排序通道（无特判代码）
+- Hunger.shouldRender() 简化回归，移除 Vampirism 检测逻辑
+- Blood.java 颜色语义对齐 vanilla 组（primary=主色）
+
+### Fixed
+- 血液栏出现在右侧顶端而非食物栏位置的问题
+- 饱食度栏与血液栏同时渲染的问题
+- 血液栏数值文字默认不显示的问题
+- MountHealth.java 缩进自相矛盾 + 死字段
+- Air.java 缩进自相矛盾 + 缺失空行
+- Absorption.java 类型转换错误 + 缺失 @Override
+
 ## [1.1.0] — 2026-05-01
 
 ### ✨ 新功能

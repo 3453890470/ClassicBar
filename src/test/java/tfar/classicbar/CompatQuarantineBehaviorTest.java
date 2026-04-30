@@ -18,9 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CompatQuarantineBehaviorTest {
 
-  private static final Set<String> EXPECTED_QUARANTINE_EXCLUDES = Set.of(
-          "tfar/classicbar/impl/overlays/mod/**"
-  );
+  private static final Set<String> EXPECTED_QUARANTINE_EXCLUDES = Set.of();
   private static final List<String> ACTIVE_VANILLA_OVERLAYS = List.of(
           "Health",
           "Armor",
@@ -30,14 +28,23 @@ class CompatQuarantineBehaviorTest {
           "MountHealth",
           "Air"
   );
+  // VAMP-003: Blood is intentionally registered in EventHandler; generic mod package import is
+  // no longer a blanket violation. Each still-quarantined overlay has its own token below.
   private static final List<String> COMPAT_SOURCE_TOKENS = List.of(
-          "import tfar.classicbar.impl.overlays.mod",
           "VampirismHelper",
-          "new Blood(",
+          "import tfar.classicbar.impl.overlays.mod.Thirst",
+          "import tfar.classicbar.impl.overlays.mod.Stamina",
+          "import tfar.classicbar.impl.overlays.mod.Feathers",
           "new Thirst(",
           "new StaminaB(",
           "new Feathers("
   );
+  // VAMP-003: Blood overlay is no longer quarantined; only EventHandler.java may reference it
+  private static final List<String> VAMPIRISM_ACTIVE_TOKENS = List.of(
+          "import tfar.classicbar.impl.overlays.mod.Blood",
+          "new Blood("
+  );
+  private static final String EVENT_HANDLER_RELATIVE = "tfar/classicbar/client/EventHandler.java";
   private static final List<String> NETWORK_RESTORE_TOKENS = List.of(
           "ClassicBarNetwork",
           "SyncHandler",
@@ -61,18 +68,21 @@ class CompatQuarantineBehaviorTest {
   }
 
   @Test
-  void eventHandlerRegistersOnlyVanillaOverlaysAndMutationWouldExposeCompatRestore() throws IOException {
+  void eventHandlerRegistersVanillaOverlaysAndBloodCompatRestore() throws IOException {
     String eventHandler = readProjectFile("src/main/java/tfar/classicbar/client/EventHandler.java");
 
     for (String overlayClass : ACTIVE_VANILLA_OVERLAYS) {
       assertTrue(eventHandler.contains("new " + overlayClass + "()"), "Active EventHandler should keep " + overlayClass + " in the vanilla overlay registry");
     }
 
-    List<String> hits = findForbiddenTokens(eventHandler, COMPAT_SOURCE_TOKENS);
-    assertTrue(hits.isEmpty(), "Active EventHandler should not import or instantiate quarantined compat overlays: " + hits);
+    // VAMP-003: Blood is intentionally registered in EventHandler when Vampirism mod is loaded
+    assertTrue(eventHandler.contains("new Blood()"), "EventHandler should instantiate Blood overlay for VAMP-003 Vampirism support");
+    assertTrue(eventHandler.contains("ModList.get().isLoaded(\"vampirism\")"), "Blood registration should be guarded by ModList.isLoaded");
 
-    String brokenEventHandler = eventHandler + "\nregisterAll(new Blood());\n";
-    assertTrue(findForbiddenTokens(brokenEventHandler, COMPAT_SOURCE_TOKENS).contains("new Blood("), "Compat verifier should fail if a quarantined overlay is re-registered");
+    // Other compat overlays (Thirst, Stamina, Feathers) must remain quarantined
+    List<String> otherCompatTokens = List.of("new Thirst(", "new StaminaB(", "new Feathers(");
+    List<String> otherHits = findForbiddenTokens(eventHandler, otherCompatTokens);
+    assertTrue(otherHits.isEmpty(), "EventHandler should not register other quarantined compat overlays: " + otherHits);
   }
 
   @Test
@@ -88,11 +98,26 @@ class CompatQuarantineBehaviorTest {
         }
 
         String text = Files.readString(file);
+
+        // VAMP-003: EventHandler.java is explicitly allowed to reference Blood tokens
+        boolean isEventHandler = relativePath.equals(EVENT_HANDLER_RELATIVE);
+
+        // Check general compat tokens (excludes Blood which we handle separately)
         for (String token : COMPAT_SOURCE_TOKENS) {
           if (text.contains(token)) {
             violations.add(relativePath + " -> compat token " + token);
           }
         }
+
+        // Check Vampirism-active tokens: only EventHandler may contain them
+        if (!isEventHandler) {
+          for (String token : VAMPIRISM_ACTIVE_TOKENS) {
+            if (text.contains(token)) {
+              violations.add(relativePath + " -> vampirism-active token " + token + " (only EventHandler.java may reference Blood)");
+            }
+          }
+        }
+
         for (String token : NETWORK_RESTORE_TOKENS) {
           if (text.contains(token)) {
             violations.add(relativePath + " -> network token " + token);
@@ -121,21 +146,29 @@ class CompatQuarantineBehaviorTest {
 
     assertFalse(enUs.contains("TASK-03") || enUs.contains("TASK-04"), "en_us should not leak internal task labels into user-visible lang text");
     assertFalse(zhCn.contains("TASK-03") || zhCn.contains("TASK-04"), "zh_cn should not leak internal task labels into user-visible lang text");
-    assertTrue(enUs.contains("Reserved for future compatibility work. No active effect in this build."), "en_us should use stable reserved compat messaging");
-    assertTrue(zhCn.contains("为未来兼容功能预留。本版本中没有实际效果。"), "zh_cn should use stable reserved compat messaging");
+    assertTrue(enUs.contains("Compatibility and reserved support for third-party mods."), "en_us should describe the mod support section");
+    assertTrue(zhCn.contains("第三方模组的兼容与预留支持。"), "zh_cn should describe the mod support section");
     assertTrue(enUs.contains("Reserved compatibility section for Tough As Nails. No active effect in this build."), "en_us should keep Tough As Nails reserved without task labels");
-    assertTrue(enUs.contains("Reserved compatibility section for Vampirism. No active effect in this build."), "en_us should keep Vampirism reserved without task labels");
+    // VAMP-003: Vampirism is no longer reserved; it has active blood bar support
+    assertTrue(enUs.contains("Compatibility section for Vampirism blood bar."), "en_us should describe active Vampirism blood bar support");
+    assertTrue(enUs.contains("Vampirism Blood Bar"), "en_us should have Vampirism Blood Bar toggle name");
+    assertTrue(enUs.contains("Enable Vampirism blood bar support (enabled by default when Vampirism is installed)."), "en_us should describe the Vampirism toggle effect");
     assertTrue(enUs.contains("Reserved compatibility section for ParCool. No active effect in this build."), "en_us should keep ParCool reserved without task labels");
     assertTrue(enUs.contains("no compatible NeoForge 1.21.1 build is currently available"), "en_us should explain why Feathers stays unavailable in this build");
     assertTrue(enUs.contains("Enabling this toggle does not restore Tough As Nails support in this build."), "en_us should explain that reserved toggles stay inactive in this build");
     assertTrue(zhCn.contains("为 Tough As Nails 兼容功能预留。本版本中没有实际效果。"), "zh_cn should keep Tough As Nails reserved without task labels");
-    assertTrue(zhCn.contains("为 Vampirism 兼容功能预留。本版本中没有实际效果。"), "zh_cn should keep Vampirism reserved without task labels");
+    // VAMP-003: Vampirism is no longer reserved in zh_cn
+    assertTrue(zhCn.contains("Vampirism 血液状态栏兼容设置。"), "zh_cn should describe active Vampirism blood bar support");
+    assertTrue(zhCn.contains("Vampirism 血液状态栏"), "zh_cn should have Vampirism blood bar toggle name");
+    assertTrue(zhCn.contains("启用 Vampirism 血液状态栏支持（安装 Vampirism 后默认启用）。"), "zh_cn should describe the Vampirism toggle effect");
     assertTrue(zhCn.contains("为 ParCool 兼容功能预留。本版本中没有实际效果。"), "zh_cn should keep ParCool reserved without task labels");
     assertTrue(zhCn.contains("目前没有兼容的 NeoForge 1.21.1 构件"), "zh_cn should explain why Feathers stays unavailable in this build");
     assertTrue(zhCn.contains("启用此开关也不会在当前版本中恢复 Tough As Nails 支持。"), "zh_cn should explain that reserved toggles stay inactive in this build");
 
-    String brokenEnUs = enUs.replace("No active effect in this build.", "No active effect yet.");
-    assertFalse(collectModSupportMessagingFailures(brokenEnUs, zhCn).isEmpty(), "Messaging verifier should fail if stable reserved compat wording regresses");
+    // Simulate regression: remove the "Reserved compatibility section for" qualifier from Tough As Nails
+    String brokenEnUs = enUs.replace("Reserved compatibility section for Tough As Nails. No active effect in this build.",
+            "Compatibility section for Tough As Nails.");
+    assertFalse(collectModSupportMessagingFailures(brokenEnUs, zhCn).isEmpty(), "Messaging verifier should fail if reserved compat wording regresses");
   }
 
   private static Set<String> extractSourceSetExcludes(String buildGradle) {
@@ -172,7 +205,7 @@ class CompatQuarantineBehaviorTest {
     Matcher matcher = Pattern.compile("\\[\\[dependencies\\.classicbar\\]\\](.*?)(?=\\n\\[\\[dependencies\\.classicbar\\]\\]|\\z)", Pattern.DOTALL).matcher(metadata);
     while (matcher.find()) {
       String block = matcher.group(1);
-      for (String modId : List.of("toughasnails", "vampirism", "parcool", "feathers")) {
+      for (String modId : List.of("toughasnails", "parcool", "feathers")) {
         if (block.contains("modId=\"" + modId + "\"")) {
           failures.add(modId + " dependency block must stay absent during the first-pass compat quarantine");
         }

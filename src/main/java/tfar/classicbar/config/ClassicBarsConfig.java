@@ -29,7 +29,20 @@ public class ClassicBarsConfig {
   public static final ModConfigSpec CLIENT_SPEC;
 
   private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
-  private static final List<String> ACTIVE_BAR_IDS = List.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air");
+  private static final List<String> ACTIVE_BAR_IDS = List.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air", "blood");
+
+  /**
+   * 手动分配的默认优先级。
+   * 互斥的状态栏共用同一优先级序号。
+   * 例如：blood 和 food 互斥，共用优先级 4。
+   */
+  private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.of(
+    "blood", 4 // blood 和 food 互斥，共用同一位置
+  );
+
+  public static boolean isActiveBarId(String id) {
+    return ACTIVE_BAR_IDS.contains(id);
+  }
 
   private static final Map<String, ConfiguredBarSettings> BAR_CONFIGS = new LinkedHashMap<>();
   private static final Map<String, ModConfigSpec.BooleanValue> MOD_SUPPORT_ENABLED = new LinkedHashMap<>();
@@ -241,7 +254,7 @@ public class ClassicBarsConfig {
       PLACEMENTS.put(barId, builder.translation(layoutKey("placement_value"))
               .defineEnum("placement", defaultPlacement));
       SORT_PRIORITIES.put(barId, builder.translation(layoutKey("priority_value"))
-              .defineInRange("sort_priority", defaultPriority, 1, 7));
+              .defineInRange("sort_priority", defaultPriority, 1, ACTIVE_BAR_IDS.size()));
       builder.pop();
     }
     builder.pop();
@@ -256,13 +269,14 @@ public class ClassicBarsConfig {
     registerBarConfig(builder, "armor_toughness", BarIcons.ARMOR_TOUGHNESS, true);
     registerBarConfig(builder, "health_mount", BarIcons.MOUNT_HEALTH, true);
     registerBarConfig(builder, "air", BarIcons.AIR, true);
+    registerBarConfig(builder, "blood", BarIcons.BLOOD, true);
     builder.pop();
 
     builder.translation(sectionKey("mod_support"))
 
             .push("mod_support");
     registerReservedModSupport(builder, "toughasnails");
-    registerReservedModSupport(builder, "vampirism");
+    registerReservedModSupport(builder, "vampirism", true);
     registerReservedModSupport(builder, "parcool");
     registerReservedModSupport(builder, "feathers");
     registerReservedModSupport(builder, "farmersdelight", true);
@@ -288,7 +302,15 @@ public class ClassicBarsConfig {
   public static BarSettings getBarSettings(String overlayName) {
     ConfiguredBarSettings configuredBar = BAR_CONFIGS.get(overlayName);
     if (configuredBar != null) {
-      return configuredBar.toBarSettings();
+      BarSettings settings = configuredBar.toBarSettings();
+      // Blood/Food 互斥：当 blood 的模式是 OVERRIDE（启用状态）时，自动禁用 food
+      if ("food".equals(overlayName)) {
+        BarSettings bloodSettings = getBarSettings("blood");
+        if (bloodSettings.rendersClassicBar()) {
+          return new BarSettings(false, BarIcons.FOOD, BarMode.DISABLED, BarColorOverlay.none());
+        }
+      }
+      return settings;
     }
     return FALLBACK_SETTINGS.getOrDefault(overlayName, NULL_SETTINGS).copy();
   }
@@ -317,7 +339,7 @@ public class ClassicBarsConfig {
   }
 
   private static void registerFallbackBarSettings() {
-    FALLBACK_SETTINGS.put("blood", new BarSettings(false, BarIcons.BLOOD, BarMode.DISABLED, BarColorOverlay.none()));
+    FALLBACK_SETTINGS.put("blood", new BarSettings(true, BarIcons.BLOOD, BarMode.OVERRIDE, BarColorOverlay.none()));
     FALLBACK_SETTINGS.put("feathers", new BarSettings(false, BarIcons.FEATHERS, BarMode.DISABLED, BarColorOverlay.none()));
     FALLBACK_SETTINGS.put("stamina", new BarSettings(false, BarIcons.STAMINA, BarMode.DISABLED, BarColorOverlay.none()));
     FALLBACK_SETTINGS.put("thirst_level", new BarSettings(false, BarIcons.THIRST, BarMode.DISABLED, BarColorOverlay.none()));
@@ -395,10 +417,23 @@ public class ClassicBarsConfig {
     return BarPlacement.RIGHT;
   }
 
-  /** 根据 ACTIVE_BAR_IDS 顺序返回默认排序优先级 (1-7) */
+  /**
+   * 获取非 ACTIVE_BAR_IDS 的额外 overlay 的默认渲染侧。
+   * 用于追加通道中决定额外 overlay（如 mod 兼容 overlay）的渲染位置。
+   */
+  public static BarPlacement getDefaultPlacementForExtra(String id) {
+    // 非 ACTIVE_BAR_IDS 的额外 overlay 默认渲染在右侧
+    return BarPlacement.RIGHT;
+  }
+
+  /** 返回默认排序优先级 (1-N) */
   private static int getDefaultPriority(String barId) {
+    // 手动分配优先级
+    Integer manualPri = DEFAULT_PRIORITIES.get(barId);
+    if (manualPri != null) return manualPri;
+    // 默认：基于 ACTIVE_BAR_IDS 索引顺序
     int index = ACTIVE_BAR_IDS.indexOf(barId);
-    return index >= 0 ? index + 1 : 7;
+    return index >= 0 ? index + 1 : ACTIVE_BAR_IDS.size();
   }
 
   /** 获取左侧栏的按优先级排序列表 */

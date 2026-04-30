@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -13,6 +14,7 @@ import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
+import tfar.classicbar.impl.overlays.mod.Blood;
 import tfar.classicbar.impl.overlays.vanilla.Absorption;
 import tfar.classicbar.impl.overlays.vanilla.Air;
 import tfar.classicbar.impl.overlays.vanilla.Armor;
@@ -50,6 +52,11 @@ public final class EventHandler {
 
     ClassicBar.logger.info("Registering Vanilla Overlays");
     registerAll(new Health(), new Armor(), new Absorption(), new Hunger(), new ArmorToughness(), new MountHealth(), new Air());
+
+    // 条件注册 Vampirism Blood overlay
+    if (ModList.get().isLoaded("vampirism")) {
+      register(new Blood());
+    }
   }
 
   public static void register(BarOverlay iBarOverlay) {
@@ -101,6 +108,17 @@ public final class EventHandler {
     Set<String> appliedOverlays = new LinkedHashSet<>();
     applyConfiguredBars(ClassicBarsConfig.getLeftOrder(), false, appliedOverlays);
     applyConfiguredBars(ClassicBarsConfig.getRightOrder(), true, appliedOverlays);
+    // 追加通道：处理非 ACTIVE_BAR_IDS 的额外 overlay
+    for (BarOverlay overlay : registry.values()) {
+      String name = overlay.name();
+      if (!ClassicBarsConfig.isActiveBarId(name) && !appliedOverlays.contains(name)) {
+        BarSettings settings = ClassicBarsConfig.getBarSettings(name);
+        overlay.setBarSettings(settings);
+        if (settings.rendersClassicBar() && appliedOverlays.add(name)) {
+          all.add(overlay.setSide(true)); // 默认右侧
+        }
+      }
+    }
     ConfigCache.setActiveLayoutOverlays(appliedOverlays);
     all.removeAll(errored);
     ConfigCache.setActiveLayoutOverlays(collectRenderableLayoutOverlays());
@@ -170,6 +188,14 @@ public final class EventHandler {
 
     if (VanillaGuiLayers.AIR_LEVEL.equals(layerName) && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("air", player))) {
       event.setCanceled(true);
+    }
+
+    // 取消 Vampirism 原生 blood_bar 层（方案 A: RenderGuiLayerEvent.Pre）
+    ResourceLocation vampirismBloodBar = ResourceLocation.parse("vampirism:blood_bar");
+    if (vampirismBloodBar.equals(layerName)
+        && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("blood", player))) {
+      event.setCanceled(true);
+      return;
     }
   }
 

@@ -12,6 +12,13 @@ import tfar.classicbar.util.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.resources.BarIcons;
 
+/**
+ * ClassicBar overlay for {@link net.minecraft.world.entity.player.Player} absorption health.
+ * <p>
+ * Renders absorption (yellow) hearts as a classic-style progress bar,
+ * wrapping at full-health intervals. Color comes from the
+ * {@link ConfigCache#absorption} color list, supporting multi-layer display.
+ */
 public class Absorption extends BarOverlayImpl {
 
     public Absorption() {
@@ -63,10 +70,11 @@ public class Absorption extends BarOverlayImpl {
         }
     }
 
+    @Override
     public double getBarWidth(Player player) {
         double absorb = player.getAbsorptionAmount();
         double maxHealth = player.getMaxHealth();
-        return (int) Math.ceil(BarOverlayImpl.WIDTH * Math.min(maxHealth, absorb) / maxHealth);
+        return Math.ceil(BarOverlayImpl.WIDTH * Math.min(maxHealth, absorb) / maxHealth);
     }
 
     @Override

@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.fml.ModList;
 import tfar.classicbar.config.ClassicBarsConfig;
 
 /**
@@ -63,5 +64,15 @@ public class ModCompat {
     public static boolean isKaleidoscopeCookeryLoaded() {
         ensureEffects();
         return satiatedShield != null;
+    }
+
+    /**
+     * 检查 Vampirism 模组是否在运行时已加载。
+     * <p>
+     * 不同于 effect-based 检测，Vampirism 通过 API 接口访问，
+     * 因此直接检查 ModList 即可作为第一道守卫。
+     */
+    public static boolean isVampirismLoaded() {
+        return ModList.get().isLoaded("vampirism");
     }
 }

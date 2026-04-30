@@ -14,6 +14,13 @@ import tfar.classicbar.util.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.resources.BarIcons;
 
+/**
+ * ClassicBar overlay for {@link net.minecraft.world.entity.player.Player} armor rating.
+ * <p>
+ * Renders the player's armor protection value as a classic-style progress bar,
+ * wrapping at intervals of 20. Supports low armor warning and durability-based
+ * flashing. Color comes from the {@link ConfigCache#armor} color list.
+ */
 public class Armor extends BarOverlayImpl {
 
     private static final EquipmentSlot[] armorList = new EquipmentSlot[]{EquipmentSlot.HEAD,
