@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import tfar.classicbar.ClassicBar;
+import tfar.classicbar.api.BarMode;
 import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
 import tfar.classicbar.config.ClassicBarsConfig;
@@ -67,6 +68,8 @@ public final class EventHandler {
   public static void registerGuiLayers(RegisterGuiLayersEvent event) {
     bootstrap();
     event.registerBelow(VanillaGuiLayers.PLAYER_HEALTH, HUD_LAYER, HUD_RENDERER);
+    // 在配置加载前主动设置所有已注册 overlay 为活跃，防止原版层取消竞态
+    ConfigCache.setActiveLayoutOverlays(new LinkedHashSet<>(registry.keySet()));
   }
 
   public static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
@@ -78,6 +81,26 @@ public final class EventHandler {
     HudRenderContext context = new HudRenderContext();
     int screenWidth = graphics.guiWidth();
     int screenHeight = graphics.guiHeight();
+
+    // 检测是否有 COMPAT overlay，设置全局布局偏移
+    boolean leftHasCompat = false;
+    boolean rightHasCompat = false;
+    for (BarOverlay overlay : all) {
+        BarSettings settings = ClassicBarsConfig.getBarSettings(overlay.name());
+        if (settings.mode == BarMode.COMPAT) {
+            if (overlay.rightHandSide()) {
+                rightHasCompat = true;
+            } else {
+                leftHasCompat = true;
+            }
+        }
+    }
+    if (leftHasCompat) {
+        context.setCompatOffset(false, 10);
+    }
+    if (rightHasCompat) {
+        context.setCompatOffset(true, 10);
+    }
 
     for (BarOverlay overlay : all) {
       boolean rightHand = overlay.rightHandSide();

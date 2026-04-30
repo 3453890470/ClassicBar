@@ -5,17 +5,19 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.impl.BarOverlayImpl;
+import tfar.classicbar.resources.BarIcons;
 
 public class ModUtils {
   public static final Minecraft mc = Minecraft.getInstance();
-    public static final ResourceLocation VAMPIRISM_ICONS = new ResourceLocation("vampirism:textures/gui/icons.png");
-  public static final ResourceLocation THIRST_ICON = new ResourceLocation("toughasnails", "textures/gui/icons.png");
   private static final Font fontRenderer = mc.font;
-  public static final ResourceLocation ICONS = new ResourceLocation("parcool:textures/gui/stamina_bar.png");
-  public static ResourceLocation CURRENT_TEXTURE = BarOverlayImpl.GUI_ICONS_LOCATION;
+  public static ResourceLocation CURRENT_TEXTURE = BarIcons.FALLBACK;
 
   public static void drawTexturedModalRect(GuiGraphics stack, double x, int y, int textureX, int textureY, double width, int height) {
     stack.blit(CURRENT_TEXTURE, (int) x, y, textureX, textureY, (int) width, height);
+  }
+
+  public static void drawStandaloneIcon(GuiGraphics stack, int x, int y, int size) {
+    stack.blit(CURRENT_TEXTURE, x, y, 0, 0, size, size, size, size);
   }
 
   public static double getWidth(double d1, double d2) {

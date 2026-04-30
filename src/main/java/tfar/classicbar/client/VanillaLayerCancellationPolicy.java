@@ -23,7 +23,8 @@ final class VanillaLayerCancellationPolicy {
             return true;
         }
 
-        return shouldCancelIndependentVanillaLayer(absorptionMode, absorptionActiveInLayout, absorptionShouldRender);
+        // 如果 ClassicBar 会渲染吸收条（非 DISABLED 且在布局中），就可以安全取消整个原版层
+        return !isDisabled(absorptionMode) && absorptionActiveInLayout;
     }
 
     private static boolean isOverride(String modeName) {

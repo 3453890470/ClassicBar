@@ -21,8 +21,8 @@ class EventHandlerCancellationBehaviorTest {
   }
 
   @Test
-  void healthOverrideAndAbsorptionCompatDoNotCancelSharedPlayerHealthWhenAbsorptionIsPresent() throws Exception {
-    assertFalse(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "COMPAT", true, true), "Visible vanilla absorption hearts should keep the shared PLAYER_HEALTH layer when absorption is COMPAT");
+  void healthOverrideCancelsSharedPlayerHealthEvenWhenAbsorptionIsCompatAndPresent() throws Exception {
+    assertTrue(shouldCancelSharedPlayerHealth("OVERRIDE", true, true, "COMPAT", true, true), "Health OVERRIDE cancels entire PLAYER_HEALTH layer even when absorption is COMPAT with visible hearts; ClassicBar renders both bars");
   }
 
   @Test

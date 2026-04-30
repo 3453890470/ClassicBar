@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import tfar.classicbar.ClassicBar;
+import tfar.classicbar.api.BarMode;
 import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
 import tfar.classicbar.api.TextFormats;
