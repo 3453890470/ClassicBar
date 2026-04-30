@@ -12,6 +12,7 @@ public final class BarIcons {
     public static final ResourceLocation HEALTH_FROZEN = icon("health_frozen");
     public static final ResourceLocation ARMOR = icon("armor");
     public static final ResourceLocation FOOD = icon("food");
+    public static final ResourceLocation FOOD_HUNGER = icon("food_hunger");
     public static final ResourceLocation AIR = icon("air");
     public static final ResourceLocation ABSORPTION = icon("absorption");
     public static final ResourceLocation ARMOR_TOUGHNESS = icon("armor_toughness");

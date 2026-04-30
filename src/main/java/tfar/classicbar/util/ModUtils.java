@@ -20,6 +20,13 @@ public class ModUtils {
     stack.blit(CURRENT_TEXTURE, x, y, 0, 0, size, size, size, size);
   }
 
+  public static void drawIconWithTexture(GuiGraphics stack, int x, int y, int size, ResourceLocation texture) {
+    ResourceLocation prev = CURRENT_TEXTURE;
+    CURRENT_TEXTURE = texture;
+    drawStandaloneIcon(stack, x, y, size);
+    CURRENT_TEXTURE = prev;
+  }
+
   public static double getWidth(double d1, double d2) {
     double ratio = BarOverlayImpl.WIDTH * d1 / d2;
     return Math.ceil(ratio);

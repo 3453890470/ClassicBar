@@ -132,18 +132,16 @@ public class Health extends BarOverlayImpl {
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
     HealthEffect effect = getHealthEffect(player);
-    ResourceLocation saved = ModUtils.CURRENT_TEXTURE;
-    try {
-      if (effect == HealthEffect.POISON) {
-        ModUtils.CURRENT_TEXTURE = BarIcons.HEALTH_POISON;
-      } else if (effect == HealthEffect.WITHER) {
-        ModUtils.CURRENT_TEXTURE = BarIcons.HEALTH_WITHER;
-      } else if (effect == HealthEffect.FROZEN) {
-        ModUtils.CURRENT_TEXTURE = BarIcons.HEALTH_FROZEN;
-      }
-      ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
-    } finally {
-      ModUtils.CURRENT_TEXTURE = saved;
+    ResourceLocation icon;
+    if (effect == HealthEffect.POISON) {
+      icon = BarIcons.HEALTH_POISON;
+    } else if (effect == HealthEffect.WITHER) {
+      icon = BarIcons.HEALTH_WITHER;
+    } else if (effect == HealthEffect.FROZEN) {
+      icon = BarIcons.HEALTH_FROZEN;
+    } else {
+      icon = BarIcons.HEALTH;
     }
+    ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, icon);
   }
 }

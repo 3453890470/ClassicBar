@@ -9,6 +9,8 @@ import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ColorUtils;
 import tfar.classicbar.util.HealthEffect;
 import tfar.classicbar.util.ModUtils;
+import net.minecraft.resources.ResourceLocation;
+import tfar.classicbar.resources.BarIcons;
 
 public class MountHealth extends BarOverlayImpl {
 
@@ -66,12 +68,12 @@ public class MountHealth extends BarOverlayImpl {
     }
   }
 
-  @Override
-  public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    int xStart = width / 2 + getIconOffset();
-    int yStart = height - vOffset;
-    ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
-  }
+    @Override
+    public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+        int xStart = width / 2 + getIconOffset();
+        int yStart = height - vOffset;
+        ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, BarIcons.MOUNT_HEALTH);
+    }
 
   private static LivingEntity getMount(Player player) {
     if (player.getVehicle() instanceof LivingEntity livingEntity && livingEntity.isAlive()) {

@@ -1,6 +1,7 @@
 package tfar.classicbar.impl.overlays.vanilla;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -10,6 +11,7 @@ import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
+import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.util.ModUtils;
 
 public class Hunger extends BarOverlayImpl {
@@ -55,7 +57,7 @@ public class Hunger extends BarOverlayImpl {
       renderPartialBar(matrices,f + 2, yStart + 2, barWidthS);
     }
 
-    // --- Food preview (AppleSkin-style) ---
+    // --- Food preview ---
     if (ConfigCache.showFoodPreview) {
       ItemStack held = player.getMainHandItem();
       FoodProperties food = held.getItem().getFoodProperties(held, player);
@@ -66,27 +68,92 @@ public class Hunger extends BarOverlayImpl {
         // Expected hunger after eating
         double newHunger = Math.min(maxHunger, hunger + nutrition);
         double hungerPreview = newHunger - hunger;
-        if (hungerPreview > 0) {
-          double hungerPreviewWidth = Math.ceil(BarOverlayImpl.WIDTH * hungerPreview / maxHunger);
-          double previewX = rightHandSide()
-              ? xStart + BarOverlayImpl.WIDTH - barWidthH - hungerPreviewWidth + 2
-              : xStart + barWidthH + 2;
-          applyConfiguredBarColor(hungerColor, 0.39f);
-          renderPartialBar(matrices, previewX, yStart + 2, hungerPreviewWidth);
-        }
 
-        // Expected saturation after eating — capped at 20 regardless of current values
+        // Expected saturation after eating — capped at 20
         double satFromFood = nutrition * satMod * 2.0f;
         double cappedCurrentSat = Math.min(20, currentSat);
         double cappedNewSaturation = Math.min(20, cappedCurrentSat + satFromFood);
         double satPreview = Math.max(0, cappedNewSaturation - cappedCurrentSat);
-        if (satPreview > 0) {
-          double satPreviewWidth = Math.ceil(BarOverlayImpl.WIDTH * satPreview / maxHunger);
-          double satPreviewX = rightHandSide()
-              ? xStart + BarOverlayImpl.WIDTH - barWidthS - satPreviewWidth + 2
-              : xStart + barWidthS + 2;
-          applyConfiguredBarColor(satColor, 0.39f);
-          renderPartialBar(matrices, satPreviewX, yStart + 2, satPreviewWidth);
+
+        if (hungerPreview > 0 || satPreview > 0) {
+          // Breathing alpha: 0.30 ~ 1.00, period 40 ticks (2 seconds)
+          float breath = 0.65f + 0.35f * (float) Math.sin(context.getGuiTicks() * Math.PI / 20);
+
+          // p4: Hunger preview bar
+          if (hungerPreview > 0) {
+            double previewWidth = Math.ceil(BarOverlayImpl.WIDTH * hungerPreview / maxHunger);
+            double previewX = rightHandSide()
+                ? xStart + BarOverlayImpl.WIDTH + 2 - previewWidth
+                : xStart + barWidthH + 2;
+            // Clamp to container bounds: [xStart+2, xStart+79]
+            double containerLeft = xStart + 2;
+            double containerRight = xStart + BarOverlayImpl.WIDTH + 2;
+            if (rightHandSide()) {
+              if (previewX < containerLeft) {
+                previewWidth = Math.max(0, previewWidth - (containerLeft - previewX));
+                previewX = containerLeft;
+              }
+            } else {
+              double previewEnd = previewX + previewWidth;
+              if (previewEnd > containerRight) {
+                previewWidth = Math.max(0, containerRight - previewX);
+              }
+            }
+            if (previewWidth > 0) {
+              applyConfiguredBarColor(hungerColor, breath);
+              renderPartialBar(matrices, previewX, yStart + 2, previewWidth);
+            }
+          }
+
+          // p5: Saturation preview bar
+          if (satPreview > 0) {
+            double previewWidth = Math.ceil(BarOverlayImpl.WIDTH * satPreview / maxHunger);
+            double previewX = rightHandSide()
+                ? xStart + BarOverlayImpl.WIDTH + 2 - previewWidth
+                : xStart + barWidthS + 2;
+            // Clamp to container bounds: [xStart+2, xStart+79]
+            double containerLeft = xStart + 2;
+            double containerRight = xStart + BarOverlayImpl.WIDTH + 2;
+            if (rightHandSide()) {
+              if (previewX < containerLeft) {
+                previewWidth = Math.max(0, previewWidth - (containerLeft - previewX));
+                previewX = containerLeft;
+              }
+            } else {
+              double previewEnd = previewX + previewWidth;
+              if (previewEnd > containerRight) {
+                previewWidth = Math.max(0, containerRight - previewX);
+              }
+            }
+            if (previewWidth > 0) {
+              applyConfiguredBarColor(satColor, breath);
+              renderPartialBar(matrices, previewX, yStart + 2, previewWidth);
+            }
+          }
+
+          // p6: Preview overlay — from rightmost edge, covers max of both preview widths
+          double maxPreviewWidth = 0;
+          if (hungerPreview > 0) {
+            maxPreviewWidth = Math.max(maxPreviewWidth, Math.ceil(BarOverlayImpl.WIDTH * hungerPreview / maxHunger));
+          }
+          if (satPreview > 0) {
+            maxPreviewWidth = Math.max(maxPreviewWidth, Math.ceil(BarOverlayImpl.WIDTH * satPreview / maxHunger));
+          }
+          if (maxPreviewWidth > 0) {
+            double overlayX = rightHandSide()
+                ? xStart + BarOverlayImpl.WIDTH + 2 - maxPreviewWidth
+                : xStart + barWidthH + 2; // LHS: keep original behavior
+            double containerLeft = xStart + 2;
+            if (overlayX < containerLeft) {
+              maxPreviewWidth = Math.max(0, maxPreviewWidth - (containerLeft - overlayX));
+              overlayX = containerLeft;
+            }
+            if (maxPreviewWidth > 0) {
+              Color.WHITE.color2Gla(breath);
+              ModUtils.drawTexturedModalRect(matrices, overlayX, yStart, 0, 35, maxPreviewWidth, 9);
+              Color.reset();
+            }
+          }
         }
       }
     }
@@ -129,9 +196,9 @@ public class Hunger extends BarOverlayImpl {
 
   @Override
   public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-
     int xStart = width / 2 + getIconOffset();
     int yStart = height - vOffset;
-    ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
+    ResourceLocation icon = player.hasEffect(MobEffects.HUNGER) ? BarIcons.FOOD_HUNGER : BarIcons.FOOD;
+    ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, icon);
   }
 }

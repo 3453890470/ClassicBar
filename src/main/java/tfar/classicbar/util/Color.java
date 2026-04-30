@@ -3,6 +3,7 @@ package tfar.classicbar.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 public record Color(int r,int g,int b) {
+    public static final Color WHITE = Color.from(0xff,0xff,0xff);
     public static final Color BLACK = Color.from(0,0,0);
     public static final Color RED = Color.from(0xff,0,0);
     public static final Color YELLOW = Color.from(0xff,0xff,0);

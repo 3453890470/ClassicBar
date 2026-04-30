@@ -7,6 +7,8 @@ import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ModUtils;
+import net.minecraft.resources.ResourceLocation;
+import tfar.classicbar.resources.BarIcons;
 
 public class Air extends BarOverlayImpl {
 
@@ -53,10 +55,10 @@ public class Air extends BarOverlayImpl {
     textHelper(graphics, xStart, yStart, air / 20, maxAir / 20,
                getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
   }
-  @Override
-  public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-    int xStart = width / 2 + getIconOffset();
-    int yStart = height - vOffset;
-    ModUtils.drawStandaloneIcon(graphics, xStart, yStart, 9);
-  }
+    @Override
+    public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+        int xStart = width / 2 + getIconOffset();
+        int yStart = height - vOffset;
+        ModUtils.drawIconWithTexture(graphics, xStart, yStart, 9, BarIcons.AIR);
+    }
 }

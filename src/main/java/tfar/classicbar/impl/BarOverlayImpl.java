@@ -164,10 +164,10 @@ public abstract class BarOverlayImpl implements BarOverlay {
         }
         int i2 = ConfigCache.icons ? 1 : 0;
         if (rightHandSide()) {
-            ModUtils.drawStringOnHUD(graphics, text, xStart + 9 * i2, yStart - 3, color);
+            ModUtils.drawStringOnHUD(graphics, text, xStart + 9 * i2, yStart - 2, color);
         } else {
             int i3 = ModUtils.getStringLength(text);
-            ModUtils.drawStringOnHUD(graphics, text, xStart - 9 * i2 - i3 + 5, yStart - 3, color);
+            ModUtils.drawStringOnHUD(graphics, text, xStart - 9 * i2 - i3 + 5, yStart - 2, color);
         }
     }
     public void renderFullBarBackground(GuiGraphics matrices, int xStart, int yStart) {
