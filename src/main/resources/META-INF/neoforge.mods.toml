@@ -6,7 +6,7 @@ issueTrackerURL="https://github.com/Tfarcenim/ClassicBar/issues"
 [[mods]]
 modId="classicbar"
 version="${project_version}"
-displayName="Classic Bar"
+displayName="Classic Bar Unofficial"
 authors="Tfarecnim"
 description='''
 Status icons are bars now
