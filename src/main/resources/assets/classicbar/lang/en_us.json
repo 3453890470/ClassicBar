@@ -114,6 +114,8 @@
   "classicbar.config.layout.placement_air": "Air",
   "classicbar.config.layout.placement_blood": "Blood",
   "classicbar.config.layout.placement_forbidden_hunger": "Forbidden Hunger",
+  "classicbar.config.layout.placement_thirst_level": "Thirst",
+  "classicbar.config.layout.placement_thirst_level.tooltip": "Placement for the thirst bar",
 
   "classicbar.config.layout.placement_value": "Placement",
 
@@ -277,5 +279,41 @@
 
   "classicbar.config.enum.barplacement.left": "Left",
   "classicbar.config.enum.barplacement.right": "Right",
-  "classicbar.config.enum.barplacement.hidden": "Hidden"
+  "classicbar.config.enum.barplacement.hidden": "Hidden",
+
+  "classicbar.config.bars.thirst_level": "Thirst",
+  "classicbar.config.bars.thirst_level.tooltip": "Replaces the food bar with a thirst bar when a thirst mod is loaded",
+  "classicbar.config.bars.thirst_level.mode": "thirst_level",
+  "classicbar.config.bars.thirst_level.show_text": "Show thirst value",
+  "classicbar.config.bars.thirst_level.color_overlay": "Thirst bar color",
+  "classicbar.config.thirst_bar_color": "Thirst bar color",
+  "classicbar.config.thirst_bar_debuff_color": "Thirst bar debuff color",
+  "classicbar.config.hydration_bar_color": "Hydration bar color",
+  "classicbar.config.hydration_bar_debuff_color": "Hydration bar debuff color",
+  "classicbar.config.show_hydration_bar": "Show hydration bar",
+  "classicbar.config.show_hydration_bar.tooltip": "Shows the hydration (quench) sub-bar under the thirst bar",
+  "classicbar.config.show_held_drink_overlay": "Show held drink overlay",
+  "classicbar.config.show_held_drink_overlay.tooltip": "Shows thirst info when holding a drinkable item",
+  "classicbar.config.show_thirst_exhaustion_overlay": "Show thirst exhaustion overlay",
+  "classicbar.config.show_thirst_exhaustion_overlay.tooltip": "Shows thirst exhaustion flash effect",
+  "classicbar.config.mod_support.thirst": "Thirst Was Taken",
+  "classicbar.config.mod_support.thirst.tooltip": "Enable support for Thirst Was Taken mod",
+
+  "classicbar.config.debug": "Debug",
+  "classicbar.config.debug.wither": "Wither (every 1min, 2min duration)",
+  "classicbar.config.debug.wither.tooltip": "Applies Wither II every minute for testing bar colors",
+  "classicbar.config.debug.poison": "Poison (every 1min, 2min duration)",
+  "classicbar.config.debug.poison.tooltip": "Applies Poison II every minute for testing bar colors",
+  "classicbar.config.debug.frozen": "Frozen (every 1min, 2min duration)",
+  "classicbar.config.debug.frozen.tooltip": "Applies Powder Snow freeze damage every minute",
+  "classicbar.config.debug.hunger": "Hunger (every 1min, 2min duration)",
+  "classicbar.config.debug.hunger.tooltip": "Applies Hunger II every minute for testing bar colors",
+  "classicbar.config.debug.nourishment": "Nourishment (every 1min, 2min duration)",
+  "classicbar.config.debug.nourishment.tooltip": "Applies Farmer's Delight Nourishment every minute",
+  "classicbar.config.debug.satiated_shield": "Satiated Shield (every 1min, 2min duration)",
+  "classicbar.config.debug.satiated_shield.tooltip": "Applies Kaleidoscope Cookery Satiated Shield every minute",
+  "classicbar.config.debug.vampire": "Vampire Level 1",
+  "classicbar.config.debug.vampire.tooltip": "Sets vampire level to 1, disable to revert to human",
+  "classicbar.config.debug.forbidden_curse": "Forbidden Curse",
+  "classicbar.config.debug.forbidden_curse.tooltip": "Applies Enigmatic Legacy+ Forbidden Curse, disable to remove"
 }

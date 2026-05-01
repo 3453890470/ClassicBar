@@ -107,84 +107,13 @@ public class Hunger extends BarOverlayImpl {
                 double satPreview = Math.max(0, cappedNewSaturation - cappedCurrentSat);
 
                 if (hungerPreview > 0 || satPreview > 0) {
-                    // Breathing alpha: 0.30 ~ 1.00, period 40 ticks (2 seconds)
-                    float breath = 0.65f + 0.35f * (float) Math.sin(context.getGuiTicks() * Math.PI / 20);
+                    float breath = ModUtils.getBreathingAlpha(context.getGuiTicks());
 
-                    // Hunger preview bar
-                    if (hungerPreview > 0) {
-                        double previewWidth = Math.ceil(BarOverlayImpl.WIDTH * hungerPreview / maxHunger);
-                        double previewX = rightHandSide()
-                            ? xStart + BarOverlayImpl.WIDTH + 2 - previewWidth
-                            : xStart + barWidthH + 2;
-                        // Clamp to container bounds: [xStart+2, xStart+79]
-                        double containerLeft = xStart + 2;
-                        double containerRight = xStart + BarOverlayImpl.WIDTH + 2;
-                        if (rightHandSide()) {
-                            if (previewX < containerLeft) {
-                                previewWidth = Math.max(0, previewWidth - (containerLeft - previewX));
-                                previewX = containerLeft;
-                            }
-                        } else {
-                            double previewEnd = previewX + previewWidth;
-                            if (previewEnd > containerRight) {
-                                previewWidth = Math.max(0, containerRight - previewX);
-                            }
-                        }
-                        if (previewWidth > 0) {
-                            applyConfiguredBarColor(hungerColor, breath);
-                            renderPartialBar(graphics, previewX, yStart + 2, previewWidth);
-                        }
-                    }
+                    renderPreviewBar(graphics, hungerPreview, maxHunger, barWidthH, hungerColor, breath, xStart, yStart);
 
-                    // Saturation preview bar
-                    if (satPreview > 0) {
-                        double previewWidth = Math.ceil(BarOverlayImpl.WIDTH * satPreview / maxHunger);
-                        double previewX = rightHandSide()
-                            ? xStart + BarOverlayImpl.WIDTH + 2 - previewWidth
-                            : xStart + barWidthS + 2;
-                        // Clamp to container bounds: [xStart+2, xStart+79]
-                        double containerLeft = xStart + 2;
-                        double containerRight = xStart + BarOverlayImpl.WIDTH + 2;
-                        if (rightHandSide()) {
-                            if (previewX < containerLeft) {
-                                previewWidth = Math.max(0, previewWidth - (containerLeft - previewX));
-                                previewX = containerLeft;
-                            }
-                        } else {
-                            double previewEnd = previewX + previewWidth;
-                            if (previewEnd > containerRight) {
-                                previewWidth = Math.max(0, containerRight - previewX);
-                            }
-                        }
-                        if (previewWidth > 0) {
-                            applyConfiguredBarColor(satColor, breath);
-                            renderPartialBar(graphics, previewX, yStart + 2, previewWidth);
-                        }
-                    }
+                    renderPreviewBar(graphics, satPreview, maxHunger, barWidthS, satColor, breath, xStart, yStart);
 
-                    // Preview overlay — from rightmost edge, covers max of both preview widths
-                    double maxPreviewWidth = 0;
-                    if (hungerPreview > 0) {
-                        maxPreviewWidth = Math.max(maxPreviewWidth, Math.ceil(BarOverlayImpl.WIDTH * hungerPreview / maxHunger));
-                    }
-                    if (satPreview > 0) {
-                        maxPreviewWidth = Math.max(maxPreviewWidth, Math.ceil(BarOverlayImpl.WIDTH * satPreview / maxHunger));
-                    }
-                    if (maxPreviewWidth > 0) {
-                        double overlayX = rightHandSide()
-                            ? xStart + BarOverlayImpl.WIDTH + 2 - maxPreviewWidth
-                            : xStart + barWidthH + 2; // LHS: keep original behavior
-                        double containerLeft = xStart + 2;
-                        if (overlayX < containerLeft) {
-                            maxPreviewWidth = Math.max(0, maxPreviewWidth - (containerLeft - overlayX));
-                            overlayX = containerLeft;
-                        }
-                        if (maxPreviewWidth > 0) {
-                            Color.WHITE.color2Gla(breath);
-                            ModUtils.drawTexturedModalRect(graphics, overlayX, yStart, 0, 35, maxPreviewWidth, 9);
-                            Color.reset();
-                        }
-                    }
+                    renderWhitePreviewOverlay(graphics, hungerPreview, satPreview, maxHunger, barWidthH, breath, xStart, yStart);
                 }
             }
         }
@@ -213,13 +142,13 @@ public class Hunger extends BarOverlayImpl {
     public double getBarWidth(Player player) {
         double hunger = player.getFoodData().getFoodLevel();
         double maxHunger = 20;
-        return Math.min(BarOverlayImpl.WIDTH, Math.ceil(BarOverlayImpl.WIDTH * hunger / maxHunger));
+        return Math.min(BarOverlayImpl.WIDTH, ModUtils.getWidth(hunger, maxHunger));
     }
 
     public int getSatBarWidth(Player player) {
         double saturation = player.getFoodData().getSaturationLevel();
         double maxSat = 20;
-        return Math.min(BarOverlayImpl.WIDTH, (int) Math.ceil(BarOverlayImpl.WIDTH * saturation / maxSat));
+        return Math.min(BarOverlayImpl.WIDTH, (int) ModUtils.getWidth(saturation, maxSat));
     }
     //saturation
     @Override

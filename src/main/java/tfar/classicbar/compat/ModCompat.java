@@ -51,6 +51,16 @@ public class ModCompat {
         return satiatedShield != null && player.hasEffect(satiatedShield);
     }
 
+    public static Holder<MobEffect> getNourishmentEffect() {
+        ensureEffects();
+        return nourishment;
+    }
+
+    public static Holder<MobEffect> getSatiatedShieldEffect() {
+        ensureEffects();
+        return satiatedShield;
+    }
+
     /**
      * 检查农夫乐事模组是否在运行时已加载。
      */

@@ -21,6 +21,9 @@ public class ConfigCache {
     public static Color saturationDebuff;
     public static Color thirst;
     public static Color thirstDebuff;
+    public static boolean showHydrationBar;
+    public static boolean showHeldDrinkOverlay;
+    public static boolean showThirstExhaustionOverlay;
     public static Color nourishment;
     public static Color satiatedShield;
     public static boolean disableFdNourishmentOverlay;
@@ -93,6 +96,9 @@ public class ConfigCache {
         thirstDebuff = ColorUtils.hex2Color(ClassicBarsConfig.thirstBarDebuffColor.get());
         hydration = ColorUtils.hex2Color(ClassicBarsConfig.hydrationBarColor.get());
         hydrationDebuff = ColorUtils.hex2Color(ClassicBarsConfig.hydrationBarDebuffColor.get());
+        showHydrationBar = ClassicBarsConfig.showHydrationBar.get();
+        showHeldDrinkOverlay = ClassicBarsConfig.showHeldDrinkOverlay.get();
+        showThirstExhaustionOverlay = ClassicBarsConfig.showThirstExhaustionOverlay.get();
         air = ColorUtils.hex2Color(ClassicBarsConfig.airBarColor.get());
         frozenHealth = ColorUtils.hex2Color(ClassicBarsConfig.frozenHealthColor.get());
 

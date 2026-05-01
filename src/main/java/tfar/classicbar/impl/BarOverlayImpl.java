@@ -179,6 +179,61 @@ public abstract class BarOverlayImpl implements BarOverlay {
     public void renderPartialBar(GuiGraphics matrices, double xStart, int yStart,double barWidth) {
         ModUtils.drawTexturedModalRect(matrices, xStart, yStart, BAR_U, BAR_V, barWidth, HEIGHT);
     }
+
+    protected void renderPreviewBar(GuiGraphics graphics, double previewValue, double maxValue,
+                                    double currentBarWidth, Color color, float breath,
+                                    int xStart, int yStart) {
+        if (previewValue <= 0) return;
+        double previewWidth = Math.ceil(WIDTH * previewValue / maxValue);
+        double previewX = rightHandSide()
+            ? xStart + WIDTH + 2 - previewWidth
+            : xStart + currentBarWidth + 2;
+        // 钳位到容器边界
+        double containerLeft = xStart + 2;
+        double containerRight = xStart + WIDTH + 2;
+        if (rightHandSide()) {
+            if (previewX < containerLeft) {
+                previewWidth = Math.max(0, previewWidth - (containerLeft - previewX));
+                previewX = containerLeft;
+            }
+        } else {
+            double previewEnd = previewX + previewWidth;
+            if (previewEnd > containerRight) {
+                previewWidth = Math.max(0, containerRight - previewX);
+            }
+        }
+        if (previewWidth > 0) {
+            applyConfiguredBarColor(color, breath);
+            renderPartialBar(graphics, previewX, yStart + 2, previewWidth);
+        }
+    }
+
+    protected void renderWhitePreviewOverlay(GuiGraphics graphics, double previewA, double previewB,
+                                              double maxValue, double currentBarWidth,
+                                              float breath, int xStart, int yStart) {
+        double maxPreviewWidth = 0;
+        if (previewA > 0) {
+            maxPreviewWidth = Math.max(maxPreviewWidth, Math.ceil(WIDTH * previewA / maxValue));
+        }
+        if (previewB > 0) {
+            maxPreviewWidth = Math.max(maxPreviewWidth, Math.ceil(WIDTH * previewB / maxValue));
+        }
+        if (maxPreviewWidth <= 0) return;
+        double overlayX = rightHandSide()
+            ? xStart + WIDTH + 2 - maxPreviewWidth
+            : xStart + currentBarWidth + 2;
+        double containerLeft = xStart + 2;
+        if (overlayX < containerLeft) {
+            maxPreviewWidth = Math.max(0, maxPreviewWidth - (containerLeft - overlayX));
+            overlayX = containerLeft;
+        }
+        if (maxPreviewWidth > 0) {
+            Color.WHITE.color2Gla(breath);
+            ModUtils.drawTexturedModalRect(graphics, overlayX, yStart, 0, 35, maxPreviewWidth, 9);
+            Color.reset();
+        }
+    }
+
     @Override
     public Color getPrimaryBarColor(int index, Player player) {
         return Color.BLACK;

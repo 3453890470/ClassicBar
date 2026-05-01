@@ -4,11 +4,19 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Holder;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import tfar.classicbar.ClassicBar;
 import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.api.BarOverlay;
@@ -23,8 +31,10 @@ import tfar.classicbar.impl.overlays.vanilla.Health;
 import tfar.classicbar.impl.overlays.vanilla.Hunger;
 import tfar.classicbar.impl.overlays.vanilla.MountHealth;
 import auviotre.enigmatic.legacy.contents.item.food.ForbiddenFruit;
+import auviotre.enigmatic.legacy.registries.EnigmaticAttachments;
 import tfar.classicbar.impl.overlays.mod.Blood;
 import tfar.classicbar.impl.overlays.mod.ForbiddenHunger;
+import tfar.classicbar.impl.overlays.mod.Thirst;
 import tfar.classicbar.util.ModUtils;
 
 import java.util.ArrayList;
@@ -60,6 +70,9 @@ public final class EventHandler {
     }
     if (ModList.get().isLoaded("enigmaticlegacyplus")) {
       register(new ForbiddenHunger());
+    }
+    if (ModList.get().isLoaded("toughasnails") || ModList.get().isLoaded("thirst")) {
+      register(new Thirst());
     }
   }
 
@@ -241,7 +254,9 @@ public final class EventHandler {
       return;
     }
 
-    if (VanillaGuiLayers.AIR_LEVEL.equals(layerName) && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("air", player))) {
+    if (VanillaGuiLayers.AIR_LEVEL.equals(layerName)
+        && (shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("air", player))
+            || shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("thirst_level", player)))) {
       event.setCanceled(true);
     }
 
@@ -282,6 +297,78 @@ public final class EventHandler {
     private boolean cancelsVanillaLayer() {
       return requestsVanillaCancel
               && VanillaLayerCancellationPolicy.shouldCancelIndependentVanillaLayer(modeName, activeInLayout, shouldRender);
+    }
+  }
+
+  // === Debug: development testing effects ===
+
+  // Apply vanilla debug effect
+  private static void debugEffect(Player player, ConfigValue<Boolean> config, Holder<MobEffect> effect, int duration) {
+    if (config.get()) {
+      player.addEffect(new MobEffectInstance(effect, duration, 0));
+    }
+  }
+
+  // Apply mod debug effect (checks mod loaded + effect not null)
+  private static void debugModEffect(Player player, ConfigValue<Boolean> config, String modId, Holder<MobEffect> effect, int duration) {
+    if (config.get() && ModList.get().isLoaded(modId) && effect != null) {
+      player.addEffect(new MobEffectInstance(effect, duration, 0));
+    }
+  }
+
+  @SubscribeEvent
+  public static void onDebugPlayerTick(PlayerTickEvent.Post event) {
+    Player player = event.getEntity();
+    if (player.level().isClientSide) return;
+    // 非开发环境不执行调试效果
+    if (FMLLoader.isProduction()) return;
+
+    // Period effects: every 1 minute (1200 ticks)
+    boolean isIntervalTick = (player.tickCount % 1200 == 0);
+
+    // 1-6: Periodic effects
+    if (isIntervalTick) {
+      debugEffect(player, ClassicBarsConfig.debugWitherEnabled, MobEffects.WITHER, 2400);
+      debugEffect(player, ClassicBarsConfig.debugPoisonEnabled, MobEffects.POISON, 2400);
+      debugEffect(player, ClassicBarsConfig.debugHungerEnabled, MobEffects.HUNGER, 2400);
+      debugModEffect(player, ClassicBarsConfig.debugNourishmentEnabled, "farmersdelight", ModCompat.getNourishmentEffect(), 2400);
+      debugModEffect(player, ClassicBarsConfig.debugSatiatedShieldEnabled, "kaleidoscope_cookery", ModCompat.getSatiatedShieldEffect(), 2400);
+    }
+
+    // 冻伤 — 独立处理（类燃烧机制，需每 tick 维持）
+    if (ClassicBarsConfig.debugFrozenEnabled.get()) {
+        player.setTicksFrozen(player.getTicksRequiredToFreeze());
+    }
+
+    // 7. Vampire level — checked every tick for immediate enable/disable
+    if (ModList.get().isLoaded("vampirism")) {
+      try {
+        boolean wantVampire = ClassicBarsConfig.debugVampireEnabled.get();
+        var handler = de.teamlapen.vampirism.api.VampirismAPI.factionPlayerHandler(player);
+        int currentLevel = handler.getCurrentLevel();
+        if (wantVampire && currentLevel < 1) {
+          handler.setFactionAndLevel(de.teamlapen.vampirism.api.VReference.VAMPIRE_FACTION, 1);
+        } else if (!wantVampire && currentLevel > 0) {
+          handler.setFactionAndLevel(de.teamlapen.vampirism.api.VReference.VAMPIRE_FACTION, 0);
+        }
+      } catch (Throwable t) {
+        // Debug feature — silent fail
+      }
+    }
+
+    // 8. Forbidden curse — checked every tick for immediate enable/disable
+    if (ModList.get().isLoaded("enigmaticlegacyplus")) {
+      try {
+        boolean wantCurse = ClassicBarsConfig.debugForbiddenCurseEnabled.get();
+        boolean hasCurse = ForbiddenFruit.isForbiddenCursed(player);
+        if (wantCurse && !hasCurse) {
+          player.getData(EnigmaticAttachments.ENIGMATIC_DATA).setForbiddenCursed(true);
+        } else if (!wantCurse && hasCurse) {
+          player.getData(EnigmaticAttachments.ENIGMATIC_DATA).setForbiddenCursed(false);
+        }
+      } catch (Throwable t) {
+        // Debug feature — silent fail
+      }
     }
   }
 }

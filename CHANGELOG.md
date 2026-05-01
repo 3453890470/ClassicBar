@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.0] - 2026-05-01
+### Added
+- Thirst overlay: 口渴值状态栏支持（Thirst Was Taken + Tough As Nails 双模组 API 路由）
+- Drink preview: 手持饮品时显示口渴值恢复预览（呼吸动画 + 白色覆盖层）
+- Debug config section: 8 个调试配置项（凋零/中毒/冻伤/饥饿/滋养/饱腹代偿/吸血鬼/禁忌诅咒）
+- i18n: 完整的中文本地化（解渴值命名修正 + debug 翻译 + 布局键补充）
+- HUD freeze overlay cancellation: 可通过配置禁用冻伤视场角覆盖层（`debug` → `cancel_freeze_overlay`）
+
+### Changed
+- Architecture: 双模组 API 支持架构（TWT Attachment + TAN API）
+- Preview system: 预览渲染代码封装到 BarOverlayImpl 基类复用
+- Config layout: 配置 GUI 序号按左右侧分离排列
+- Build system: 统一可选依赖格式（compileOnly + runtimeOnly）
+
+### Fixed
+- 空手时错误显示 drink preview
+- TWT 自带 HUD 未被屏蔽（取消 air 层）
+- Nourishment/SatiatedShield 效果获取方式（改用 ModCompat 缓存机制）
+
 ## [1.3.0] - 2026-05-01
 
 ### Added

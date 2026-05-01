@@ -17,5 +17,6 @@ public final class ClassicBarClient {
     modBus.addListener(EventHandler::registerGuiLayers);
     NeoForge.EVENT_BUS.addListener(EventHandler::disableVanillaLayers);
     NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, EventHandler::finalizeFoodLevelCancellation);
+    NeoForge.EVENT_BUS.addListener(EventHandler::onDebugPlayerTick);
   }
 }

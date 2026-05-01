@@ -46,7 +46,12 @@ public class ClassicBarsConfig {
   public static final ModConfigSpec CLIENT_SPEC;
 
   private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
-  private static final List<String> ACTIVE_BAR_IDS = List.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air", "blood", "forbidden_hunger");
+  private static final List<String> ACTIVE_BAR_IDS = List.of(
+    // LEFT side
+    "health", "armor", "absorption", "armor_toughness",
+    // RIGHT side — health_mount at position 1
+    "health_mount", "food", "blood", "forbidden_hunger", "thirst_level", "air"
+  );
 
   /** 默认放置在左侧的栏 ID 集合 */
   private static final Set<String> LEFT_BAR_IDS = Set.of("health", "armor", "absorption", "armor_toughness");
@@ -62,11 +67,12 @@ public class ClassicBarsConfig {
     Map.entry("armor", 3),
     Map.entry("armor_toughness", 4),
     // RIGHT side (top→bottom)
-    Map.entry("food", 1),
-    Map.entry("blood", 2),
-    Map.entry("forbidden_hunger", 3),
-    Map.entry("health_mount", 4),
-    Map.entry("air", 5)
+    Map.entry("health_mount", 1),
+    Map.entry("food", 2),
+    Map.entry("thirst_level", 3),
+    Map.entry("blood", 4),
+    Map.entry("forbidden_hunger", 5),
+    Map.entry("air", 6)
   );
 
   public static boolean isActiveBarId(String id) {
@@ -132,6 +138,16 @@ public class ClassicBarsConfig {
   public static ModConfigSpec.ConfigValue<String> satiatedShieldBarColor;
   static ModConfigSpec.ConfigValue<String> forbiddenCurseBarColor;
   public static ModConfigSpec.BooleanValue disableFdNourishmentOverlay;
+
+  // === Debug section fields (for development testing) ===
+  public static ModConfigSpec.BooleanValue debugWitherEnabled;
+  public static ModConfigSpec.BooleanValue debugPoisonEnabled;
+  public static ModConfigSpec.BooleanValue debugFrozenEnabled;
+  public static ModConfigSpec.BooleanValue debugHungerEnabled;
+  public static ModConfigSpec.BooleanValue debugNourishmentEnabled;
+  public static ModConfigSpec.BooleanValue debugSatiatedShieldEnabled;
+  public static ModConfigSpec.BooleanValue debugVampireEnabled;
+  public static ModConfigSpec.BooleanValue debugForbiddenCurseEnabled;
 
   public ClassicBarsConfig(ModConfigSpec.Builder builder) {
     BAR_CONFIGS.clear();
@@ -297,27 +313,61 @@ public class ClassicBarsConfig {
     builder.translation(sectionKey("bars"))
 
             .push("bars");
+    // === LEFT side ===
     registerBarConfig(builder, "health", BarIcons.HEALTH, true);
     registerBarConfig(builder, "armor", BarIcons.ARMOR, true);
     registerBarConfig(builder, "absorption", BarIcons.ABSORPTION, true);
-    registerBarConfig(builder, "food", BarIcons.FOOD, true);
     registerBarConfig(builder, "armor_toughness", BarIcons.ARMOR_TOUGHNESS, true);
+
+    // === RIGHT side — health_mount at position 1 ===
     registerBarConfig(builder, "health_mount", BarIcons.MOUNT_HEALTH, true);
-    registerBarConfig(builder, "air", BarIcons.AIR, true);
+    registerBarConfig(builder, "food", BarIcons.FOOD, true);
     registerBarConfig(builder, "blood", BarIcons.BLOOD, true);
     registerBarConfig(builder, "forbidden_hunger", BarIcons.FORBIDDEN_HUNGER, true);
+    registerBarConfig(builder, "thirst_level", BarIcons.THIRST, true);
+    registerBarConfig(builder, "air", BarIcons.AIR, true);
     builder.pop();
 
     builder.translation(sectionKey("mod_support"))
 
             .push("mod_support");
     registerReservedModSupport(builder, "toughasnails");
+    registerReservedModSupport(builder, "thirst");
     registerReservedModSupport(builder, "vampirism", true);
     registerReservedModSupport(builder, "parcool");
     registerReservedModSupport(builder, "feathers");
     registerReservedModSupport(builder, "farmersdelight", true);
     registerReservedModSupport(builder, "kaleidoscope_cookery", true);
     registerReservedModSupport(builder, "enigmaticlegacyplus", true);
+    builder.pop();
+
+    // === Debug section (for development testing) ===
+    builder.translation(sectionKey("debug"))
+            .push("debug");
+    debugWitherEnabled = builder
+            .translation(debugKey("wither"))
+            .define("wither", false);
+    debugPoisonEnabled = builder
+            .translation(debugKey("poison"))
+            .define("poison", false);
+    debugFrozenEnabled = builder
+            .translation(debugKey("frozen"))
+            .define("frozen", false);
+    debugHungerEnabled = builder
+            .translation(debugKey("hunger"))
+            .define("hunger", false);
+    debugNourishmentEnabled = builder
+            .translation(debugKey("nourishment"))
+            .define("nourishment", false);
+    debugSatiatedShieldEnabled = builder
+            .translation(debugKey("satiated_shield"))
+            .define("satiated_shield", false);
+    debugVampireEnabled = builder
+            .translation(debugKey("vampire"))
+            .define("vampire", false);
+    debugForbiddenCurseEnabled = builder
+            .translation(debugKey("forbidden_curse"))
+            .define("forbidden_curse", false);
     builder.pop();
 
     registerFallbackBarSettings();
@@ -430,6 +480,10 @@ public class ClassicBarsConfig {
 
   private static String generalKey(String name) {
     return "classicbar.config.general." + name;
+  }
+
+  private static String debugKey(String key) {
+    return "classicbar.config.debug." + key;
   }
 
   private static String layoutKey(String name) {

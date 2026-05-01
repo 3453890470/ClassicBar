@@ -26,16 +26,15 @@ class CompatQuarantineBehaviorTest {
           "Hunger",
           "ArmorToughness",
           "MountHealth",
-          "Air"
+          "Air",
+          "Thirst"
   );
   // VAMP-003: Blood is an independent overlay registered in EventHandler.
   // Each still-quarantined overlay has its own token below.
   private static final List<String> COMPAT_SOURCE_TOKENS = List.of(
           "VampirismHelper",
-          "import tfar.classicbar.impl.overlays.mod.Thirst",
           "import tfar.classicbar.impl.overlays.mod.Stamina",
           "import tfar.classicbar.impl.overlays.mod.Feathers",
-          "new Thirst(",
           "new StaminaB(",
           "new Feathers("
   );
@@ -47,7 +46,6 @@ class CompatQuarantineBehaviorTest {
           "SyncHandler",
           "VanillaFoodDataPayload",
           "RegisterPayloadHandlersEvent",
-          "PlayerTickEvent",
           "PlayerLoggedOutEvent",
           "PacketDistributor",
           "NetworkRegistry",
@@ -75,8 +73,8 @@ class CompatQuarantineBehaviorTest {
     // Blood is now an independent overlay registered in EventHandler (active source).
     assertTrue(eventHandler.contains("new Blood()"), "EventHandler should instantiate Blood (now an independent overlay)");
 
-    // Other compat overlays (Thirst, Stamina, Feathers) must remain quarantined
-    List<String> otherCompatTokens = List.of("new Thirst(", "new StaminaB(", "new Feathers(");
+    // Other compat overlays (Stamina, Feathers) must remain quarantined
+    List<String> otherCompatTokens = List.of("new StaminaB(", "new Feathers(");
     List<String> otherHits = findForbiddenTokens(eventHandler, otherCompatTokens);
     assertTrue(otherHits.isEmpty(), "EventHandler should not register other quarantined compat overlays: " + otherHits);
   }
@@ -201,7 +199,7 @@ class CompatQuarantineBehaviorTest {
     Matcher matcher = Pattern.compile("\\[\\[dependencies\\.classicbar\\]\\](.*?)(?=\\n\\[\\[dependencies\\.classicbar\\]\\]|\\z)", Pattern.DOTALL).matcher(metadata);
     while (matcher.find()) {
       String block = matcher.group(1);
-      for (String modId : List.of("toughasnails", "parcool", "feathers")) {
+      for (String modId : List.of("parcool", "feathers")) {
         if (block.contains("modId=\"" + modId + "\"")) {
           failures.add(modId + " dependency block must stay absent during the first-pass compat quarantine");
         }

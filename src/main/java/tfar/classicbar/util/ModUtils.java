@@ -44,6 +44,10 @@ public class ModUtils {
     return Minecraft.getInstance().gui.getGuiTicks();
   }
 
+  public static float getBreathingAlpha(int guiTicks) {
+    return 0.65f + 0.35f * (float) Math.sin(guiTicks * Math.PI / 20);
+  }
+
   public static double getWidth(double d1, double d2) {
     double ratio = BarOverlayImpl.WIDTH * d1 / d2;
     return Math.ceil(ratio);
