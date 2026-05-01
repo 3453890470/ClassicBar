@@ -2,6 +2,7 @@ package tfar.classicbar.config;
 
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -21,23 +22,51 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * 所有状态栏的配置定义。
+ * 
+ * <h3>布局规则</h3>
+ * <ul>
+ *   <li>左侧：生命值、伤害吸收、护甲值、韧性值（按此顺序）</li>
+ *   <li>右侧：饱食度、血液、禁忌、坐骑、氧气（按此顺序）</li>
+ * </ul>
+ * 
+ * <h3>互斥关系</h3>
+ * <ul>
+ *   <li>blood 活跃时 food → DISABLED、forbidden_hunger → DISABLED</li>
+ *   <li>forbidden_hunger 活跃时 food → DISABLED</li>
+ * </ul>
+ */
 public class ClassicBarsConfig {
 
   public static final ClassicBarsConfig CLIENT;
   public static final ModConfigSpec CLIENT_SPEC;
 
   private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
-  private static final List<String> ACTIVE_BAR_IDS = List.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air", "blood");
+  private static final List<String> ACTIVE_BAR_IDS = List.of("health", "armor", "absorption", "food", "armor_toughness", "health_mount", "air", "blood", "forbidden_hunger");
 
-  /**
-   * 手动分配的默认优先级。
-   * 互斥的状态栏共用同一优先级序号。
-   * 例如：blood 和 food 互斥，共用优先级 4。
+  /** 默认放置在左侧的栏 ID 集合 */
+  private static final Set<String> LEFT_BAR_IDS = Set.of("health", "armor", "absorption", "armor_toughness");
+
+  /** 
+   * 默认排序优先级（数字越小越靠上）。
+   * LEFT 和 RIGHT 侧各自独立排序。
    */
-  private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.of(
-    "blood", 4 // blood 和 food 互斥，共用同一位置
+  private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.ofEntries(
+    // LEFT side (top→bottom)
+    Map.entry("health", 1),
+    Map.entry("absorption", 2),
+    Map.entry("armor", 3),
+    Map.entry("armor_toughness", 4),
+    // RIGHT side (top→bottom)
+    Map.entry("food", 1),
+    Map.entry("blood", 2),
+    Map.entry("forbidden_hunger", 3),
+    Map.entry("health_mount", 4),
+    Map.entry("air", 5)
   );
 
   public static boolean isActiveBarId(String id) {
@@ -101,6 +130,7 @@ public class ClassicBarsConfig {
   public static ModConfigSpec.ConfigValue<String> flightBarColor;
   public static ModConfigSpec.ConfigValue<String> nourishmentBarColor;
   public static ModConfigSpec.ConfigValue<String> satiatedShieldBarColor;
+  static ModConfigSpec.ConfigValue<String> forbiddenCurseBarColor;
   public static ModConfigSpec.BooleanValue disableFdNourishmentOverlay;
 
   public ClassicBarsConfig(ModConfigSpec.Builder builder) {
@@ -239,6 +269,11 @@ public class ClassicBarsConfig {
             .define("nourishment_bar_color", "#F3B300", ClassicBarsConfig::isValidHexColor);
     satiatedShieldBarColor = builder.translation(generalKey("satiated_shield_bar_color"))
             .define("satiated_shield_bar_color", "#FF1313", ClassicBarsConfig::isValidHexColor);
+    // 禁忌之果诅咒状态下饥饿条颜色 (EnigmaticLegacy+)
+    forbiddenCurseBarColor = builder.translation(generalKey("forbidden_curse_bar_color"))
+            .comment("Color of the hunger bar when under the Forbidden Curse (EnigmaticLegacy+).",
+                    "Format: #RRGGBB or #AARRGGBB")
+            .define("forbidden_curse_bar_color", "#9932CC", ClassicBarsConfig::isValidHexColor);
     disableFdNourishmentOverlay = builder.translation(generalKey("disable_fd_nourishment_overlay"))
             .define("disable_fd_nourishment_overlay", true);
     builder.pop();
@@ -270,6 +305,7 @@ public class ClassicBarsConfig {
     registerBarConfig(builder, "health_mount", BarIcons.MOUNT_HEALTH, true);
     registerBarConfig(builder, "air", BarIcons.AIR, true);
     registerBarConfig(builder, "blood", BarIcons.BLOOD, true);
+    registerBarConfig(builder, "forbidden_hunger", BarIcons.FORBIDDEN_HUNGER, true);
     builder.pop();
 
     builder.translation(sectionKey("mod_support"))
@@ -281,6 +317,7 @@ public class ClassicBarsConfig {
     registerReservedModSupport(builder, "feathers");
     registerReservedModSupport(builder, "farmersdelight", true);
     registerReservedModSupport(builder, "kaleidoscope_cookery", true);
+    registerReservedModSupport(builder, "enigmaticlegacyplus", true);
     builder.pop();
 
     registerFallbackBarSettings();
@@ -300,17 +337,10 @@ public class ClassicBarsConfig {
   }
 
   public static BarSettings getBarSettings(String overlayName) {
+    // 互斥移至 Hunger.shouldRender() 运行时检测
     ConfiguredBarSettings configuredBar = BAR_CONFIGS.get(overlayName);
     if (configuredBar != null) {
-      BarSettings settings = configuredBar.toBarSettings();
-      // Blood/Food 互斥：当 blood 的模式是 OVERRIDE（启用状态）时，自动禁用 food
-      if ("food".equals(overlayName)) {
-        BarSettings bloodSettings = getBarSettings("blood");
-        if (bloodSettings.rendersClassicBar()) {
-          return new BarSettings(false, BarIcons.FOOD, BarMode.DISABLED, BarColorOverlay.none());
-        }
-      }
-      return settings;
+      return configuredBar.toBarSettings();
     }
     return FALLBACK_SETTINGS.getOrDefault(overlayName, NULL_SETTINGS).copy();
   }
@@ -339,7 +369,6 @@ public class ClassicBarsConfig {
   }
 
   private static void registerFallbackBarSettings() {
-    FALLBACK_SETTINGS.put("blood", new BarSettings(true, BarIcons.BLOOD, BarMode.OVERRIDE, BarColorOverlay.none()));
     FALLBACK_SETTINGS.put("feathers", new BarSettings(false, BarIcons.FEATHERS, BarMode.DISABLED, BarColorOverlay.none()));
     FALLBACK_SETTINGS.put("stamina", new BarSettings(false, BarIcons.STAMINA, BarMode.DISABLED, BarColorOverlay.none()));
     FALLBACK_SETTINGS.put("thirst_level", new BarSettings(false, BarIcons.THIRST, BarMode.DISABLED, BarColorOverlay.none()));
@@ -409,12 +438,7 @@ public class ClassicBarsConfig {
 
   /** 根据原有布局分配默认放置 */
   private static BarPlacement getDefaultPlacement(String barId) {
-    // 原左侧列表顺序：health, armor, absorption
-    if (barId.equals("health") || barId.equals("armor") || barId.equals("absorption")) {
-      return BarPlacement.LEFT;
-    }
-    // 原右侧列表顺序：health_mount, food, armor_toughness, air
-    return BarPlacement.RIGHT;
+    return LEFT_BAR_IDS.contains(barId) ? BarPlacement.LEFT : BarPlacement.RIGHT;
   }
 
   /**

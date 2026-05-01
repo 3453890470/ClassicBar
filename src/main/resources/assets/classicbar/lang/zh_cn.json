@@ -34,6 +34,9 @@
   "classicbar.config.general.satiated_shield_bar_color": "饱腹代偿条颜色",
   "classicbar.config.general.satiated_shield_bar_color.tooltip": "森罗物语·饱腹代偿效果激活时的饱食度条颜色",
 
+  "classicbar.config.general.forbidden_curse_bar_color": "禁忌诅咒条颜色",
+  "classicbar.config.general.forbidden_curse_bar_color.tooltip": "处于神秘遗物+ 禁忌诅咒状态时饥饿条的颜色。",
+
   "classicbar.config.general.disable_fd_nourishment_overlay": "禁用农夫乐事滋养覆盖层",
   "classicbar.config.general.disable_fd_nourishment_overlay.tooltip": "隐藏农夫乐事在饱食度栏上的金色滋养覆盖层，避免与 ClassicBar 重叠",
 
@@ -110,6 +113,7 @@
   "classicbar.config.layout.placement_health_mount": "坐骑生命",
   "classicbar.config.layout.placement_air": "氧气值",
   "classicbar.config.layout.placement_blood": "血液",
+  "classicbar.config.layout.placement_forbidden_hunger": "禁忌饥饿",
 
   "classicbar.config.layout.placement_value": "位置",
 
@@ -219,6 +223,19 @@
   "classicbar.config.bars.blood.text_format": "血液值显示格式",
   "classicbar.config.bars.blood.text_format.tooltip": "控制血液数值的显示方式。current_only: 12, current_max: 12 / 20, percent_max: 60% / 20。",
 
+  "classicbar.config.bars.forbidden_hunger": "禁忌饥饿条",
+  "classicbar.config.bars.forbidden_hunger.tooltip": "神秘遗物+ 禁忌饥饿条的设置。",
+  "classicbar.config.bars.forbidden_hunger.show_text": "显示禁忌饥饿数值",
+  "classicbar.config.bars.forbidden_hunger.show_text.tooltip": "在禁忌饥饿条上渲染数值文字。",
+  "classicbar.config.bars.forbidden_hunger.icon": "禁忌饥饿图标",
+  "classicbar.config.bars.forbidden_hunger.icon.tooltip": "禁忌饥饿条的 ClassicBar 图标资源路径。",
+  "classicbar.config.bars.forbidden_hunger.mode": "禁忌饥饿模式",
+  "classicbar.config.bars.forbidden_hunger.mode.tooltip": "OVERRIDE 启用 ClassicBar 禁忌饥饿覆盖层（需要神秘遗物+），DISABLED 关闭。",
+  "classicbar.config.bars.forbidden_hunger.color_overlay": "禁忌饥饿颜色覆盖层",
+  "classicbar.config.bars.forbidden_hunger.color_overlay.tooltip": "禁忌饥饿条的叠加十六进制颜色。",
+  "classicbar.config.bars.forbidden_hunger.text_format": "禁忌饥饿文字格式",
+  "classicbar.config.bars.forbidden_hunger.text_format.tooltip": "控制禁忌饥饿条数值文字的显示方式。",
+
   "classicbar.config.mod_support.toughasnails": "Tough As Nails",
   "classicbar.config.mod_support.toughasnails.tooltip": "为 Tough As Nails 兼容功能预留。本版本中没有实际效果。",
   "classicbar.config.mod_support.toughasnails.enabled": "预留 Tough As Nails 开关",
@@ -245,6 +262,11 @@
   "classicbar.config.mod_support.kaleidoscope_cookery.tooltip": "森罗物语兼容，用于食物条上的饱腹代偿效果检测。",
   "classicbar.config.mod_support.kaleidoscope_cookery.enabled": "森罗物语兼容",
   "classicbar.config.mod_support.kaleidoscope_cookery.enabled.tooltip": "启用森罗物语·饱腹代偿效果检测以改变饱食度栏渲染",
+
+  "classicbar.config.mod_support.enigmaticlegacyplus": "神秘遗物+",
+  "classicbar.config.mod_support.enigmaticlegacyplus.tooltip": "神秘遗物+ 兼容设置。",
+  "classicbar.config.mod_support.enigmaticlegacyplus.enabled": "神秘遗物+ 禁忌饥饿",
+  "classicbar.config.mod_support.enigmaticlegacyplus.enabled.tooltip": "启用神秘遗物+ 禁忌饥饿条的兼容支持。",
 
   "classicbar.config.enum.bar_mode.override": "覆盖原版",
   "classicbar.config.enum.bar_mode.disabled": "禁用 ClassicBar",

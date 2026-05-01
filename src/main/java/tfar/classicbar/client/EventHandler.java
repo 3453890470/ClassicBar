@@ -10,11 +10,11 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import tfar.classicbar.ClassicBar;
+import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
-import tfar.classicbar.impl.overlays.mod.Blood;
 import tfar.classicbar.impl.overlays.vanilla.Absorption;
 import tfar.classicbar.impl.overlays.vanilla.Air;
 import tfar.classicbar.impl.overlays.vanilla.Armor;
@@ -22,6 +22,9 @@ import tfar.classicbar.impl.overlays.vanilla.ArmorToughness;
 import tfar.classicbar.impl.overlays.vanilla.Health;
 import tfar.classicbar.impl.overlays.vanilla.Hunger;
 import tfar.classicbar.impl.overlays.vanilla.MountHealth;
+import auviotre.enigmatic.legacy.contents.item.food.ForbiddenFruit;
+import tfar.classicbar.impl.overlays.mod.Blood;
+import tfar.classicbar.impl.overlays.mod.ForbiddenHunger;
 import tfar.classicbar.util.ModUtils;
 
 import java.util.ArrayList;
@@ -52,10 +55,11 @@ public final class EventHandler {
 
     ClassicBar.logger.info("Registering Vanilla Overlays");
     registerAll(new Health(), new Armor(), new Absorption(), new Hunger(), new ArmorToughness(), new MountHealth(), new Air());
-
-    // 条件注册 Vampirism Blood overlay
     if (ModList.get().isLoaded("vampirism")) {
       register(new Blood());
+    }
+    if (ModList.get().isLoaded("enigmaticlegacyplus")) {
+      register(new ForbiddenHunger());
     }
   }
 
@@ -73,7 +77,7 @@ public final class EventHandler {
 
   public static void registerGuiLayers(RegisterGuiLayersEvent event) {
     bootstrap();
-    event.registerBelow(VanillaGuiLayers.PLAYER_HEALTH, HUD_LAYER, HUD_RENDERER);
+    event.registerAbove(VanillaGuiLayers.FOOD_LEVEL, HUD_LAYER, HUD_RENDERER);
     // 在配置加载前主动设置所有已注册 overlay 为活跃，防止原版层取消竞态
     ConfigCache.setActiveLayoutOverlays(new LinkedHashSet<>(registry.keySet()));
   }
@@ -148,8 +152,64 @@ public final class EventHandler {
     }
   }
 
-  public static void disableVanillaLayers(RenderGuiLayerEvent.Pre event) {
+  /**
+   * 最低优先级拦截 FOOD_LEVEL 层，运行于 EL+ 的 NORMAL 处理器之后。
+   * <p>
+   * EL+ 的 ClientEventHandler 使用 {@code @SubscribeEvent(receiveCanceled = true)}
+   * 监听 FOOD_LEVEL 的 Pre 事件，即使在 HIGH 优先级取消后仍会渲染其覆盖层。
+   * 此方法在 LOWEST 优先级再次取消，确保 {@link ForbiddenHunger} 或 {@link Blood}
+   * 活跃时代理位置被标记为取消，使 ClassicBar 的独立渲染覆盖在 EL+ 的渲染之上。
+   */
+  public static void finalizeFoodLevelCancellation(RenderGuiLayerEvent.Pre event) {
+    if (!event.getName().equals(VanillaGuiLayers.FOOD_LEVEL)) return;
     Player player = ModUtils.mc.player;
+    if (player == null) return;
+
+    boolean forbiddenActive = isForbiddenHungerActive(player);
+    boolean bloodActive = isBloodActive(player);
+
+    if (forbiddenActive || bloodActive) {
+      event.setCanceled(true);
+    }
+  }
+
+  private static boolean isForbiddenHungerActive(Player player) {
+    if (!ModList.get().isLoaded("enigmaticlegacyplus")) return false;
+    if (!ClassicBarsConfig.isReservedModSupportEnabled("enigmaticlegacyplus")) return false;
+    try {
+      return ForbiddenFruit.isForbiddenCursed(player);
+    } catch (Throwable t) {
+      return false;
+    }
+  }
+
+  private static boolean isBloodActive(Player player) {
+    if (!ModList.get().isLoaded("vampirism")) return false;
+    BarOverlay overlay = registry.get("blood");
+    if (overlay == null) return false;
+    return overlay.shouldRender(player);
+  }
+
+  public static void disableVanillaLayers(RenderGuiLayerEvent.Pre event) {
+    ResourceLocation loc = event.getName();
+    Player player = ModUtils.mc.player;
+
+    // ★ 最优先：取消 EnigmaticLegacy+ 的所有 GUI 层（不依赖 player 状态）
+    //   确保创造/旁观模式下 EL+ 覆盖层也被取消
+    if (ModCompat.isEnigmaticLegacyPlusLoaded()
+        && "enigmaticlegacyplus".equals(loc.getNamespace())) {
+      event.setCanceled(true);
+      return;
+    }
+
+    // ★ 取消 Vampirism 原生 blood_bar 层（不依赖 player 状态）
+    if (ModCompat.isVampirismLoaded()
+        && "vampirism".equals(loc.getNamespace())
+        && "blood_bar".equals(loc.getPath())
+        && ClassicBarsConfig.getBarSettings("blood").rendersClassicBar()) {
+      event.setCanceled(true);
+      return;
+    }
     if (player == null || player.getAbilities().instabuild || player.isSpectator()) {
       return;
     }
@@ -163,11 +223,6 @@ public final class EventHandler {
     }
 
     if (VanillaGuiLayers.ARMOR_LEVEL.equals(layerName) && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("armor", player))) {
-      event.setCanceled(true);
-      return;
-    }
-
-    if (VanillaGuiLayers.FOOD_LEVEL.equals(layerName) && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("food", player))) {
       event.setCanceled(true);
       return;
     }
@@ -190,13 +245,6 @@ public final class EventHandler {
       event.setCanceled(true);
     }
 
-    // 取消 Vampirism 原生 blood_bar 层（方案 A: RenderGuiLayerEvent.Pre）
-    ResourceLocation vampirismBloodBar = ResourceLocation.parse("vampirism:blood_bar");
-    if (vampirismBloodBar.equals(layerName)
-        && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("blood", player))) {
-      event.setCanceled(true);
-      return;
-    }
   }
 
   private static OverlayRenderState resolveOverlayRenderState(String overlayId, Player player) {

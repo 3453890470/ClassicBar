@@ -28,8 +28,8 @@ class CompatQuarantineBehaviorTest {
           "MountHealth",
           "Air"
   );
-  // VAMP-003: Blood is intentionally registered in EventHandler; generic mod package import is
-  // no longer a blanket violation. Each still-quarantined overlay has its own token below.
+  // VAMP-003: Blood is an independent overlay registered in EventHandler.
+  // Each still-quarantined overlay has its own token below.
   private static final List<String> COMPAT_SOURCE_TOKENS = List.of(
           "VampirismHelper",
           "import tfar.classicbar.impl.overlays.mod.Thirst",
@@ -39,11 +39,8 @@ class CompatQuarantineBehaviorTest {
           "new StaminaB(",
           "new Feathers("
   );
-  // VAMP-003: Blood overlay is no longer quarantined; only EventHandler.java may reference it
-  private static final List<String> VAMPIRISM_ACTIVE_TOKENS = List.of(
-          "import tfar.classicbar.impl.overlays.mod.Blood",
-          "new Blood("
-  );
+  // Blood is now an independent overlay registered in EventHandler as active source.
+  private static final List<String> VAMPIRISM_ACTIVE_TOKENS = List.of();
   private static final String EVENT_HANDLER_RELATIVE = "tfar/classicbar/client/EventHandler.java";
   private static final List<String> NETWORK_RESTORE_TOKENS = List.of(
           "ClassicBarNetwork",
@@ -68,16 +65,15 @@ class CompatQuarantineBehaviorTest {
   }
 
   @Test
-  void eventHandlerRegistersVanillaOverlaysAndBloodCompatRestore() throws IOException {
+  void eventHandlerRegistersVanillaOverlaysOnly() throws IOException {
     String eventHandler = readProjectFile("src/main/java/tfar/classicbar/client/EventHandler.java");
 
     for (String overlayClass : ACTIVE_VANILLA_OVERLAYS) {
       assertTrue(eventHandler.contains("new " + overlayClass + "()"), "Active EventHandler should keep " + overlayClass + " in the vanilla overlay registry");
     }
 
-    // VAMP-003: Blood is intentionally registered in EventHandler when Vampirism mod is loaded
-    assertTrue(eventHandler.contains("new Blood()"), "EventHandler should instantiate Blood overlay for VAMP-003 Vampirism support");
-    assertTrue(eventHandler.contains("ModList.get().isLoaded(\"vampirism\")"), "Blood registration should be guarded by ModList.isLoaded");
+    // Blood is now an independent overlay registered in EventHandler (active source).
+    assertTrue(eventHandler.contains("new Blood()"), "EventHandler should instantiate Blood (now an independent overlay)");
 
     // Other compat overlays (Thirst, Stamina, Feathers) must remain quarantined
     List<String> otherCompatTokens = List.of("new Thirst(", "new StaminaB(", "new Feathers(");
@@ -99,7 +95,7 @@ class CompatQuarantineBehaviorTest {
 
         String text = Files.readString(file);
 
-        // VAMP-003: EventHandler.java is explicitly allowed to reference Blood tokens
+        // Blood is under mod/ package (quarantined by isQuarantinedSource), not scanned here
         boolean isEventHandler = relativePath.equals(EVENT_HANDLER_RELATIVE);
 
         // Check general compat tokens (excludes Blood which we handle separately)

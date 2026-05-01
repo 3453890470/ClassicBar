@@ -25,6 +25,12 @@ public final class BarIcons {
     public static final ResourceLocation ARMOR_TOUGHNESS = icon("armor_toughness");
     public static final ResourceLocation MOUNT_HEALTH = icon("mount_health");
     public static final ResourceLocation BLOOD = icon("blood");
+
+    //#region Forbidden Fruit / 禁忌诅咒状态（EnigmaticLegacy+ 兼容）
+    /** 禁忌诅咒状态下的饥饿条图标（EnigmaticLegacy+ 兼容） */
+    public static final ResourceLocation FORBIDDEN_HUNGER = icon("forbidden_hunger");
+    //#endregion
+
     public static final ResourceLocation THIRST = icon("thirst");
     public static final ResourceLocation STAMINA = icon("stamina");
     public static final ResourceLocation FEATHERS = icon("feathers");

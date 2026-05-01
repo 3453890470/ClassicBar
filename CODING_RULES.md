@@ -496,7 +496,7 @@ public class HudRenderContext {
 // ✅ 正确：声明 ACTIVE_BAR_IDS
 private static final List<String> ACTIVE_BAR_IDS = List.of(
     "health", "armor", "absorption", "food",
-    "armor_toughness", "health_mount", "air", "blood"
+    "armor_toughness", "health_mount", "air", "blood", "forbidden_hunger"
 );
 ```
 
@@ -517,6 +517,7 @@ registerBarConfig(builder, "armor_toughness", BarIcons.ARMOR_TOUGHNESS, true);
 registerBarConfig(builder, "health_mount", BarIcons.MOUNT_HEALTH, true);
 registerBarConfig(builder, "air", BarIcons.AIR, true);
 registerBarConfig(builder, "blood", BarIcons.BLOOD, true);
+registerBarConfig(builder, "forbidden_hunger", BarIcons.FORBIDDEN_HUNGER, true);
 builder.pop();
 ```
 
@@ -526,8 +527,8 @@ builder.pop();
 
 ```java
 // ✅ 正确：blood 和 food 互斥，共用优先级 4
-private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.of(
-    "blood", 4  // blood 和 food 互斥，共用同一位置
+private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.ofEntries(
+    Map.entry("blood", 4)  // blood 和 food 互斥，共用同一位置
 );
 ```
 
@@ -580,6 +581,68 @@ public static BarSettings getBarSettings(String overlayName) {
     return FALLBACK_SETTINGS.getOrDefault(overlayName, NULL_SETTINGS).copy();
 }
 ```
+
+
+## 6.6 布局配置规范
+
+所有状态栏（BarOverlay）的布局通过 `ClassicBarsConfig.java` 集中定义：
+
+### DEFAULT_PRIORITIES
+- 使用 `Map.ofEntries()` 声明，按 LEFT / RIGHT 侧分组
+- 注释标注 `// LEFT side (top→bottom)` 和 `// RIGHT side (top→bottom)`
+- 数字越小越靠上
+- 左侧和右侧各自独立排序，可以使用相同的序号
+
+```java
+// ✅ 正确：按侧边分组 + 侧边注释
+private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.ofEntries(
+    // LEFT side (top→bottom)
+    Map.entry("health", 1),
+    Map.entry("absorption", 2),
+    Map.entry("armor", 3),
+    Map.entry("armor_toughness", 4),
+    // RIGHT side (top→bottom)
+    Map.entry("food", 1),
+    Map.entry("blood", 2),
+    Map.entry("forbidden_hunger", 3),
+    Map.entry("health_mount", 4),
+    Map.entry("air", 5)
+);
+
+// ❌ 错误：使用 Map.of()（条目数受限）且未分组
+private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.of(
+    "absorption", 2, "armor", 3, ...
+);
+```
+
+### getDefaultPlacement()
+- 使用 `Set.of()` 声明左侧栏 ID 集合
+- `LEFT_BAR_IDS.contains(barId)` 决定左右归属
+- 不属于左侧的默认归入右侧
+
+```java
+// ✅ 正确：Set.of + contains 判断
+private static final Set<String> LEFT_BAR_IDS = Set.of("health", "armor", "absorption", "armor_toughness");
+
+private static BarPlacement getDefaultPlacement(String barId) {
+    return LEFT_BAR_IDS.contains(barId) ? BarPlacement.LEFT : BarPlacement.RIGHT;
+}
+
+// ❌ 错误：if-else 长链
+private static BarPlacement getDefaultPlacement(String barId) {
+    if (barId.equals("health") || barId.equals("armor") || ...) {
+        return BarPlacement.LEFT;
+    }
+    return BarPlacement.RIGHT;
+}
+```
+
+### 添加新栏
+1. 在 `ACTIVE_BAR_IDS` 末尾追加
+2. 在 `DEFAULT_PRIORITIES` 中添加对应侧的正确序号
+3. 如需放在左侧，在 `LEFT_BAR_IDS` 中添加
+4. 调用 `registerBarConfig()` 注册配置
+5. 在 `getBarSettings()` 中按需添加互斥逻辑
 
 ---
 
@@ -676,8 +739,8 @@ registerReservedModSupport(builder, "kaleidoscope_cookery", true); // 默认 tru
 通过 `DEFAULT_PRIORITIES` 指定兼容模组 overlay 的默认优先级序号，**不**在渲染层硬编码位置。
 
 ```java
-private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.of(
-    "blood", 4  // 与 food 共用同一位置序号
+private static final Map<String, Integer> DEFAULT_PRIORITIES = Map.ofEntries(
+    Map.entry("blood", 4)  // 与 food 共用同一位置序号
 );
 ```
 

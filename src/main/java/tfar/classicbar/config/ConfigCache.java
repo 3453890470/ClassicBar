@@ -26,6 +26,8 @@ public class ConfigCache {
     public static boolean disableFdNourishmentOverlay;
     public static boolean enableNourishmentCompat;
     public static boolean enableSatiatedShieldCompat;
+    public static Color forbiddenCurseBarColor;  // 禁忌诅咒状态饥饿条颜色
+    public static boolean enableEnigmaticLegacyPlus; // EnigmaticLegacyPlus 兼容开关
     public static Color hydration;
     public static Color hydrationDebuff;
     public static Color air;
@@ -85,6 +87,8 @@ public class ConfigCache {
         disableFdNourishmentOverlay = ClassicBarsConfig.disableFdNourishmentOverlay.get();
         enableNourishmentCompat = ClassicBarsConfig.isReservedModSupportEnabled("farmersdelight");
         enableSatiatedShieldCompat = ClassicBarsConfig.isReservedModSupportEnabled("kaleidoscope_cookery");
+        forbiddenCurseBarColor = ColorUtils.hex2Color(ClassicBarsConfig.forbiddenCurseBarColor.get());
+        enableEnigmaticLegacyPlus = ClassicBarsConfig.isReservedModSupportEnabled("enigmaticlegacyplus");
         thirst = ColorUtils.hex2Color(ClassicBarsConfig.thirstBarColor.get());
         thirstDebuff = ColorUtils.hex2Color(ClassicBarsConfig.thirstBarDebuffColor.get());
         hydration = ColorUtils.hex2Color(ClassicBarsConfig.hydrationBarColor.get());

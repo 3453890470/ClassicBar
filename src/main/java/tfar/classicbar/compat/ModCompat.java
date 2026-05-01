@@ -1,5 +1,6 @@
 package tfar.classicbar.compat;
 
+import auviotre.enigmatic.legacy.contents.item.food.ForbiddenFruit;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -74,5 +75,29 @@ public class ModCompat {
      */
     public static boolean isVampirismLoaded() {
         return ModList.get().isLoaded("vampirism");
+    }
+
+    /**
+     * 检查 EnigmaticLegacy+ 模组是否在运行时已加载。
+     */
+    public static boolean isEnigmaticLegacyPlusLoaded() {
+        return ModList.get().isLoaded("enigmaticlegacyplus");
+    }
+
+    /**
+     * 检测玩家是否拥有 EnigmaticLegacy+ 的「禁忌诅咒」状态。
+     * <p>
+     * 直接调用 {@code ForbiddenFruit.isForbiddenCursed(player)} 编译期 API。
+     *
+     * @param player 目标玩家
+     * @return 是否处于禁忌诅咒状态；模组未加载或 API 异常时返回 false
+     */
+    public static boolean hasForbiddenCurse(Player player) {
+        if (!isEnigmaticLegacyPlusLoaded()) return false;
+        try {
+            return ForbiddenFruit.isForbiddenCursed(player);
+        } catch (Throwable t) {
+            return false;
+        }
     }
 }

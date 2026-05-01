@@ -7,25 +7,11 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.ModList;
 import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.impl.BarOverlayImpl;
+import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ColorUtils;
 import tfar.classicbar.util.ModUtils;
 
-/**
- * Blood overlay for Vampirism mod compatibility.
- * <p>
- * Renders the vampire blood level as a classic-style progress bar
- * with deep red (#AA0000) primary and bright red (#FF4444) accent.
- * <p>
- * Runtime safety (two-layer guard):
- * <ul>
- *   <li>ModList.isLoaded("vampirism") guards class-level Vampirism API access</li>
- *   <li>VampirismAPI.vampirePlayer() + maxBlood > 0 distinguishes vampire players;
- *       returns null for non-vampire players</li>
- * </ul>
- * The config toggle is intentionally not checked — Vampirism presence + vampire
- * status auto-enables the blood bar.
- */
 public class Blood extends BarOverlayImpl {
 
     public Blood() {
@@ -33,95 +19,80 @@ public class Blood extends BarOverlayImpl {
     }
 
     /**
-     * Two-layer guard: mod loaded, player is vampire.
-     * Config toggle is intentionally removed — Vampirism presence + vampire status auto-enables the blood bar.
+     * 运行时检测：玩家是否为吸血鬼（血族等级 > 0）。
+     * 供 {@link ForbiddenHunger} 等互斥 overlay 调用。
      */
-    @Override
-    public boolean shouldRender(Player player) {
+    public static boolean isVampireBloodActive(Player player) {
         if (!ModList.get().isLoaded("vampirism")) return false;
-        return getVampirePlayer(player) != null;
+        try {
+            IVampirePlayer vp = VampirismAPI.vampirePlayer(player);
+            return vp.getLevel() > 0;
+        } catch (Throwable t) {
+            return false;
+        }
     }
 
-    /**
-     * Safely retrieve the {@link IVampirePlayer} handle for a vampire player.
-     * <p>
-     * {@link VampirismAPI#vampirePlayer(Player)} returns an {@link IVampirePlayer}
-     * directly (not Optional) for all players via attachment system.
-     * Non-vampire players have maxBlood == 0, which we use as the distinguishing check.
-     *
-     * @return the {@link IVampirePlayer} if the player is a vampire, {@code null} otherwise
-     */
-    private static IVampirePlayer getVampirePlayer(Player player) {
+    @Override
+    public boolean shouldRender(Player player) {
+        return isVampireBloodActive(player);
+    }
+
+    @Override
+    public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+        int xStart = screenWidth / 2 + getHOffset();
+        int yStart = screenHeight - vOffset;
+
+        Color.reset();
+        renderFullBarBackground(graphics, xStart, yStart);
+
         try {
-            IVampirePlayer vampire = VampirismAPI.vampirePlayer(player);
-            if (vampire != null && vampire.getBloodStats().getMaxBlood() > 0) {
-                return vampire;
+            IVampirePlayer vp = VampirismAPI.vampirePlayer(player);
+            int blood = vp.getBloodLevel();
+            int maxBlood = vp.getBloodStats().getMaxBlood();
+            if (blood > 0 && maxBlood > 0) {
+                double barWidth = blood * (double) BarOverlayImpl.WIDTH / maxBlood;
+                double barX = xStart + (rightHandSide() ? BarOverlayImpl.WIDTH - barWidth : 0);
+                applyConfiguredBarColor(ColorUtils.hex2Color("#AA0000"));
+                renderPartialBar(graphics, barX + 2, yStart + 2, barWidth);
             }
-            return null;
-        } catch (Exception e) {
-            return null;
+        } catch (Throwable t) {
+            // ignore
+        }
+    }
+
+    @Override
+    public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
+        try {
+            IVampirePlayer vp = VampirismAPI.vampirePlayer(player);
+            int blood = vp.getBloodLevel();
+            int maxBlood = vp.getBloodStats().getMaxBlood();
+            if (maxBlood <= 0) return;
+            int baseX = width / 2 + getIconOffset();
+            int yStart = height - vOffset;
+            textHelper(graphics, baseX, yStart, blood, maxBlood,
+                    getConfiguredTextColor(ColorUtils.hex2Color("#AA0000")), barSettings.textFormat);
+        } catch (Throwable t) {
+            // ignore
         }
     }
 
     @Override
     public double getBarWidth(Player player) {
-        IVampirePlayer vampire = getVampirePlayer(player);
-        if (vampire == null) return 0;
-        int bloodLevel = vampire.getBloodLevel();
-        int maxBlood = Math.max(1, vampire.getBloodStats().getMaxBlood());
-        return Math.min(BarOverlayImpl.WIDTH, Math.ceil(BarOverlayImpl.WIDTH * (double) bloodLevel / maxBlood));
-    }
-
-    @Override
-    public Color getPrimaryBarColor(int index, Player player) {
-        // Deep red — main blood bar color
-        return ColorUtils.hex2Color("#AA0000");
-    }
-
-    @Override
-    public Color getSecondaryBarColor(int index, Player player) {
-        // Bright red — used for accent / saturation portion
-        return ColorUtils.hex2Color("#FF4444");
-    }
-
-    @Override
-    public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
-        IVampirePlayer vampire = getVampirePlayer(player);
-        if (vampire == null) return;
-
-        double barWidth = getBarWidth(player);
-        int xStart = screenWidth / 2 + getHOffset();
-        int yStart = screenHeight - vOffset;
-
-        // Background
-        Color.reset();
-        renderFullBarBackground(graphics, xStart, yStart);
-
-        // Blood bar foreground
-        double barX = xStart + (rightHandSide() ? BarOverlayImpl.WIDTH - barWidth : 0);
-        applyConfiguredBarColor(getPrimaryBarColor(0, player));
-        renderPartialBar(graphics, barX + 2, yStart + 2, barWidth);
-    }
-
-    @Override
-    public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
-        IVampirePlayer vampire = getVampirePlayer(player);
-        if (vampire == null) return;
-
-        int bloodLevel = vampire.getBloodLevel();
-        int maxBlood = Math.max(1, vampire.getBloodStats().getMaxBlood());
-        int baseX = width / 2 + getIconOffset();
-        int yStart = height - vOffset;
-
-        textHelper(graphics, baseX, yStart, bloodLevel, maxBlood,
-                getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
+        try {
+            IVampirePlayer vp = VampirismAPI.vampirePlayer(player);
+            int blood = vp.getBloodLevel();
+            int maxBlood = vp.getBloodStats().getMaxBlood();
+            if (maxBlood <= 0) return 0;
+            return Math.min(BarOverlayImpl.WIDTH, Math.ceil(BarOverlayImpl.WIDTH * (double) blood / maxBlood));
+        } catch (Throwable t) {
+            return 0;
+        }
     }
 
     @Override
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         int baseX = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        // Texture is already bound to BarIcons.BLOOD via bindIconTexture() in the render pipeline
-        ModUtils.drawStandaloneIcon(graphics, baseX, yStart, 9);
+        ModUtils.drawIconWithTexture(graphics, baseX, yStart, 9, BarIcons.BLOOD);
     }
 }

@@ -11,6 +11,7 @@ import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
+import tfar.classicbar.impl.overlays.mod.Blood;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.util.ModUtils;
@@ -20,7 +21,8 @@ import tfar.classicbar.util.ModUtils;
  * <p>
  * Renders the player's food level and saturation as a classic-style progress bar.
  * Supports food preview for held items and third-party mod buff effects (nourishment, satiated shield).
- * Disables rendering for Vampirism vampire players when the blood bar is active.
+ * Forbidden curse rendering has been extracted to a dedicated {@code forbidden_hunger} overlay
+ * (see {@link tfar.classicbar.impl.overlays.mod.ForbiddenHunger}).
  */
 public class Hunger extends BarOverlayImpl {
 
@@ -33,6 +35,10 @@ public class Hunger extends BarOverlayImpl {
 
     @Override
     public boolean shouldRender(Player player) {
+        // 血族活跃时由 Blood 处理，food 不渲染
+        if (Blood.isVampireBloodActive(player)) return false;
+        // 禁忌诅咒活跃时由 ForbiddenHunger 处理，food 不渲染
+        if (ModCompat.hasForbiddenCurse(player)) return false;
         return true;
     }
 
@@ -343,4 +349,5 @@ public class Hunger extends BarOverlayImpl {
                 BarIcons.FOOD, BarIcons.FOOD_BLINKING, baseFlashing, guiTicks);
         }
     }
+
 }
