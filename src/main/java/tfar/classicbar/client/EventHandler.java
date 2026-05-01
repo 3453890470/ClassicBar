@@ -90,7 +90,7 @@ public final class EventHandler {
 
   public static void registerGuiLayers(RegisterGuiLayersEvent event) {
     bootstrap();
-    event.registerAbove(VanillaGuiLayers.FOOD_LEVEL, HUD_LAYER, HUD_RENDERER);
+    event.registerAbove(VanillaGuiLayers.VEHICLE_HEALTH, HUD_LAYER, HUD_RENDERER);
     // 在配置加载前主动设置所有已注册 overlay 为活跃，防止原版层取消竞态
     ConfigCache.setActiveLayoutOverlays(new LinkedHashSet<>(registry.keySet()));
   }
