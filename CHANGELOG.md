@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0] - 2026-05-03
+### Added
+- Custom number font: 集成 3x5/3x5_tiny 像素数字字体，HUD 数字使用 FONT_3X5_TINY 渲染
+- Font resources: 注册 3x5.ttf / 3x5_tiny.ttf 字体定义到 assets/classicbar/font/
+
+### Changed
+- License: 从 Unlicense 更换为 GPL-3.0-only（适配上游字体协议，来源：Reliable-Recount / catboybinary）
+
+### Fixed
+- Icon rendering test: renderSimpleIcon()/renderSimpleIconWithFlash() 内联为直接 ModUtils 调用，修复测试检测链断裂
+- TTF corruption: 修复首次部署时字体文件在 base64 转递中损坏的问题
+
 ## [1.4.0] - 2026-05-01
 ### Added
 - Thirst overlay: 口渴值状态栏支持（Thirst Was Taken + Tough As Nails 双模组 API 路由）
