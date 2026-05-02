@@ -9,6 +9,7 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.client.ClassicBarClient;
 import tfar.classicbar.config.ClassicBarsConfig;
 
@@ -16,6 +17,9 @@ import tfar.classicbar.config.ClassicBarsConfig;
 public class ClassicBar {
 
   public static final String MODID = "classicbar";
+
+  public static final ResourceLocation FONT_3X5 = ResourceLocation.fromNamespaceAndPath(MODID, "3x5");
+  public static final ResourceLocation FONT_3X5_TINY = ResourceLocation.fromNamespaceAndPath(MODID, "3x5_tiny");
 
   public static final Logger logger = LogManager.getLogger();
 

@@ -37,7 +37,7 @@ public class Air extends BarOverlayImpl {
         // Bar background
         renderFullBarBackground(graphics, xStart, yStart);
         // Draw portion of bar based on air amount
-        double f = xStart + (rightHandSide() ? BarOverlayImpl.WIDTH - barWidth : 0);
+        double f = getBarStartX(xStart, barWidth);
         Color color = getPrimaryBarColor(0, player);
         applyConfiguredBarColor(color);
         renderPartialBar(graphics, f + 2, yStart + 2, barWidth);
@@ -70,8 +70,8 @@ public class Air extends BarOverlayImpl {
     public void renderIcon(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         int xStart = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        int guiTicks = ModUtils.getGuiTicks();
         boolean flashing = player.getAirSupply() < player.getMaxAirSupply();
+        int guiTicks = ModUtils.getGuiTicks();
         ModUtils.drawIconWithFlash(graphics, xStart, yStart, 9, BarIcons.AIR, BarIcons.AIR_BLINKING, flashing, guiTicks);
     }
 }

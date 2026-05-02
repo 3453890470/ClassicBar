@@ -53,4 +53,6 @@
 
 ## 许可证
 
-[Unlicense](https://unlicense.org/) — 公有领域，自由使用。
+[GNU General Public License v3.0](LICENSE.txt) — 自由软件，遵循 GPL v3 协议。
+
+本作品包含来自 [Reliable-Recount](https://github.com/evanbones/Reliable-Recount) 的数字字体（3x5.ttf / 3x5_tiny.ttf），原作者 catboybinary，同样以 GPL v3 发布。

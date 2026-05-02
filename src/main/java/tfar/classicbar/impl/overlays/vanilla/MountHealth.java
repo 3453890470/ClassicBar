@@ -39,7 +39,7 @@ public class MountHealth extends BarOverlayImpl {
         double currentMountHealth = mount.getHealth();
         double barWidth = getBarWidth(player);
         int backgroundX = screenWidth / 2 + getHOffset();
-        double filledX = backgroundX + (rightHandSide() ? BarOverlayImpl.WIDTH - barWidth : 0);
+        double filledX = getBarStartX(backgroundX, barWidth);
         int yStart = screenHeight - vOffset;
         double maxHealth = mount.getMaxHealth();
 

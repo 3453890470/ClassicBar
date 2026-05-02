@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[1,)"
-license="Unlicense"
+license="GPL-3.0-only"
 issueTrackerURL="https://github.com/Tfarcenim/ClassicBar/issues"
 
 [[mods]]

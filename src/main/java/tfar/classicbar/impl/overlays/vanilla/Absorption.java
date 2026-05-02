@@ -45,9 +45,8 @@ public class Absorption extends BarOverlayImpl {
         }
 
         //draw absorption bar
-        int index = Math.min((int) Math.ceil(absorb / maxHealth), ConfigCache.absorption.size()) - 1;
+        int index = computeWrapIndex(absorb, maxHealth, ConfigCache.absorption.size());
         Color primary = getPrimaryBarColor(index, player);
-        Color.reset();
         //draw background bar
         renderBarBackground(graphics, player, screenWidth, screenHeight, vOffset);
         if (index == 0) {//no wrapping
@@ -90,10 +89,7 @@ public class Absorption extends BarOverlayImpl {
     @Override
     public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         double absorb = player.getAbsorptionAmount();
-        int xStart = width / 2 + getIconOffset();
-        int yStart = height - vOffset;
-        textHelper(graphics, xStart, yStart, absorb, player.getMaxHealth(),
-                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
+        renderSimpleText(graphics, width, height, vOffset, absorb, player.getMaxHealth(), player);
     }
 
     @Override

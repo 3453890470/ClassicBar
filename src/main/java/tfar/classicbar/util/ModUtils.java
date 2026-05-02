@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import tfar.classicbar.ClassicBar;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.resources.BarIcons;
 
@@ -69,7 +70,8 @@ public class ModUtils {
 
     xOffset += 2;
     yOffset += 2;
-
-    stack.drawString(Minecraft.getInstance().font,string, xOffset, yOffset, color,true);
+    net.minecraft.network.chat.Component component = net.minecraft.network.chat.Component.literal(string)
+        .withStyle(net.minecraft.network.chat.Style.EMPTY.withFont(ClassicBar.FONT_3X5_TINY));
+    stack.drawString(Minecraft.getInstance().font, component, xOffset, yOffset, color, true);
   }
 }

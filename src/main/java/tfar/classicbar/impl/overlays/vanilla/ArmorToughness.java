@@ -40,10 +40,9 @@ public class ArmorToughness extends BarOverlayImpl {
             xStart += WIDTH - barWidth;
         }
         int yStart = screenHeight - vOffset;
-        int index = (int) Math.min(Math.ceil(armorToughness / 20), ConfigCache.armor_toughness.size()) - 1;
+        int index = computeWrapIndex(armorToughness, 20, ConfigCache.armor_toughness.size());
         Color primary = getPrimaryBarColor(index, player);
         //draw bar background portion
-        Color.reset();
         renderBarBackground(graphics, player, screenWidth, screenHeight, vOffset);
         if (index == 0) {
             applyConfiguredBarColor(primary);
@@ -97,10 +96,7 @@ public class ArmorToughness extends BarOverlayImpl {
     @Override
     public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         double toughness = player.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
-        int xStart = width / 2 + getIconOffset();
-        int yStart = height - vOffset;
-        textHelper(graphics, xStart, yStart, toughness, 20,
-                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
+        renderSimpleText(graphics, width, height, vOffset, toughness, 20, player);
     }
 
     @Override

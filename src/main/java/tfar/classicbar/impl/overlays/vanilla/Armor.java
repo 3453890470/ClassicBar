@@ -52,7 +52,7 @@ public class Armor extends BarOverlayImpl {
         //bar background
         renderBarBackground(graphics, player, screenWidth, screenHeight, vOffset);
         //how many layers are there? remember to start at 0
-        int index = (int) Math.min(Math.ceil(armor / 20), ConfigCache.armor.size()) - 1;
+        int index = computeWrapIndex(armor, 20, ConfigCache.armor.size());
         Color primary = getPrimaryBarColor(index, player);
 
         if (index == 0) {
@@ -136,10 +136,7 @@ public class Armor extends BarOverlayImpl {
     @Override
     public void renderText(GuiGraphics graphics, Player player, int width, int height, int vOffset) {
         double armor = player.getArmorValue();
-        int xStart = width / 2 + getIconOffset();
-        int yStart = height - vOffset;
-        textHelper(graphics, xStart, yStart, armor, 20,
-                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
+        renderSimpleText(graphics, width, height, vOffset, armor, 20, player);
     }
 
     @Override
