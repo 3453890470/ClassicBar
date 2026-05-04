@@ -11,7 +11,6 @@ import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
-import tfar.classicbar.impl.overlays.mod.Blood;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.util.ModUtils;
@@ -35,10 +34,6 @@ public class Hunger extends BarOverlayImpl {
 
     @Override
     public boolean shouldRender(Player player) {
-        // 血族活跃时由 Blood 处理，food 不渲染
-        if (Blood.isVampireBloodActive(player)) return false;
-        // 禁忌诅咒活跃时由 ForbiddenHunger 处理，food 不渲染
-        if (ModCompat.hasForbiddenCurse(player)) return false;
         return true;
     }
 

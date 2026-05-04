@@ -14,11 +14,12 @@ import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ModUtils;
 
 /**
- * 独立禁忌诅咒状态栏 (EnigmaticLegacy+ 兼容)。
+ * Dedicated Forbidden Curse overlay (EnigmaticLegacy+ compat).
  * <p>
- * 当玩家处于禁忌诅咒状态时，以独立 overlay 渲染满格饥饿条。
- * 与 food overlay 互斥——food 活跃时隐藏，由本 overlay 接管。
- * 架构与 {@link Blood} 一致，继承 {@link BarOverlayImpl}。
+ * Renders a full hunger bar as an independent overlay when the player
+ * is under the Forbidden Curse. Mutually exclusive with the food overlay
+ * — hides when food is active, takes over rendering.
+ * Architecture mirrors {@link Blood}, extends {@link BarOverlayImpl}.
  */
 public class ForbiddenHunger extends BarOverlayImpl {
 
@@ -31,7 +32,7 @@ public class ForbiddenHunger extends BarOverlayImpl {
         if (!ModList.get().isLoaded("enigmaticlegacyplus")) return false;
         if (!ClassicBarsConfig.isReservedModSupportEnabled("enigmaticlegacyplus")) return false;
         try {
-            // 血族优先：如果玩家是吸血鬼，由 blood 处理，禁忌栏不渲染
+            // vampire priority: blood overlay handles, forbidden hunger skips
             if (Blood.isVampireBloodActive(player)) return false;
             return ForbiddenFruit.isForbiddenCursed(player);
         } catch (Throwable t) {
@@ -47,7 +48,7 @@ public class ForbiddenHunger extends BarOverlayImpl {
         Color.reset();
         renderFullBarBackground(graphics, xStart, yStart);
 
-        // 饥饿值锁定为 20，渲染满条
+        // hunger locked at 20, render full bar
         double barWidth = BarOverlayImpl.WIDTH;
         double barX = xStart + (rightHandSide() ? BarOverlayImpl.WIDTH - barWidth : 0);
         applyConfiguredBarColor(ConfigCache.forbiddenCurseBarColor);

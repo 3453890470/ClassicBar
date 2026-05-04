@@ -171,21 +171,21 @@ public class Health extends BarOverlayImpl {
         boolean hasWither = player.hasEffect(MobEffects.WITHER);
         boolean hasFrozen = player.getTicksFrozen() > 0;
 
-        // 效果计数
+        // count active effects for offset
         int effectCount = 0;
         if (hasPoison) effectCount++;
         if (hasWither) effectCount++;
         if (hasFrozen) effectCount++;
 
-        final int OVERLAP = 4; // 露出4px，被盖5px
+        final int OVERLAP = 4; // 4px visible, 5px overlapped
         boolean baseFlashing = healthUpdateCounter > (long) guiTicks;
 
         if (rightHandSide()) {
-            // === 右侧图标：基础在最左（靠近条），效果向右延伸 ===
+            // === right side: base icon leftmost (near bar), effects extend right ===
             int startX = baseX + effectCount * OVERLAP;
             int currentX = startX;
 
-            // 从右到左绘制（底层→顶层）：冻伤→凋零→中毒→基础
+            // draw right-to-left (bottom→top): frozen→wither→poison→base
             if (hasFrozen) {
                 ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
                     BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING, baseFlashing, guiTicks);
@@ -201,16 +201,16 @@ public class Health extends BarOverlayImpl {
                     BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING, baseFlashing, guiTicks);
                 currentX -= OVERLAP;
             }
-            // 基础 HEALTH 图标（最左，顶层）
+            // base HEALTH icon (leftmost, top layer)
             ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
                 BarIcons.HEALTH, BarIcons.HEALTH_BLINKING, baseFlashing, guiTicks);
 
         } else {
-            // === 左侧图标：基础在最右（靠近条），效果向左延伸 ===
+            // === left side: base icon rightmost (near bar), effects extend left ===
             int startX = baseX - effectCount * OVERLAP;
             int currentX = startX;
 
-            // 从左到右绘制（底层→顶层）：冻伤→凋零→中毒→基础
+            // draw left-to-right (bottom→top): frozen→wither→poison→base
             if (hasFrozen) {
                 ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
                     BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING, baseFlashing, guiTicks);
@@ -226,7 +226,7 @@ public class Health extends BarOverlayImpl {
                     BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING, baseFlashing, guiTicks);
                 currentX += OVERLAP;
             }
-            // 基础 HEALTH 图标（最右，顶层）
+            // base HEALTH icon (rightmost, top layer)
             ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
                 BarIcons.HEALTH, BarIcons.HEALTH_BLINKING, baseFlashing, guiTicks);
         }

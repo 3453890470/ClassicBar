@@ -12,6 +12,13 @@ import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ColorUtils;
 import tfar.classicbar.util.ModUtils;
 
+/**
+ * ClassicBar overlay for Vampirism blood level.
+ * <p>
+ * Renders the player's vampire blood level as a classic-style progress bar
+ * with deep red (#AA0000) primary and bright red (#FF4444) accent.
+ * Only renders when Vampirism is loaded and the player is a vampire.
+ */
 public class Blood extends BarOverlayImpl {
 
     public Blood() {
@@ -19,8 +26,8 @@ public class Blood extends BarOverlayImpl {
     }
 
     /**
-     * 运行时检测：玩家是否为吸血鬼（血族等级 > 0）。
-     * 供 {@link ForbiddenHunger} 等互斥 overlay 调用。
+     * runtime check: is player a vampire (blood level > 0)
+     * Used by {@link ForbiddenHunger} and other exclusive overlays.
      */
     public static boolean isVampireBloodActive(Player player) {
         if (!ModList.get().isLoaded("vampirism")) return false;

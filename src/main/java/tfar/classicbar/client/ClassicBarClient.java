@@ -7,16 +7,16 @@ import tfar.classicbar.config.ClassicBarsConfig;
 
 public final class ClassicBarClient {
 
-  private ClassicBarClient() {
-  }
+    private ClassicBarClient() {
+    }
 
-  public static void init(IEventBus modBus) {
-    EventHandler.bootstrap();
-    modBus.addListener(ClassicBarsConfig::onConfigLoading);
-    modBus.addListener(ClassicBarsConfig::onConfigReloading);
-    modBus.addListener(EventHandler::registerGuiLayers);
-    NeoForge.EVENT_BUS.addListener(EventHandler::disableVanillaLayers);
-    NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, EventHandler::finalizeFoodLevelCancellation);
-    NeoForge.EVENT_BUS.addListener(EventHandler::onDebugPlayerTick);
-  }
+    public static void init(IEventBus modBus) {
+        EventHandler.bootstrap();
+        modBus.addListener(ClassicBarsConfig::onConfigLoading);
+        modBus.addListener(ClassicBarsConfig::onConfigReloading);
+        modBus.addListener(EventHandler::registerGuiLayers);
+        NeoForge.EVENT_BUS.addListener(EventHandler::disableVanillaLayers);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, EventHandler::finalizeFoodLevelCancellation);
+        NeoForge.EVENT_BUS.addListener(EventHandler::onDebugPlayerTick);
+    }
 }

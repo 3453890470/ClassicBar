@@ -23,7 +23,7 @@ final class VanillaLayerCancellationPolicy {
             return true;
         }
 
-        // 如果 ClassicBar 会渲染吸收条（非 DISABLED 且在布局中），就可以安全取消整个原版层
+        // if ClassicBar renders absorption bar (non-DISABLED, in layout), safe to cancel entire vanilla layer
         return !isDisabled(absorptionMode) && absorptionActiveInLayout;
     }
 

@@ -26,8 +26,8 @@ public final class BarIcons {
     public static final ResourceLocation MOUNT_HEALTH = icon("mount_health");
     public static final ResourceLocation BLOOD = icon("blood");
 
-    //#region Forbidden Fruit / 禁忌诅咒状态（EnigmaticLegacy+ 兼容）
-    /** 禁忌诅咒状态下的饥饿条图标（EnigmaticLegacy+ 兼容） */
+    //#region Forbidden Curse (EnigmaticLegacy+ compatibility)
+    /** Forbidden curse hunger bar icon (EnigmaticLegacy+ compat) */
     public static final ResourceLocation FORBIDDEN_HUNGER = icon("forbidden_hunger");
     //#endregion
 

@@ -35,22 +35,22 @@ public class Thirst extends BarOverlayImpl {
         super("thirst_level");
     }
 
-    /** 消耗闪烁追踪 */
+    /** Consumption flash tracking */
     private double lastThirstLevel = 0;
     private long thirstUpdateCounter = 0;
 
-    /** 口渴值内部封装 */
+    /** Thirst data internal record */
     private record ThirstData(int thirst, int hydration, float exhaustion) {}
 
     // ========================================================================
-    //  API Routing — TAN 优先
+    //  API Routing — TAN priority
     // ========================================================================
 
     /**
-     * 获取口渴数据。TAN 优先（如果两模组均加载）。
+     * Fetch thirst data. TAN first (if both mods are loaded).
      */
     private static ThirstData getThirstData(Player player) {
-        // [TAN 兼容暂时搁置] Tough As Nails 的意志坚定系统暂不激活
+        // [TAN compat shelved] Tough As Nails thirst system not activated in this build
         if (ModList.get().isLoaded("toughasnails")) {
             try {
                 toughasnails.api.thirst.IThirst tan = toughasnails.api.thirst.ThirstHelper.getThirst(player);
@@ -77,11 +77,11 @@ public class Thirst extends BarOverlayImpl {
     }
 
     /**
-     * 运行时检测：玩家是否处于活跃口渴状态（模组已加载且可获取数据）。
-     * 供 {@link #shouldRender} 及外部互斥检测调用。
+     * Runtime check: is player in active thirst state (mod loaded + data available).
+     * Used by {@link #shouldRender} and external mutual exclusion checks.
      */
     public static boolean isThirstActive(Player player) {
-        // [TAN 兼容暂时搁置] Tough As Nails 的意志坚定系统暂不激活
+        // [TAN compat shelved] Tough As Nails thirst system not activated in this build
         if (ModList.get().isLoaded("toughasnails")) {
             try {
                 return toughasnails.api.thirst.ThirstHelper.getThirst(player) != null;
@@ -103,7 +103,7 @@ public class Thirst extends BarOverlayImpl {
     }
 
     // ========================================================================
-    //  BarOverlayImpl 实现
+    //  BarOverlayImpl implementation
     // ========================================================================
 
     @Override
@@ -119,9 +119,9 @@ public class Thirst extends BarOverlayImpl {
         double hydration = data.hydration();
 
         double barWidthT = getBarWidth(player);
-        double barWidthH = 0; // 提升作用域，供 drink preview 使用
+        double barWidthH = 0; // widen scope for drink preview
 
-        // 检测口渴值下降 → 触发图标闪烁
+        // detect thirst decrease → trigger icon flash
         int updateCounter = context.getGuiTicks();
         if (thirst < lastThirstLevel) {
             thirstUpdateCounter = updateCounter + 2;
@@ -131,11 +131,11 @@ public class Thirst extends BarOverlayImpl {
         int xStart = screenWidth / 2 + getHOffset();
         int yStart = screenHeight - vOffset;
 
-        // 背景
+        // background
         Color.reset();
         renderFullBarBackground(graphics, xStart, yStart);
 
-        // 主条：口渴值
+        // main bar: thirst value
         Color thirstColor = getSecondaryBarColor(0, player);
         Color hydrationColor = getPrimaryBarColor(0, player);
 
@@ -143,7 +143,7 @@ public class Thirst extends BarOverlayImpl {
         applyConfiguredBarColor(thirstColor);
         renderPartialBar(graphics, f + 2, yStart + 2, barWidthT);
 
-        // 子条：解渴值（渲染在主条上方，类似饱食度条叠加在饥饿条上的方式）
+        // sub-bar: hydration value (rendered atop main bar, similar to saturation on hunger)
         if (hydration > 0 && ClassicBarsConfig.showHydrationBar.get()) {
             barWidthH = ModUtils.getWidth(hydration, maxThirst);
             f = xStart + (rightHandSide() ? BarOverlayImpl.WIDTH - barWidthH : 0);
@@ -179,7 +179,7 @@ public class Thirst extends BarOverlayImpl {
                     }
                 }
             } catch (Throwable t) {
-                // TWT 未加载或无数据时静默跳过
+                // TWT not loaded or no data — silent skip
             }
         }
     }
@@ -208,19 +208,18 @@ public class Thirst extends BarOverlayImpl {
         int guiTicks = ModUtils.getGuiTicks();
         boolean flashing = thirstUpdateCounter > (long) guiTicks;
 
-        // 当口渴值下降时闪烁图标（目前 normal 与 blinking 使用同一纹理，
-        // 待 BarIcons.THIRST_BLINKING 添加后替换第二个参数即可启用闪烁效果）
+        // flash icon on thirst decrease; normal & blinking use same texture until BarIcons.THIRST_BLINKING is added
         ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
                 BarIcons.THIRST, BarIcons.THIRST, flashing, guiTicks);
     }
 
     // ========================================================================
-    //  颜色路由
+    //  Color routing
     // ========================================================================
 
     /**
-     * 解渴值（hydration）颜色 — 作为子条渲染在主条上方。
-     * 对应 Hunger 中 {@code getPrimaryBarColor} 管理饱食度颜色的模式。
+     * Hydration bar color — rendered as sub-bar atop the main bar.
+     * Mirrors Hunger's {@code getPrimaryBarColor} saturation color pattern.
      */
     @Override
     public Color getPrimaryBarColor(int index, Player player) {
@@ -229,8 +228,8 @@ public class Thirst extends BarOverlayImpl {
     }
 
     /**
-     * 口渴值（thirst）颜色 — 主条颜色。
-     * 对应 Hunger 中 {@code getSecondaryBarColor} 管理饥饿颜色的模式。
+     * Thirst bar color — main bar color.
+     * Mirrors Hunger's {@code getSecondaryBarColor} hunger color pattern.
      */
     @Override
     public Color getSecondaryBarColor(int index, Player player) {

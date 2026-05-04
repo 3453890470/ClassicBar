@@ -34,6 +34,7 @@ public abstract class BarOverlayImpl implements BarOverlay {
         this.name = name;
     }
 
+    @Override
     public boolean shouldRender(Player player) {
         return true;
     }
@@ -145,7 +146,7 @@ public abstract class BarOverlayImpl implements BarOverlay {
         }
     }
     public void textHelper(GuiGraphics graphics, int xStart, int yStart, double stat, double maxStat, int color, TextFormat format) {
-        // 防止除零
+        // prevent division by zero
         if (maxStat <= 0) {
             maxStat = 1;
         }
@@ -170,14 +171,14 @@ public abstract class BarOverlayImpl implements BarOverlay {
             ModUtils.drawStringOnHUD(graphics, text, xStart - 9 * i2 - i3 + 5, yStart - 2, color);
         }
     }
-    public void renderFullBarBackground(GuiGraphics matrices, int xStart, int yStart) {
-        ModUtils.drawTexturedModalRect(matrices, xStart, yStart, 0, 0, WIDTH + 4, 9);
+    public void renderFullBarBackground(GuiGraphics graphics, int xStart, int yStart) {
+        ModUtils.drawTexturedModalRect(graphics, xStart, yStart, 0, 0, WIDTH + 4, 9);
     }
-    public void renderFullBar(GuiGraphics matrices, int xStart, int yStart) {
-        renderPartialBar(matrices,xStart,yStart,WIDTH);
+    public void renderFullBar(GuiGraphics graphics, int xStart, int yStart) {
+        renderPartialBar(graphics,xStart,yStart,WIDTH);
     }
-    public void renderPartialBar(GuiGraphics matrices, double xStart, int yStart,double barWidth) {
-        ModUtils.drawTexturedModalRect(matrices, xStart, yStart, BAR_U, BAR_V, barWidth, HEIGHT);
+    public void renderPartialBar(GuiGraphics graphics, double xStart, int yStart,double barWidth) {
+        ModUtils.drawTexturedModalRect(graphics, xStart, yStart, BAR_U, BAR_V, barWidth, HEIGHT);
     }
 
     protected void renderPreviewBar(GuiGraphics graphics, double previewValue, double maxValue,
@@ -188,7 +189,7 @@ public abstract class BarOverlayImpl implements BarOverlay {
         double previewX = rightHandSide()
             ? xStart + WIDTH + 2 - previewWidth
             : xStart + currentBarWidth + 2;
-        // 钳位到容器边界
+        // clamp to container bounds
         double containerLeft = xStart + 2;
         double containerRight = xStart + WIDTH + 2;
         if (rightHandSide()) {

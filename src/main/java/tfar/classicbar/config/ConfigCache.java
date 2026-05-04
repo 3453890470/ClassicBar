@@ -29,8 +29,8 @@ public class ConfigCache {
     public static boolean disableFdNourishmentOverlay;
     public static boolean enableNourishmentCompat;
     public static boolean enableSatiatedShieldCompat;
-    public static Color forbiddenCurseBarColor;  // 禁忌诅咒状态饥饿条颜色
-    public static boolean enableEnigmaticLegacyPlus; // EnigmaticLegacyPlus 兼容开关
+    public static Color forbiddenCurseBarColor;  // forbidden curse hunger bar color
+    public static boolean enableEnigmaticLegacyPlus; // EnigmaticLegacyPlus compat toggle
     public static Color hydration;
     public static Color hydrationDebuff;
     public static Color air;
@@ -102,7 +102,7 @@ public class ConfigCache {
         air = ColorUtils.hex2Color(ClassicBarsConfig.airBarColor.get());
         frozenHealth = ColorUtils.hex2Color(ClassicBarsConfig.frozenHealthColor.get());
 
-        // 健康覆盖层颜色（从 #AARRGGBB 配置读取）
+        // health overlay color (parsed from #AARRGGBB config)
         ColorUtils.ParsedHexColor parsed;
 
         parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthPoisonOverlayColor.get());

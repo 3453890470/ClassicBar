@@ -16,16 +16,16 @@ import tfar.classicbar.config.ClassicBarsConfig;
 @Mod(value = ClassicBar.MODID, dist = Dist.CLIENT)
 public class ClassicBar {
 
-  public static final String MODID = "classicbar";
+    public static final String MODID = "classicbar";
 
-  public static final ResourceLocation FONT_3X5 = ResourceLocation.fromNamespaceAndPath(MODID, "3x5");
-  public static final ResourceLocation FONT_3X5_TINY = ResourceLocation.fromNamespaceAndPath(MODID, "3x5_tiny");
+    public static final ResourceLocation FONT_3X5 = ResourceLocation.fromNamespaceAndPath(MODID, "3x5");
+    public static final ResourceLocation FONT_3X5_TINY = ResourceLocation.fromNamespaceAndPath(MODID, "3x5_tiny");
 
-  public static final Logger logger = LogManager.getLogger();
+    public static final Logger logger = LogManager.getLogger();
 
-  public ClassicBar(IEventBus modBus, ModContainer modContainer) {
-    modContainer.registerConfig(ModConfig.Type.CLIENT, ClassicBarsConfig.CLIENT_SPEC);
-    modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-    ClassicBarClient.init(modBus);
-  }
+    public ClassicBar(IEventBus modBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClassicBarsConfig.CLIENT_SPEC);
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        ClassicBarClient.init(modBus);
+    }
 }
