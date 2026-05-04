@@ -59,10 +59,3 @@ Status icons are bars now
     ordering="NONE"
     versionRange="[0.6.0,)"
 
-[[dependencies.classicbar]]
-    modId="ars_nouveau"
-    type="optional"
-    side="CLIENT"
-    ordering="NONE"
-    versionRange="[5.11,)"
-

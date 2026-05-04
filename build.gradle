@@ -110,9 +110,6 @@ dependencies {
     runtimeOnly "maven.modrinth:caelus:KsfI4QsR"
     runtimeOnly "maven.modrinth:patchouli:BIogJv2D"
 
-    // 新生魔艺 (Ars Nouveau) — BlameJared Maven
-    compileOnly "com.hollingsworth.ars_nouveau:ars_nouveau-1.21.1:5.11.3.1328"
-
     // === End optional mod compatibility ===
 }
 
@@ -123,12 +120,6 @@ tasks.named('test', Test).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-tasks.register('generateManaIcon', JavaExec) {
-    description = 'Generate the 9x9 mana icon PNG (temporary)'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'tfar.classicbar.util.GenManaIcon'
 }
 
 tasks.named('processResources', ProcessResources).configure {

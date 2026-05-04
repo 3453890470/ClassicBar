@@ -315,18 +315,5 @@
   "classicbar.config.debug.vampire": "Vampire Level 1",
   "classicbar.config.debug.vampire.tooltip": "Sets vampire level to 1, disable to revert to human",
   "classicbar.config.debug.forbidden_curse": "Forbidden Curse",
-  "classicbar.config.debug.forbidden_curse.tooltip": "Applies Enigmatic Legacy+ Forbidden Curse, disable to remove",
-
-  "classicbar.config.general.mana_bar_color": "Mana Bar Color",
-  "classicbar.config.general.mana_bar_color.tooltip": "Color of the Ars Nouveau mana bar",
-  "classicbar.config.bars.mana.name": "Ars Nouveau Mana",
-  "classicbar.config.bars.mana.desc": "Displays your Ars Nouveau mana as a bar",
-  "classicbar.config.bars.mana.mode": "Mana Mode",
-  "classicbar.config.bars.mana.mode.tooltip": "Override or disable the Ars Nouveau mana bar",
-  "classicbar.config.bars.mana.text": "Show Mana Text",
-  "classicbar.config.bars.mana.text.tooltip": "Show the mana value as text on the bar",
-  "classicbar.config.bars.mana.icon": "Mana Icon",
-  "classicbar.config.bars.mana.icon.tooltip": "Icon displayed for the mana bar",
-  "classicbar.config.bars.mana.text_format": "Mana Text Format",
-  "classicbar.config.bars.mana.text_format.tooltip": "How to display the mana value"
+  "classicbar.config.debug.forbidden_curse.tooltip": "Applies Enigmatic Legacy+ Forbidden Curse, disable to remove"
 }

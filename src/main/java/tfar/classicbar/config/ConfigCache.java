@@ -34,7 +34,6 @@ public class ConfigCache {
     public static Color hydration;
     public static Color hydrationDebuff;
     public static Color air;
-    public static Color mana;
     public static List<Color> normal = new ArrayList<>();
     public static List<Color> poison = new ArrayList<>();
     public static List<Color> wither = new ArrayList<>();
@@ -69,19 +68,6 @@ public class ConfigCache {
         return activeLayoutOverlays.contains(overlayId);
     }
 
-    private static void applyOverlayColor(ModConfigSpec.ConfigValue<String> config,
-                                           java.util.function.Consumer<Color> colorSetter,
-                                           java.util.function.Consumer<Float> alphaSetter) {
-        ColorUtils.ParsedHexColor parsed = ColorUtils.parseHexColor(config.get());
-        if (parsed != null) {
-            colorSetter.accept(parsed.color());
-            alphaSetter.accept(parsed.alphaAsFloat());
-        } else {
-            colorSetter.accept(Color.BLACK);
-            alphaSetter.accept(1.0f);
-        }
-    }
-
     public static void bake() {
         clear();
         icons = ClassicBarsConfig.displayIcons.get();
@@ -114,15 +100,37 @@ public class ConfigCache {
         showHeldDrinkOverlay = ClassicBarsConfig.showHeldDrinkOverlay.get();
         showThirstExhaustionOverlay = ClassicBarsConfig.showThirstExhaustionOverlay.get();
         air = ColorUtils.hex2Color(ClassicBarsConfig.airBarColor.get());
-        mana = ColorUtils.hex2Color(ClassicBarsConfig.manaBarColor.get());
         frozenHealth = ColorUtils.hex2Color(ClassicBarsConfig.frozenHealthColor.get());
 
-        applyOverlayColor(ClassicBarsConfig.healthPoisonOverlayColor,
-                c -> healthPoisonOverlay = c, a -> healthPoisonOverlayAlpha = a);
-        applyOverlayColor(ClassicBarsConfig.healthWitherOverlayColor,
-                c -> healthWitherOverlay = c, a -> healthWitherOverlayAlpha = a);
-        applyOverlayColor(ClassicBarsConfig.healthFrozenOverlayColor,
-                c -> healthFrozenOverlay = c, a -> healthFrozenOverlayAlpha = a);
+        // 健康覆盖层颜色（从 #AARRGGBB 配置读取）
+        ColorUtils.ParsedHexColor parsed;
+
+        parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthPoisonOverlayColor.get());
+        if (parsed != null) {
+            healthPoisonOverlay = parsed.color();
+            healthPoisonOverlayAlpha = parsed.alphaAsFloat();
+        } else {
+            healthPoisonOverlay = Color.BLACK;
+            healthPoisonOverlayAlpha = 1.0f;
+        }
+
+        parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthWitherOverlayColor.get());
+        if (parsed != null) {
+            healthWitherOverlay = parsed.color();
+            healthWitherOverlayAlpha = parsed.alphaAsFloat();
+        } else {
+            healthWitherOverlay = Color.BLACK;
+            healthWitherOverlayAlpha = 1.0f;
+        }
+
+        parsed = ColorUtils.parseHexColor(ClassicBarsConfig.healthFrozenOverlayColor.get());
+        if (parsed != null) {
+            healthFrozenOverlay = parsed.color();
+            healthFrozenOverlayAlpha = parsed.alphaAsFloat();
+        } else {
+            healthFrozenOverlay = Color.BLACK;
+            healthFrozenOverlayAlpha = 1.0f;
+        }
     }
 
     private static void cacheList(ModConfigSpec.ConfigValue<List<? extends String>> config, List<Color> cache) {

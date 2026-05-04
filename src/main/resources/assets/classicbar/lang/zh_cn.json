@@ -315,17 +315,5 @@
   "classicbar.config.debug.vampire": "吸血鬼等级1",
   "classicbar.config.debug.vampire.tooltip": "设置为1级吸血鬼，关闭恢复为人类",
   "classicbar.config.debug.forbidden_curse": "禁忌诅咒",
-  "classicbar.config.debug.forbidden_curse.tooltip": "应用神秘遗物+禁忌诅咒，关闭移除",
-
-  "classicbar.config.general.mana_bar_color": "魔源条颜色",
-  "classicbar.config.bars.mana.name": "Ars Nouveau 魔源",
-  "classicbar.config.bars.mana.desc": "以条状显示你的 Ars Nouveau 魔源值",
-  "classicbar.config.bars.mana.mode": "魔源模式",
-  "classicbar.config.bars.mana.mode.tooltip": "覆盖或禁用 Ars Nouveau 魔源条",
-  "classicbar.config.bars.mana.text": "显示魔源数值",
-  "classicbar.config.bars.mana.text.tooltip": "在魔源条上以文字显示魔源值",
-  "classicbar.config.bars.mana.icon": "魔源图标",
-  "classicbar.config.bars.mana.icon.tooltip": "魔源条显示的图标",
-  "classicbar.config.bars.mana.text_format": "魔源文字格式",
-  "classicbar.config.bars.mana.text_format.tooltip": "魔源数值的显示方式"
+  "classicbar.config.debug.forbidden_curse.tooltip": "应用神秘遗物+禁忌诅咒，关闭移除"
 }

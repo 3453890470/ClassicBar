@@ -45,7 +45,7 @@ class PureClientConvergenceTest {
       clientSideDeclarations++;
     }
 
-    assertEquals(6, clientSideDeclarations, "NeoForge metadata should declare client-only dependencies for farmersdelight, kaleidoscope_cookery, vampirism, thirst, enigmaticlegacyplus, and ars_nouveau");
+    assertEquals(5, clientSideDeclarations, "NeoForge metadata should declare client-only dependencies for farmersdelight, kaleidoscope_cookery, vampirism, thirst, and enigmaticlegacyplus");
     assertFalse(metadata.contains("side=\"BOTH\""), "NeoForge metadata should not keep BOTH-side dependency declarations");
   }
 

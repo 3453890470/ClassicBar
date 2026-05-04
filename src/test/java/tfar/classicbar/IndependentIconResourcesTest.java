@@ -34,7 +34,6 @@ class IndependentIconResourcesTest {
           "armor_toughness",
           "mount_health",
           "air",
-          "mana",
           "fallback"
   );
   private static final List<String> FORBIDDEN_ICON_REFERENCES = List.of(
@@ -63,7 +62,6 @@ class IndependentIconResourcesTest {
     ACTIVE_BAR_CONSTANTS.put("armor_toughness", "ARMOR_TOUGHNESS");
     ACTIVE_BAR_CONSTANTS.put("health_mount", "MOUNT_HEALTH");
     ACTIVE_BAR_CONSTANTS.put("air", "AIR");
-    ACTIVE_BAR_CONSTANTS.put("mana", "MANA");
 
     COMPAT_BAR_CONSTANTS.put("blood", "BLOOD");
     COMPAT_BAR_CONSTANTS.put("thirst", "THIRST");
