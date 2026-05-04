@@ -254,7 +254,7 @@ public boolean shouldRender(Player player) {
 
 ### 3.5 import
 
-**规则**：显式 import，禁止通配符 `*`。
+**规则**：显式 import 为主。从同一包导入 ≥4 个类时，允许合并为通配符 `*`。
 
 ```java
 // ✅ 正确：显式 import
@@ -836,6 +836,95 @@ Javadoc 中必须标注 overlay 的颜色方案，方便维护者快速理解视
  */
 public class Blood extends BarOverlayImpl { ... }
 ```
+
+## §10 补充规范
+
+### 10.1 兼容模组守卫模式
+
+项目使用三层守卫模式处理可选模组兼容代码：
+
+```
+① ModList.get().isLoaded("modid")  → 快速失败门卫
+② try { API 调用 }                 → 捕获反射/版本不匹配
+③ catch (Throwable t) { /* 静默 */ } → 不因兼容模组问题崩溃
+```
+
+所有兼容模组 overlay 必须遵循此模式。上层业务逻辑不做防卫，由 overlay 自身完成。
+
+### 10.2 catch 块规范
+
+| 场景 | 处理方式 |
+|---|---|
+| 兼容模组 API 调用失败（预期内） | 静默忽略，不打印日志 |
+| 代码预期不会抛出的异常 | `ClassicBar.logger.warn()` 记录一次 |
+| 断言/配置异常 | `ClassicBar.logger.error()` + 合理的回退值 |
+
+### 10.3 ResourceLocation 创建
+
+所有 `ResourceLocation` 统一使用 `ResourceLocation.fromNamespaceAndPath(namespace, path)`。
+
+| 写法 | 评级 |
+|---|---|
+| `ResourceLocation.fromNamespaceAndPath("ns", "path")` | ✅ 推荐 |
+| `ResourceLocation.parse("ns:path")` | ⚠️ 允许（字符串拼接易错） |
+| `ResourceLocation.tryBuild("ns", "path")` | ❌ 避免（null 返回值隐蔽） |
+| `new ResourceLocation("ns:path")` | ❌ 禁止（1.21+ 已弃用） |
+
+### 10.4 日志分级规范
+
+| 级别 | 使用场景 |
+|---|---|
+| `logger.debug` | 详细诊断，仅在开发调试时开启 |
+| `logger.info` | 功能启用/禁用、配置热加载等常规事件 |
+| `logger.warn` | 预期外的运行时问题，不影响主流程 |
+| `logger.error` | 必须通知开发者的异常，附异常堆栈 |
+
+### 10.5 Record 使用
+
+Java 16+ record 适用于临时数据传输对象（DTO），如 `ThirstData`、`OverlayRenderState`。
+
+- 允许：方法内部传输、配置文件读取、回调数据打包
+- 避免：需要继承的、需要 JPA 映射的、频繁修改状态的场景
+
+### 10.6 Switch 表达式
+
+多路分支优先使用 switch 表达式（Java 14+），而非 if-else 链。
+
+```java
+// ✅ 推荐 — switch 表达式
+return switch (type) {
+    case "health" -> HEALTH;
+    case "armor" -> ARMOR;
+    default -> FALLBACK;
+};
+
+// ❌ 避免 — 长 if-else 链
+if (type.equals("health")) return HEALTH;
+else if (type.equals("armor")) return ARMOR;
+```
+
+### 10.7 提交信息格式
+
+提交信息使用以下前缀：
+
+| 前缀 | 场景 |
+|---|---|
+| `feat:` | 新功能 |
+| `fix:` | 缺陷修复 |
+| `docs:` | 文档变更 |
+| `chore:` | 构建/配置/工具链变更 |
+| `refactor:` | 代码重构（不改变行为） |
+| `test:` | 测试相关 |
+
+例如：
+
+```
+feat: add Ars Nouveau mana bar overlay
+fix: correct mana bar color hex parsing
+docs: add import threshold rule
+```
+
+---
 
 ---
 
