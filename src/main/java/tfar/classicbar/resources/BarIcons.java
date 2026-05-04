@@ -32,10 +32,18 @@ public final class BarIcons {
     //#endregion
 
     public static final ResourceLocation THIRST = icon("thirst");
+    public static final ResourceLocation THIRST_BLINKING = icon("thirst_blinking");
     public static final ResourceLocation STAMINA = icon("stamina");
     public static final ResourceLocation FEATHERS = icon("feathers");
+    /** Ars Nouveau 魔力值状态栏图标 */
+    public static final ResourceLocation MANA = icon("mana");
     public static final ResourceLocation FOOD_NOURISHMENT = icon("food_nourishment");
     public static final ResourceLocation FOOD_SATIATED_SHIELD = icon("food_satiated_shield");
+    public static final ResourceLocation FOOD_SATIATED_SHIELD_BLINKING = icon("food_satiated_shield_blinking");
+    public static final ResourceLocation THIRST_HUNGER = icon("thirst_hunger");
+    public static final ResourceLocation THIRST_HUNGER_BLINKING = icon("thirst_hunger_blinking");
+    public static final ResourceLocation THIRST_NOURISHMENT = icon("thirst_nourishment");
+    public static final ResourceLocation THIRST_NOURISHMENT_BLINKING = icon("thirst_nourishment_blinking");
 
     private BarIcons() {
     }
@@ -53,6 +61,7 @@ public final class BarIcons {
             case "thirst", "thirst_level" -> THIRST;
             case "stamina", "stamina_b", "staminab" -> STAMINA;
             case "feathers" -> FEATHERS;
+            case "mana" -> MANA;
             default -> FALLBACK;
         };
     }

@@ -50,7 +50,7 @@ public class ClassicBarsConfig {
     // LEFT side
     "health", "armor", "absorption", "armor_toughness",
     // RIGHT side — health_mount at position 1
-    "health_mount", "food", "blood", "forbidden_hunger", "thirst_level", "air"
+    "health_mount", "food", "blood", "forbidden_hunger", "thirst_level", "air", "mana"
   );
 
   /** 默认放置在左侧的栏 ID 集合 */
@@ -72,7 +72,8 @@ public class ClassicBarsConfig {
     Map.entry("thirst_level", 3),
     Map.entry("blood", 4),
     Map.entry("forbidden_hunger", 5),
-    Map.entry("air", 6)
+    Map.entry("air", 6),
+    Map.entry("mana", 7)
   );
 
   public static boolean isActiveBarId(String id) {
@@ -117,6 +118,7 @@ public class ClassicBarsConfig {
   static ModConfigSpec.ConfigValue<String> hydrationBarColor;
   static ModConfigSpec.ConfigValue<String> hydrationBarDebuffColor;
   static ModConfigSpec.ConfigValue<String> airBarColor;
+  public static ModConfigSpec.ConfigValue<String> manaBarColor;
   static ModConfigSpec.ConfigValue<List<? extends String>> armorColors;
   static ModConfigSpec.ConfigValue<List<? extends String>> armorToughnessColors;
   static ModConfigSpec.ConfigValue<List<? extends String>> absorptionColors;
@@ -215,6 +217,7 @@ public class ClassicBarsConfig {
     airBarColor = builder.translation(generalKey("air_bar_color"))
 
             .define("air_bar_color", "#00E6E6", ClassicBarsConfig::isValidHexColor);
+    manaBarColor = builder.translation(generalKey("mana_bar_color")).define("mana_bar_color", "#4B00FF", ClassicBarsConfig::isValidHexColor);
     saturationBarColor = builder.translation(generalKey("saturation_bar_color"))
 
             .define("saturation_bar_color", "#FFCC00", ClassicBarsConfig::isValidHexColor);
@@ -326,6 +329,7 @@ public class ClassicBarsConfig {
     registerBarConfig(builder, "forbidden_hunger", BarIcons.FORBIDDEN_HUNGER, true);
     registerBarConfig(builder, "thirst_level", BarIcons.THIRST, true);
     registerBarConfig(builder, "air", BarIcons.AIR, true);
+    registerBarConfig(builder, "mana", BarIcons.MANA, true);
     builder.pop();
 
     builder.translation(sectionKey("mod_support"))
@@ -339,6 +343,7 @@ public class ClassicBarsConfig {
     registerReservedModSupport(builder, "farmersdelight", true);
     registerReservedModSupport(builder, "kaleidoscope_cookery", true);
     registerReservedModSupport(builder, "enigmaticlegacyplus", true);
+    registerReservedModSupport(builder, "ars_nouveau", true);
     builder.pop();
 
     // === Debug section (for development testing) ===

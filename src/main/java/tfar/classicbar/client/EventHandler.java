@@ -35,6 +35,7 @@ import auviotre.enigmatic.legacy.registries.EnigmaticAttachments;
 import tfar.classicbar.impl.overlays.mod.Blood;
 import tfar.classicbar.impl.overlays.mod.ForbiddenHunger;
 import tfar.classicbar.impl.overlays.mod.Thirst;
+import tfar.classicbar.impl.overlays.mod.Mana;
 import tfar.classicbar.util.ModUtils;
 
 import java.util.ArrayList;
@@ -73,6 +74,9 @@ public final class EventHandler {
     }
     if (ModList.get().isLoaded("toughasnails") || ModList.get().isLoaded("thirst")) {
       register(new Thirst());
+    }
+    if (ModList.get().isLoaded("ars_nouveau")) {
+      register(new Mana());
     }
   }
 
@@ -223,6 +227,16 @@ public final class EventHandler {
       event.setCanceled(true);
       return;
     }
+
+    // ★ 取消 Ars Nouveau 原生 mana HUD 层
+    if (ModList.get().isLoaded("ars_nouveau")
+        && "ars_nouveau".equals(loc.getNamespace())
+        && "mana_hud".equals(loc.getPath())
+        && ClassicBarsConfig.getBarSettings("mana").rendersClassicBar()) {
+      event.setCanceled(true);
+      return;
+    }
+
     if (player == null || player.getAbilities().instabuild || player.isSpectator()) {
       return;
     }
