@@ -1,10 +1,11 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.141'
-    id 'net.minecraftforge.accesstransformers' version '5.0.3'
+    alias libs.plugins.neoforge.moddev
+    alias libs.plugins.accesstransformers
+    id 'com.diffplug.spotless' version '7.0.3'
 }
 
-version = "${project.minecraft_version}-${project.mod_version}"
+version = "${libs.versions.minecraft.get()}-${libs.versions.mod.version.get()}"
 group = project.mod_group_id
 
 repositories {
@@ -24,14 +25,14 @@ repositories {
 }
 
 def resourceProperties = [
-        minecraft_version      : project.minecraft_version,
+        minecraft_version      : libs.versions.minecraft.get(),
         minecraft_version_range: project.minecraft_version_range,
-        neo_version            : project.neo_version,
+        neo_version            : libs.versions.neo.version.get(),
         loader_version_range   : project.loader_version_range,
         mod_id                 : project.mod_id,
         mod_name               : project.mod_name,
         mod_license            : project.mod_license,
-        mod_version            : project.mod_version,
+        mod_version            : libs.versions.mod.version.get(),
         mod_group_id           : project.mod_group_id,
         project_version        : project.version,
 ]
@@ -44,6 +45,9 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 sourceSets {
     main {
+        resources {
+            srcDir 'src/generated/resources'
+        }
         java {
             // TASK-04 compat quarantine: keep legacy mod overlays outside active compile.
             // The compat/ package is no longer quarantined — farmersdelight and kaleidoscope_cookery support are now active.
@@ -53,7 +57,7 @@ sourceSets {
 }
 
 neoForge {
-    version = project.neo_version
+    version = libs.versions.neo.version.get()
 
     runs {
         client {
@@ -63,6 +67,10 @@ neoForge {
         server {
             server()
             programArgument '--nogui'
+        }
+
+        data {
+            data()
         }
     }
 
@@ -74,42 +82,42 @@ neoForge {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.2')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter
 
     // === Optional mod compatibility ===
 
     // 农夫乐事 (Farmer's Delight)
-    compileOnly "maven.modrinth:farmers-delight:1.21.1-1.3.1"
-    runtimeOnly "maven.modrinth:farmers-delight:1.21.1-1.3.1"
+    compileOnly libs.farmers.delight
+    runtimeOnly libs.farmers.delight
 
     // 森罗物语 (Kaleidoscope Cookery)
-    compileOnly "maven.modrinth:kaleidoscope-cookery:1.3.0-neoforge+mc1.21.1"
-    runtimeOnly "maven.modrinth:kaleidoscope-cookery:1.3.0-neoforge+mc1.21.1"
+    compileOnly libs.kaleidoscope.cookery
+    runtimeOnly libs.kaleidoscope.cookery
 
     // 血族 (Vampirism)
     // compileOnly uses :api classifier to avoid pulling implementation classes
-    compileOnly "de.teamlapen.vampirism:Vampirism:1.21-${vampirism_version}:api"
-    runtimeOnly("de.teamlapen.vampirism:Vampirism:1.21-${vampirism_version}") {
+    compileOnly "de.teamlapen.vampirism:Vampirism:${libs.versions.vampirism.get()}:api"
+    runtimeOnly(libs.vampirism.core) {
         exclude group: 'com.github.glitchfiend', module: 'TerraBlender-neoforge'
     }
 
     // 神秘遗物+ (Enigmatic Legacy+)
     // Modrinth 项目 ID oIjj1Fan（避免 slug 中 + 号的 Maven 解析问题）
-    compileOnly "maven.modrinth:oIjj1Fan:ErPhQo57"
-    runtimeOnly "maven.modrinth:oIjj1Fan:ErPhQo57"
+    compileOnly libs.enigmaticlegacyplus
+    runtimeOnly libs.enigmaticlegacyplus
 
     // 口渴 (Thirst Was Taken)
-    compileOnly "maven.modrinth:iUheEnjm:YqPoqXIx"
-    runtimeOnly "maven.modrinth:iUheEnjm:YqPoqXIx"
+    compileOnly libs.thirst.was.taken
+    runtimeOnly libs.thirst.was.taken
 
     // 意志坚定 (Tough As Nails) — 临时禁用，仅编译期
-    compileOnly "maven.modrinth:ge1sOdFH:mboAbksk"
+    compileOnly libs.tough.as.nails
 
     // === 前置模组（由神秘遗物+ 自动传递，仅开发运行需要）===
-    runtimeOnly "maven.modrinth:curios:yohfFbgD"
-    runtimeOnly "maven.modrinth:caelus:KsfI4QsR"
-    runtimeOnly "maven.modrinth:patchouli:BIogJv2D"
+    runtimeOnly libs.curios
+    runtimeOnly libs.caelus
+    runtimeOnly libs.patchouli
 
     // === End optional mod compatibility ===
 }
@@ -127,5 +135,15 @@ tasks.named('processResources', ProcessResources).configure {
     inputs.properties(resourceProperties)
     filesMatching(['META-INF/neoforge.mods.toml']) {
         expand(resourceProperties)
+    }
+}
+
+spotless {
+    java {
+        target 'src/*/java/**/*.java'
+        palantirJavaFormat('2.28.0')
+        trimTrailingWhitespace()
+        removeUnusedImports()
+        endWithNewline()
     }
 }

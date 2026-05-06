@@ -1,0 +1,63 @@
+[versions]
+minecraft = "1.21.1"
+neo_version = "21.1.228"
+mod_version = "1.5.0"
+java = "21"
+
+# Plugins
+neoforge-moddev = "2.0.141"
+accesstransformers = "5.0.3"
+foojay-resolver = "0.8.0"
+
+# Test
+junit = "5.10.2"
+
+# Mod compat — Optional integration mods
+farmers-delight = "1.21.1-1.3.1"
+kaleidoscope-cookery = "1.3.0-neoforge+mc1.21.1"
+vampirism = "1.21-1.10.10"
+enigmaticlegacyplus = "ErPhQo57"
+thirst-was-taken = "YqPoqXIx"
+tough-as-nails = "mboAbksk"
+
+# Dev runtime dependencies
+curios = "yohfFbgD"
+caelus = "KsfI4QsR"
+patchouli = "BIogJv2D"
+
+[libraries]
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neo_version" }
+
+# Testing
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+
+# — Optional mod compatibility —
+
+# 农夫乐事 (Farmer's Delight)
+farmers-delight = { module = "maven.modrinth:farmers-delight", version.ref = "farmers-delight" }
+
+# 森罗物语 (Kaleidoscope Cookery)
+kaleidoscope-cookery = { module = "maven.modrinth:kaleidoscope-cookery", version.ref = "kaleidoscope-cookery" }
+
+# 血族 (Vampirism) — full jar (API classifier handled inline in build.gradle)
+vampirism-core = { module = "de.teamlapen.vampirism:Vampirism", version.ref = "vampirism" }
+
+# 神秘遗物+ (Enigmatic Legacy+)
+enigmaticlegacyplus = { module = "maven.modrinth:oIjj1Fan", version.ref = "enigmaticlegacyplus" }
+
+# 口渴 (Thirst Was Taken)
+thirst-was-taken = { module = "maven.modrinth:iUheEnjm", version.ref = "thirst-was-taken" }
+
+# 意志坚定 (Tough As Nails)
+tough-as-nails = { module = "maven.modrinth:ge1sOdFH", version.ref = "tough-as-nails" }
+
+# — Dev runtime dependencies —
+curios = { module = "maven.modrinth:curios", version.ref = "curios" }
+caelus = { module = "maven.modrinth:caelus", version.ref = "caelus" }
+patchouli = { module = "maven.modrinth:patchouli", version.ref = "patchouli" }
+
+[plugins]
+neoforge-moddev = { id = "net.neoforged.moddev", version.ref = "neoforge-moddev" }
+accesstransformers = { id = "net.minecraftforge.accesstransformers", version.ref = "accesstransformers" }
+foojay-resolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay-resolver" }

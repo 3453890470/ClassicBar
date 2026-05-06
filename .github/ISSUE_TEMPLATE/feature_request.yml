@@ -1,0 +1,33 @@
+name: Feature request
+description: Suggest an idea or compatibility request for Classic Bar
+title: "[FEATURE] "
+labels: [ enhancement ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your suggestion! ClassicBar is a **NeoForge 1.21.1 pure client-side HUD mod**.
+        If this is a compatibility request, please include the target mod details below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your idea
+      description: A clear and reasoned description of your idea. Preferably in great detail.
+      placeholder: I'd like to see a new bar type that shows ...
+    validations:
+      required: true
+
+  - type: input
+    id: target-mod
+    attributes:
+      label: Target mod (for compatibility requests)
+      description: If requesting compatibility with another mod, please provide the mod name and version.
+      placeholder: e.g. SomeOtherMod (MC 1.21.1, version 2.0.0)
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Reference screenshots / links
+      description: Any relevant images, mockups, or external references.
+      placeholder: Drag & drop images or paste links here.

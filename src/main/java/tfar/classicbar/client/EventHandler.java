@@ -23,18 +23,9 @@ import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
-import tfar.classicbar.impl.overlays.vanilla.Absorption;
-import tfar.classicbar.impl.overlays.vanilla.Air;
-import tfar.classicbar.impl.overlays.vanilla.Armor;
-import tfar.classicbar.impl.overlays.vanilla.ArmorToughness;
-import tfar.classicbar.impl.overlays.vanilla.Health;
-import tfar.classicbar.impl.overlays.vanilla.Hunger;
-import tfar.classicbar.impl.overlays.vanilla.MountHealth;
 import auviotre.enigmatic.legacy.contents.item.food.ForbiddenFruit;
 import auviotre.enigmatic.legacy.registries.EnigmaticAttachments;
-import tfar.classicbar.impl.overlays.mod.Blood;
-import tfar.classicbar.impl.overlays.mod.ForbiddenHunger;
-import tfar.classicbar.impl.overlays.mod.Thirst;
+import tfar.classicbar.register.ModOverlays;
 import tfar.classicbar.util.ModUtils;
 
 import java.util.ArrayList;
@@ -58,22 +49,18 @@ public final class EventHandler {
     private EventHandler() {
     }
 
+    /**
+     * Bootstraps overlay instances.
+     * <p>
+     * Delegates to {@link tfar.classicbar.register.ModOverlays#register()} which
+     * is the centralized registration point.
+     * This method is idempotent and safe to call multiple times.
+     */
     public static void bootstrap() {
         if (!registry.isEmpty()) {
             return;
         }
-
-        ClassicBar.logger.info("Registering Vanilla Overlays");
-        registerAll(new Health(), new Armor(), new Absorption(), new Hunger(), new ArmorToughness(), new MountHealth(), new Air());
-        if (ModList.get().isLoaded("vampirism")) {
-            register(new Blood());
-        }
-        if (ModList.get().isLoaded("enigmaticlegacyplus")) {
-            register(new ForbiddenHunger());
-        }
-        if (ModList.get().isLoaded("toughasnails") || ModList.get().isLoaded("thirst")) {
-            register(new Thirst());
-        }
+        ModOverlays.register();
     }
 
     public static void register(BarOverlay iBarOverlay) {
