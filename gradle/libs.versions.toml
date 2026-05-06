@@ -1,7 +1,7 @@
 [versions]
 minecraft = "1.21.1"
 neo_version = "21.1.228"
-mod_version = "1.5.0"
+mod_version = "1.5.1"
 java = "21"
 
 # Plugins

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.1] - 2026-05-06
+### Changed
+- 迁移至 Gradle 版本目录 (libs.versions.toml)，集中管理依赖版本
+- 集中化注册管理：ModOverlays、ModIcons、ModConfigs 独立注册类
+- 接入 Spotless 代码格式化 (palantirJavaFormat)
+- 升级 Gradle 至 9.5
+- 新增 Access Transformers 基础设施
+
+### Added
+- 数据生成器 (DataGen) 框架及语言提供者
+- GitHub CI 工作流配置
+
 ## [1.5.0] - 2026-05-03
 ### Added
 - Custom number font: 集成 3x5/3x5_tiny 像素数字字体，HUD 数字使用 FONT_3X5_TINY 渲染

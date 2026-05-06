@@ -171,6 +171,22 @@ public abstract class BarOverlayImpl implements BarOverlay {
             ModUtils.drawStringOnHUD(graphics, text, xStart - 9 * i2 - i3 + 5, yStart - 2, color);
         }
     }
+    protected int computeWrapIndex(double stat, double maxStat, int colorListSize) {
+        return Math.min((int) Math.ceil(stat / maxStat), colorListSize) - 1;
+    }
+
+    protected void renderSimpleText(GuiGraphics graphics, int width, int height, int vOffset,
+                                    double stat, double maxStat, Player player) {
+        int xStart = width / 2 + getIconOffset();
+        int yStart = height - vOffset;
+        textHelper(graphics, xStart, yStart, stat, maxStat,
+                   getConfiguredTextColor(getPrimaryBarColor(0, player)), barSettings.textFormat);
+    }
+
+    protected double getBarStartX(int xStart, double barWidth) {
+        return xStart + (rightHandSide() ? WIDTH - barWidth : 0);
+    }
+
     public void renderFullBarBackground(GuiGraphics graphics, int xStart, int yStart) {
         ModUtils.drawTexturedModalRect(graphics, xStart, yStart, 0, 0, WIDTH + 4, 9);
     }
