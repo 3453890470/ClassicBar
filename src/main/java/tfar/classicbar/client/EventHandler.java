@@ -228,6 +228,12 @@ public final class EventHandler {
             return;
         }
 
+        if (VanillaGuiLayers.FOOD_LEVEL.equals(layerName) 
+                && shouldCancelIndependentVanillaLayer(resolveOverlayRenderState("food", player))) {
+            event.setCanceled(true);
+            return;
+        }
+
         // cancel FarmersDelight nourishment overlay (config-controlled, default: enabled)
         ResourceLocation fdNourishment = ResourceLocation.parse("farmersdelight:nourishment");
         if (fdNourishment.equals(layerName)

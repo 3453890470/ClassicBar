@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.5.2 - 2026-05-07
+
+### Fix
+- Fix food overlay rendering when forbidden_hunger or blood should take over
+  (mutual exclusion: food now hidden when forbidden curse or vampire blood is active)
+- Cancel vanilla FOOD_LEVEL layer when ClassicBar food overlay is active
+
+### Config
+- Fix missing localization keys:
+  - `classicbar.config.section.debug` (was misnamed as `classicbar.config.debug`)
+  - `classicbar.config.bars.thirst_level.icon`
+  - `classicbar.config.bars.thirst_level.text_format`
+  - `classicbar.config.mod_support.thirst.enabled`
+
+### Chore
+- Remove Feathers placeholder support (no NeoForge 1.21.1 version available)
+- Remove unbound Stamina fallback settings and icon resources
+- Clean up dead code: FEATHERS/STAMINA icon constants, fallback settings, textures
+
 ## [1.5.1] - 2026-05-06
 ### Changed
 - 迁移至 Gradle 版本目录 (libs.versions.toml)，集中管理依赖版本

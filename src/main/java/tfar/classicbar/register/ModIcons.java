@@ -39,8 +39,6 @@ public final class ModIcons {
     //#endregion
 
     public static final ResourceLocation THIRST = icon("thirst");
-    public static final ResourceLocation STAMINA = icon("stamina");
-    public static final ResourceLocation FEATHERS = icon("feathers");
     public static final ResourceLocation FOOD_NOURISHMENT = icon("food_nourishment");
     public static final ResourceLocation FOOD_SATIATED_SHIELD = icon("food_satiated_shield");
 
@@ -61,8 +59,6 @@ public final class ModIcons {
             case "health_mount", "mount_health" -> MOUNT_HEALTH;
             case "blood" -> BLOOD;
             case "thirst", "thirst_level" -> THIRST;
-            case "stamina", "stamina_b", "staminab" -> STAMINA;
-            case "feathers" -> FEATHERS;
             default -> FALLBACK;
         };
     }

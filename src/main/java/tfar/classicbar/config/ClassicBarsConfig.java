@@ -335,7 +335,7 @@ public class ClassicBarsConfig {
         registerReservedModSupport(builder, "thirst");
         registerReservedModSupport(builder, "vampirism", true);
         registerReservedModSupport(builder, "parcool");
-        registerReservedModSupport(builder, "feathers");
+
         registerReservedModSupport(builder, "farmersdelight", true);
         registerReservedModSupport(builder, "kaleidoscope_cookery", true);
         registerReservedModSupport(builder, "enigmaticlegacyplus", true);
@@ -425,8 +425,7 @@ public class ClassicBarsConfig {
     }
 
     private static void registerFallbackBarSettings() {
-        FALLBACK_SETTINGS.put("feathers", new BarSettings(false, BarIcons.FEATHERS, BarMode.DISABLED, BarColorOverlay.none()));
-        FALLBACK_SETTINGS.put("stamina", new BarSettings(false, BarIcons.STAMINA, BarMode.DISABLED, BarColorOverlay.none()));
+
         FALLBACK_SETTINGS.put("thirst_level", new BarSettings(false, BarIcons.THIRST, BarMode.DISABLED, BarColorOverlay.none()));
     }
 

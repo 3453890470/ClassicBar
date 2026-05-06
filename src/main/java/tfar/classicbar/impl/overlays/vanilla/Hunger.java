@@ -7,6 +7,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import tfar.classicbar.client.HudRenderContext;
+import tfar.classicbar.api.BarOverlay;
+import tfar.classicbar.client.EventHandler;
 import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
@@ -34,6 +36,12 @@ public class Hunger extends BarOverlayImpl {
 
     @Override
     public boolean shouldRender(Player player) {
+        // Mutual exclusion: skip food when forbidden_hunger takes over
+        BarOverlay forbidden = EventHandler.registry.get("forbidden_hunger");
+        if (forbidden != null && forbidden.shouldRender(player)) return false;
+        // Mutual exclusion: skip food when blood takes over
+        BarOverlay blood = EventHandler.registry.get("blood");
+        if (blood != null && blood.shouldRender(player)) return false;
         return true;
     }
 

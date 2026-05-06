@@ -265,6 +265,8 @@ public class ClassicBarLangProvider extends LanguageProvider {
         add("classicbar.config.bars.thirst_level.mode", "thirst_level");
         add("classicbar.config.bars.thirst_level.show_text", "Show thirst value");
         add("classicbar.config.bars.thirst_level.color_overlay", "Thirst bar color");
+        add("classicbar.config.bars.thirst_level.icon", "Thirst icon");
+        add("classicbar.config.bars.thirst_level.text_format", "Thirst text format");
 
         // === Mod Support ===
         add("classicbar.config.mod_support.toughasnails", "Tough As Nails");
@@ -279,10 +281,7 @@ public class ClassicBarLangProvider extends LanguageProvider {
         add("classicbar.config.mod_support.parcool.tooltip", "Reserved compatibility section for ParCool. No active effect in this build.");
         add("classicbar.config.mod_support.parcool.enabled", "Reserved ParCool toggle");
         add("classicbar.config.mod_support.parcool.enabled.tooltip", "Enabling this toggle does not restore ParCool support in this build.");
-        add("classicbar.config.mod_support.feathers", "Feathers");
-        add("classicbar.config.mod_support.feathers.tooltip", "Reserved compatibility section for Feathers. No active effect in this build because no compatible NeoForge 1.21.1 build is currently available.");
-        add("classicbar.config.mod_support.feathers.enabled", "Reserved Feathers toggle");
-        add("classicbar.config.mod_support.feathers.enabled.tooltip", "Enabling this toggle does not restore Feathers support in this build. No compatible NeoForge 1.21.1 build is currently available.");
+
         add("classicbar.config.mod_support.farmersdelight", "FarmersDelight Compat");
         add("classicbar.config.mod_support.farmersdelight.tooltip", "FarmersDelight compatibility for Nourishment effect detection on the food bar.");
         add("classicbar.config.mod_support.farmersdelight.enabled", "FarmersDelight Compat");
@@ -297,6 +296,7 @@ public class ClassicBarLangProvider extends LanguageProvider {
         add("classicbar.config.mod_support.enigmaticlegacyplus.enabled.tooltip", "Enable compatibility with EnigmaticLegacy+ Forbidden Hunger bar.");
         add("classicbar.config.mod_support.thirst", "Thirst Was Taken");
         add("classicbar.config.mod_support.thirst.tooltip", "Enable support for Thirst Was Taken mod");
+        add("classicbar.config.mod_support.thirst.enabled", "Enable Thirst Was Taken support");
 
         // === Enum values ===
         add("classicbar.config.enum.bar_mode.override", "Override vanilla");
@@ -321,7 +321,7 @@ public class ClassicBarLangProvider extends LanguageProvider {
         add("classicbar.config.show_thirst_exhaustion_overlay.tooltip", "Shows thirst exhaustion flash effect");
 
         // === Debug ===
-        add("classicbar.config.debug", "Debug");
+        add("classicbar.config.section.debug", "Debug");
         add("classicbar.config.debug.wither", "Wither (every 1min, 2min duration)");
         add("classicbar.config.debug.wither.tooltip", "Applies Wither II every minute for testing bar colors");
         add("classicbar.config.debug.poison", "Poison (every 1min, 2min duration)");
