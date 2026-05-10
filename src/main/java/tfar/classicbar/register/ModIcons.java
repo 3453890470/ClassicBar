@@ -39,6 +39,10 @@ public final class ModIcons {
     //#endregion
 
     public static final ResourceLocation THIRST = icon("thirst");
+    public static final ResourceLocation THIRST_BLINKING = icon("thirst_blinking");
+    public static final ResourceLocation THIRST_HUNGER = icon("thirst_hunger");
+    public static final ResourceLocation THIRST_HUNGER_BLINKING = icon("thirst_hunger_blinking");
+    public static final ResourceLocation THIRST_NOURISHMENT = icon("thirst_nourishment");
     public static final ResourceLocation FOOD_NOURISHMENT = icon("food_nourishment");
     public static final ResourceLocation FOOD_SATIATED_SHIELD = icon("food_satiated_shield");
 

@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -149,6 +150,24 @@ public class ClassicBarsConfig {
     public static ModConfigSpec.BooleanValue debugVampireEnabled;
     public static ModConfigSpec.BooleanValue debugForbiddenCurseEnabled;
 
+    // === Config builder helpers ===
+
+    private static ModConfigSpec.BooleanValue generalBool(ModConfigSpec.Builder builder, String key, boolean defaultValue) {
+        return builder.translation(generalKey(key)).define(key, defaultValue);
+    }
+
+    private static ModConfigSpec.ConfigValue<String> generalColor(ModConfigSpec.Builder builder, String key, String defaultHex) {
+        return builder.translation(generalKey(key)).define(key, defaultHex, ClassicBarsConfig::isValidHexColor);
+    }
+
+    private static ModConfigSpec.BooleanValue debugBool(ModConfigSpec.Builder builder, String key) {
+        return builder.translation(debugKey(key)).define(key, false);
+    }
+
+    private static <T> ModConfigSpec.ConfigValue<List<? extends T>> generalList(ModConfigSpec.Builder builder, String key, List<T> defaults, Predicate<Object> validator) {
+        return builder.translation(generalKey(key)).defineList(key, defaults, validator);
+    }
+
     public ClassicBarsConfig(ModConfigSpec.Builder builder) {
         BAR_CONFIGS.clear();
         MOD_SUPPORT_ENABLED.clear();
@@ -157,119 +176,69 @@ public class ClassicBarsConfig {
         builder.translation(sectionKey("general"))
 
                         .push("general");
-        displayIcons = builder.translation(generalKey("display_icons"))
-
-                        .define("display_icons", true);
-        displayToughnessBar = builder.translation(generalKey("display_toughness_bar"))
-
-                        .define("display_toughness_bar", true);
-        fullAbsorptionBar = builder.translation(generalKey("full_absorption_bar"))
-
-                        .define("full_absorption_bar", false);
-        fullArmorBar = builder.translation(generalKey("full_armor_bar"))
-
-                        .define("full_armor_bar", false);
-        fullToughnessBar = builder.translation(generalKey("full_toughness_bar"))
-
-                        .define("full_toughness_bar", false);
-        lowArmorWarning = builder.translation(generalKey("display_low_armor_warning"))
-
-                        .define("display_low_armor_warning", true);
-        showSaturationBar = builder.translation(generalKey("show_saturation_bar"))
-
-                        .define("show_saturation_bar", true);
-        showHydrationBar = builder.translation(generalKey("show_hydration_bar"))
-
-                        .define("show_hydration_bar", true);
-        showHeldFoodOverlay = builder.translation(generalKey("show_held_food_overlay"))
-
-                        .define("show_held_food_overlay", true);
-        showHeldDrinkOverlay = builder.translation(generalKey("show_held_drink_overlay"))
-
-                        .define("show_held_drink_overlay", true);
-        showExhaustionOverlay = builder.translation(generalKey("show_exhaustion_overlay"))
-
-                        .define("show_exhaustion_overlay", true);
-        showThirstExhaustionOverlay = builder.translation(generalKey("show_thirst_exhaustion_overlay"))
-
-                        .define("show_thirst_exhaustion_overlay", true);
-        showFoodPreview = builder.translation(generalKey("show_food_preview"))
-
-                        .define("show_food_preview", true);
+        displayIcons = generalBool(builder, "display_icons", true);
+        displayToughnessBar = generalBool(builder, "display_toughness_bar", true);
+        fullAbsorptionBar = generalBool(builder, "full_absorption_bar", false);
+        fullArmorBar = generalBool(builder, "full_armor_bar", false);
+        fullToughnessBar = generalBool(builder, "full_toughness_bar", false);
+        lowArmorWarning = generalBool(builder, "display_low_armor_warning", true);
+        showSaturationBar = generalBool(builder, "show_saturation_bar", true);
+        showHydrationBar = generalBool(builder, "show_hydration_bar", true);
+        showHeldFoodOverlay = generalBool(builder, "show_held_food_overlay", true);
+        showHeldDrinkOverlay = generalBool(builder, "show_held_drink_overlay", true);
+        showExhaustionOverlay = generalBool(builder, "show_exhaustion_overlay", true);
+        showThirstExhaustionOverlay = generalBool(builder, "show_thirst_exhaustion_overlay", true);
+        showFoodPreview = generalBool(builder, "show_food_preview", true);
         transitionSpeed = builder.translation(generalKey("transition_speed"))
 
                         .defineInRange("transition_speed", 3.0D, 0.0D, Double.MAX_VALUE);
 
-        hungerBarColor = builder.translation(generalKey("hunger_bar_color"))
+        hungerBarColor = generalColor(builder, "hunger_bar_color", "#B34D00");
+        hungerBarDebuffColor = generalColor(builder, "hunger_bar_debuff_color", "#249016");
+        thirstBarColor = generalColor(builder, "thirst_bar_color", "#1C5EE4");
+        thirstBarDebuffColor = generalColor(builder, "thirst_bar_debuff_color", "#5A891C");
+        airBarColor = generalColor(builder, "air_bar_color", "#00E6E6");
+        saturationBarColor = generalColor(builder, "saturation_bar_color", "#FFCC00");
+        saturationBarDebuffColor = generalColor(builder, "saturation_bar_debuff_color", "#87BC00");
+        hydrationBarColor = generalColor(builder, "hydration_bar_color", "#00A3E2");
+        hydrationBarDebuffColor = generalColor(builder, "hydration_bar_debuff_color", "#85CF25");
+        lavaBarColor = generalColor(builder, "lava_bar_color", "#FF8000");
+        flightBarColor = generalColor(builder, "flight_bar_color", "#FFFFFF");
 
-                        .define("hunger_bar_color", "#B34D00", ClassicBarsConfig::isValidHexColor);
-        hungerBarDebuffColor = builder.translation(generalKey("hunger_bar_debuff_color"))
-
-                        .define("hunger_bar_debuff_color", "#249016", ClassicBarsConfig::isValidHexColor);
-        thirstBarColor = builder.translation(generalKey("thirst_bar_color"))
-
-                        .define("thirst_bar_color", "#1C5EE4", ClassicBarsConfig::isValidHexColor);
-        thirstBarDebuffColor = builder.translation(generalKey("thirst_bar_debuff_color"))
-
-                        .define("thirst_bar_debuff_color", "#5A891C", ClassicBarsConfig::isValidHexColor);
-        airBarColor = builder.translation(generalKey("air_bar_color"))
-
-                        .define("air_bar_color", "#00E6E6", ClassicBarsConfig::isValidHexColor);
-        saturationBarColor = builder.translation(generalKey("saturation_bar_color"))
-
-                        .define("saturation_bar_color", "#FFCC00", ClassicBarsConfig::isValidHexColor);
-        saturationBarDebuffColor = builder.translation(generalKey("saturation_bar_debuff_color"))
-
-                        .define("saturation_bar_debuff_color", "#87BC00", ClassicBarsConfig::isValidHexColor);
-        hydrationBarColor = builder.translation(generalKey("hydration_bar_color"))
-
-                        .define("hydration_bar_color", "#00A3E2", ClassicBarsConfig::isValidHexColor);
-        hydrationBarDebuffColor = builder.translation(generalKey("hydration_bar_debuff_color"))
-
-                        .define("hydration_bar_debuff_color", "#85CF25", ClassicBarsConfig::isValidHexColor);
-        lavaBarColor = builder.translation(generalKey("lava_bar_color"))
-
-                        .define("lava_bar_color", "#FF8000", ClassicBarsConfig::isValidHexColor);
-        flightBarColor = builder.translation(generalKey("flight_bar_color"))
-
-                        .define("flight_bar_color", "#FFFFFF", ClassicBarsConfig::isValidHexColor);
-
-        armorColors = builder.translation(generalKey("armor_color_values"))
-
-                        .defineList("armor_color_values", Lists.newArrayList("#AAAAAA", "#FF5500", "#FFC747", "#27FFE3", "#00FF00", "#7F00FF"), ClassicBarsConfig::isValidHexColor);
-        armorToughnessColors = builder.translation(generalKey("armor_toughness_color_values"))
-
-                        .defineList("armor_toughness_color_values", Lists.newArrayList("#AAAAAA", "#FF5500", "#FFC747", "#27FFE3", "#00FF00", "#7F00FF"), ClassicBarsConfig::isValidHexColor);
-        absorptionColors = builder.translation(generalKey("absorption_color_values"))
-
-                        .defineList("absorption_color_values", Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"), ClassicBarsConfig::isValidHexColor);
-        absorptionPoisonColors = builder.translation(generalKey("absorption_poison_color_values"))
-
-                        .defineList("absorption_poison_color_values", Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"), ClassicBarsConfig::isValidHexColor);
-        absorptionWitherColors = builder.translation(generalKey("absorption_wither_color_values"))
-
-                        .defineList("absorption_wither_color_values", Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"), ClassicBarsConfig::isValidHexColor);
-        normalColors = builder.translation(generalKey("normal_colors"))
-
-                        .defineList("normal_colors", Lists.newArrayList("#FF0000", "#FFFF00", "#00FF00"), ClassicBarsConfig::isValidHexColor);
-        normalFractions = builder.translation(generalKey("normal_fractions"))
-
-                        .defineList("normal_fractions", Lists.newArrayList(.25D, .5D, .75D), ClassicBarsConfig::isValidUnitFraction);
-        poisonedColors = builder.translation(generalKey("poisoned_colors"))
-
-                        .defineList("poisoned_colors", Lists.newArrayList("#00FF00", "#55FF55", "#00FF00"), ClassicBarsConfig::isValidHexColor);
-        poisonedFractions = builder.translation(generalKey("poisoned_fractions"))
-
-                        .defineList("poisoned_fractions", Lists.newArrayList(.25D, .5D, .75D), ClassicBarsConfig::isValidUnitFraction);
-        witheredColors = builder.translation(generalKey("withered_colors"))
-
-                        .defineList("withered_colors", Lists.newArrayList("#555555", "#AAAAAA", "#555555"), ClassicBarsConfig::isValidHexColor);
-        witheredFractions = builder.translation(generalKey("withered_fractions"))
-
-                        .defineList("withered_fractions", Lists.newArrayList(.25D, .5D, .75D), ClassicBarsConfig::isValidUnitFraction);
-        frozenHealthColor = builder.translation(generalKey("frozen_health_color"))
-
-                        .define("frozen_health_color", "#7FAFFF", ClassicBarsConfig::isValidHexColor);
+        armorColors = generalList(builder, "armor_color_values",
+                        Lists.newArrayList("#AAAAAA", "#FF5500", "#FFC747", "#27FFE3", "#00FF00", "#7F00FF"),
+                        ClassicBarsConfig::isValidHexColor);
+        armorToughnessColors = generalList(builder, "armor_toughness_color_values",
+                        Lists.newArrayList("#AAAAAA", "#FF5500", "#FFC747", "#27FFE3", "#00FF00", "#7F00FF"),
+                        ClassicBarsConfig::isValidHexColor);
+        absorptionColors = generalList(builder, "absorption_color_values",
+                        Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"),
+                        ClassicBarsConfig::isValidHexColor);
+        absorptionPoisonColors = generalList(builder, "absorption_poison_color_values",
+                        Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"),
+                        ClassicBarsConfig::isValidHexColor);
+        absorptionWitherColors = generalList(builder, "absorption_wither_color_values",
+                        Lists.newArrayList("#D4AF37", "#C2C73B", "#8DC337", "#36BA77", "#4A5BC4", "#D89AE2", "#DF9DC7", "#DFA99D", "#D4DF9D", "#3E84C6", "#B8C1E8", "#DFDFDF"),
+                        ClassicBarsConfig::isValidHexColor);
+        normalColors = generalList(builder, "normal_colors",
+                        Lists.newArrayList("#FF0000", "#FFFF00", "#00FF00"),
+                        ClassicBarsConfig::isValidHexColor);
+        normalFractions = generalList(builder, "normal_fractions",
+                        Lists.newArrayList(.25D, .5D, .75D),
+                        ClassicBarsConfig::isValidUnitFraction);
+        poisonedColors = generalList(builder, "poisoned_colors",
+                        Lists.newArrayList("#00FF00", "#55FF55", "#00FF00"),
+                        ClassicBarsConfig::isValidHexColor);
+        poisonedFractions = generalList(builder, "poisoned_fractions",
+                        Lists.newArrayList(.25D, .5D, .75D),
+                        ClassicBarsConfig::isValidUnitFraction);
+        witheredColors = generalList(builder, "withered_colors",
+                        Lists.newArrayList("#555555", "#AAAAAA", "#555555"),
+                        ClassicBarsConfig::isValidHexColor);
+        witheredFractions = generalList(builder, "withered_fractions",
+                        Lists.newArrayList(.25D, .5D, .75D),
+                        ClassicBarsConfig::isValidUnitFraction);
+        frozenHealthColor = generalColor(builder, "frozen_health_color", "#7FAFFF");
         healthPoisonOverlayColor = builder
                         .translation("classicbar.config.general.health_poison_overlay_color")
                         .define("health_poison_overlay_color", "#80800080", ClassicBarsConfig::isValidHexColor);
@@ -281,17 +250,14 @@ public class ClassicBarsConfig {
                         .define("health_frozen_overlay_color", "#804D80FF", ClassicBarsConfig::isValidHexColor);
 
         // === Nourishment (FarmersDelight) compat ===
-        nourishmentBarColor = builder.translation(generalKey("nourishment_bar_color"))
-                        .define("nourishment_bar_color", "#F3B300", ClassicBarsConfig::isValidHexColor);
-        satiatedShieldBarColor = builder.translation(generalKey("satiated_shield_bar_color"))
-                        .define("satiated_shield_bar_color", "#FF1313", ClassicBarsConfig::isValidHexColor);
+        nourishmentBarColor = generalColor(builder, "nourishment_bar_color", "#F3B300");
+        satiatedShieldBarColor = generalColor(builder, "satiated_shield_bar_color", "#FF1313");
         // forbidden fruit curse hunger bar color (EnigmaticLegacy+)
         forbiddenCurseBarColor = builder.translation(generalKey("forbidden_curse_bar_color"))
                         .comment("Color of the hunger bar when under the Forbidden Curse (EnigmaticLegacy+).",
                                         "Format: #RRGGBB or #AARRGGBB")
                         .define("forbidden_curse_bar_color", "#9932CC", ClassicBarsConfig::isValidHexColor);
-        disableFdNourishmentOverlay = builder.translation(generalKey("disable_fd_nourishment_overlay"))
-                        .define("disable_fd_nourishment_overlay", true);
+        disableFdNourishmentOverlay = generalBool(builder, "disable_fd_nourishment_overlay", true);
         builder.pop();
 
         builder.translation(sectionKey("layout"))
@@ -344,30 +310,14 @@ public class ClassicBarsConfig {
         // === Debug section (for development testing) ===
         builder.translation(sectionKey("debug"))
                         .push("debug");
-        debugWitherEnabled = builder
-                        .translation(debugKey("wither"))
-                        .define("wither", false);
-        debugPoisonEnabled = builder
-                        .translation(debugKey("poison"))
-                        .define("poison", false);
-        debugFrozenEnabled = builder
-                        .translation(debugKey("frozen"))
-                        .define("frozen", false);
-        debugHungerEnabled = builder
-                        .translation(debugKey("hunger"))
-                        .define("hunger", false);
-        debugNourishmentEnabled = builder
-                        .translation(debugKey("nourishment"))
-                        .define("nourishment", false);
-        debugSatiatedShieldEnabled = builder
-                        .translation(debugKey("satiated_shield"))
-                        .define("satiated_shield", false);
-        debugVampireEnabled = builder
-                        .translation(debugKey("vampire"))
-                        .define("vampire", false);
-        debugForbiddenCurseEnabled = builder
-                        .translation(debugKey("forbidden_curse"))
-                        .define("forbidden_curse", false);
+        debugWitherEnabled = debugBool(builder, "wither");
+        debugPoisonEnabled = debugBool(builder, "poison");
+        debugFrozenEnabled = debugBool(builder, "frozen");
+        debugHungerEnabled = debugBool(builder, "hunger");
+        debugNourishmentEnabled = debugBool(builder, "nourishment");
+        debugSatiatedShieldEnabled = debugBool(builder, "satiated_shield");
+        debugVampireEnabled = debugBool(builder, "vampire");
+        debugForbiddenCurseEnabled = debugBool(builder, "forbidden_curse");
         builder.pop();
 
         registerFallbackBarSettings();

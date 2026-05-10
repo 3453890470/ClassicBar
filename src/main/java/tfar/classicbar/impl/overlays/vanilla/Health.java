@@ -10,10 +10,10 @@ import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.util.ColorUtils;
-import tfar.classicbar.util.HealthEffect;
+import tfar.classicbar.impl.overlays.vanilla.HarmType;
 import tfar.classicbar.util.ModUtils;
 import tfar.classicbar.resources.BarIcons;
-import net.minecraft.resources.ResourceLocation;
+import java.util.List;
 
 /**
  * ClassicBar overlay for {@link Player} health.
@@ -58,7 +58,7 @@ public class Health extends BarOverlayImpl {
         int yStart = screenHeight - vOffset;
         double maxHealth = player.getMaxHealth();
 
-        HealthEffect effect = getHealthEffect(player);
+        HarmType effect = getHarmType(player);
 
         int i4 = (highlight) ? 18 : 0;
 
@@ -125,7 +125,7 @@ public class Health extends BarOverlayImpl {
     public Color getPrimaryBarColor(int index, Player player) {
         double health = player.getHealth();
         double maxHealth = player.getMaxHealth();
-        HealthEffect effect = getHealthEffect(player);
+        HarmType effect = getHarmType(player);
         return ColorUtils.calculateScaledColor(health, maxHealth, effect);
     }
 
@@ -171,64 +171,15 @@ public class Health extends BarOverlayImpl {
         boolean hasWither = player.hasEffect(MobEffects.WITHER);
         boolean hasFrozen = player.getTicksFrozen() > 0;
 
-        // count active effects for offset
-        int effectCount = 0;
-        if (hasPoison) effectCount++;
-        if (hasWither) effectCount++;
-        if (hasFrozen) effectCount++;
-
-        final int OVERLAP = 4; // 4px visible, 5px overlapped
         boolean baseFlashing = healthUpdateCounter > (long) guiTicks;
 
-        if (rightHandSide()) {
-            // === right side: base icon leftmost (near bar), effects extend right ===
-            int startX = baseX + effectCount * OVERLAP;
-            int currentX = startX;
-
-            // draw right-to-left (bottom→top): frozen→wither→poison→base
-            if (hasFrozen) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING, baseFlashing, guiTicks);
-                currentX -= OVERLAP;
-            }
-            if (hasWither) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.HEALTH_WITHER, BarIcons.HEALTH_WITHER_BLINKING, baseFlashing, guiTicks);
-                currentX -= OVERLAP;
-            }
-            if (hasPoison) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING, baseFlashing, guiTicks);
-                currentX -= OVERLAP;
-            }
-            // base HEALTH icon (leftmost, top layer)
-            ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
-                BarIcons.HEALTH, BarIcons.HEALTH_BLINKING, baseFlashing, guiTicks);
-
-        } else {
-            // === left side: base icon rightmost (near bar), effects extend left ===
-            int startX = baseX - effectCount * OVERLAP;
-            int currentX = startX;
-
-            // draw left-to-right (bottom→top): frozen→wither→poison→base
-            if (hasFrozen) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING, baseFlashing, guiTicks);
-                currentX += OVERLAP;
-            }
-            if (hasWither) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.HEALTH_WITHER, BarIcons.HEALTH_WITHER_BLINKING, baseFlashing, guiTicks);
-                currentX += OVERLAP;
-            }
-            if (hasPoison) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING, baseFlashing, guiTicks);
-                currentX += OVERLAP;
-            }
-            // base HEALTH icon (rightmost, top layer)
-            ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
-                BarIcons.HEALTH, BarIcons.HEALTH_BLINKING, baseFlashing, guiTicks);
-        }
+        ModUtils.renderEffectIcons(graphics, baseX, yStart, rightHandSide(), baseFlashing, guiTicks,
+            BarIcons.HEALTH, BarIcons.HEALTH_BLINKING,
+            List.of(
+                new ModUtils.EffectIcon(() -> hasFrozen, BarIcons.HEALTH_FROZEN, BarIcons.HEALTH_FROZEN_BLINKING),
+                new ModUtils.EffectIcon(() -> hasWither, BarIcons.HEALTH_WITHER, BarIcons.HEALTH_WITHER_BLINKING),
+                new ModUtils.EffectIcon(() -> hasPoison, BarIcons.HEALTH_POISON, BarIcons.HEALTH_POISON_BLINKING)
+            )
+        );
     }
 }

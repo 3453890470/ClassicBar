@@ -41,6 +41,10 @@ public final class BarIcons {
     //#endregion
 
     public static final ResourceLocation THIRST = ModIcons.THIRST;
+    public static final ResourceLocation THIRST_BLINKING = ModIcons.THIRST_BLINKING;
+    public static final ResourceLocation THIRST_HUNGER = ModIcons.THIRST_HUNGER;
+    public static final ResourceLocation THIRST_HUNGER_BLINKING = ModIcons.THIRST_HUNGER_BLINKING;
+    public static final ResourceLocation THIRST_NOURISHMENT = ModIcons.THIRST_NOURISHMENT;
     public static final ResourceLocation FOOD_NOURISHMENT = ModIcons.FOOD_NOURISHMENT;
     public static final ResourceLocation FOOD_SATIATED_SHIELD = ModIcons.FOOD_SATIATED_SHIELD;
 

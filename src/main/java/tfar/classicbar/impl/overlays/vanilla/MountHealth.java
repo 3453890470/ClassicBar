@@ -7,7 +7,7 @@ import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
 import tfar.classicbar.util.ColorUtils;
-import tfar.classicbar.util.HealthEffect;
+import tfar.classicbar.impl.overlays.vanilla.HarmType;
 import tfar.classicbar.util.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.resources.BarIcons;
@@ -45,7 +45,7 @@ public class MountHealth extends BarOverlayImpl {
 
         Color.reset();
         renderFullBarBackground(graphics, backgroundX, yStart);
-        applyConfiguredBarColor(ColorUtils.calculateScaledColor(currentMountHealth, maxHealth, HealthEffect.NONE));
+        applyConfiguredBarColor(ColorUtils.calculateScaledColor(currentMountHealth, maxHealth, HarmType.NONE));
         renderPartialBar(graphics, filledX + 2, yStart + 2, barWidth);
     }
 

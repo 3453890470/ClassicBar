@@ -13,7 +13,7 @@ import tfar.classicbar.client.HudRenderContext;
 import tfar.classicbar.resources.BarIcons;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.util.Color;
-import tfar.classicbar.util.HealthEffect;
+import tfar.classicbar.impl.overlays.vanilla.HarmType;
 import tfar.classicbar.util.ModUtils;
 
 public abstract class BarOverlayImpl implements BarOverlay {
@@ -116,11 +116,11 @@ public abstract class BarOverlayImpl implements BarOverlay {
         return rightHandSide() ? 92 : -101;
     }
 
-    protected HealthEffect getHealthEffect(Player player) {
-        HealthEffect effects = HealthEffect.NONE;//16
-        if (player.hasEffect(MobEffects.POISON)) effects = HealthEffect.POISON;//evaluates to 52
-        else if (player.hasEffect(MobEffects.WITHER)) effects = HealthEffect.WITHER;//evaluates to 88
-        else if (player.isFullyFrozen()) effects = HealthEffect.FROZEN;
+    protected HarmType getHarmType(Player player) {
+        HarmType effects = HarmType.NONE;
+        if (player.hasEffect(MobEffects.POISON)) effects = HarmType.POISON;
+        else if (player.hasEffect(MobEffects.WITHER)) effects = HarmType.WITHER;
+        else if (player.isFullyFrozen()) effects = HarmType.FROZEN;
         return effects;
     }
 

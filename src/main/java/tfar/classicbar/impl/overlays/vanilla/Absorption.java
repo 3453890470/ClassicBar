@@ -7,7 +7,6 @@ import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.util.Color;
-import tfar.classicbar.util.HealthEffect;
 import tfar.classicbar.util.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.resources.BarIcons;

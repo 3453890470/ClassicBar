@@ -7,8 +7,16 @@ import net.minecraft.resources.ResourceLocation;
 import tfar.classicbar.ClassicBar;
 import tfar.classicbar.impl.BarOverlayImpl;
 import tfar.classicbar.resources.BarIcons;
+import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public class ModUtils {
+
+    public record EffectIcon(
+        BooleanSupplier condition,
+        ResourceLocation normal,
+        ResourceLocation blinking
+    ) {}
     public static final Minecraft mc = Minecraft.getInstance();
     private static final Font fontRenderer = mc.font;
     public static ResourceLocation CURRENT_TEXTURE = BarIcons.FALLBACK;
@@ -73,5 +81,52 @@ public class ModUtils {
         net.minecraft.network.chat.Component component = net.minecraft.network.chat.Component.literal(string)
         .withStyle(net.minecraft.network.chat.Style.EMPTY.withFont(ClassicBar.FONT_3X5_TINY));
         stack.drawString(Minecraft.getInstance().font, component, xOffset, yOffset, color, true);
+    }
+
+    public static void renderEffectIcons(
+        GuiGraphics graphics,
+        int baseX,
+        int yStart,
+        boolean rightHandSide,
+        boolean baseFlashing,
+        int guiTicks,
+        ResourceLocation baseNormal,
+        ResourceLocation baseBlinking,
+        List<EffectIcon> effects
+    ) {
+        final int OVERLAP = 4;
+        int effectCount = 0;
+        for (EffectIcon e : effects) {
+            if (e.condition.getAsBoolean()) effectCount++;
+        }
+        if (rightHandSide) {
+            int currentX = baseX + effectCount * OVERLAP;
+            for (EffectIcon e : effects) {
+                if (e.condition.getAsBoolean()) {
+                    ResourceLocation blink = e.blinking != null ? e.blinking : e.normal;
+                    ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+                        e.normal, blink, baseFlashing, guiTicks);
+                    currentX -= OVERLAP;
+                }
+            }
+            if (effectCount == 0) {
+                ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+                    baseNormal, baseBlinking, baseFlashing, guiTicks);
+            }
+        } else {
+            int currentX = baseX - effectCount * OVERLAP;
+            for (EffectIcon e : effects) {
+                if (e.condition.getAsBoolean()) {
+                    ResourceLocation blink = e.blinking != null ? e.blinking : e.normal;
+                    ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+                        e.normal, blink, baseFlashing, guiTicks);
+                    currentX += OVERLAP;
+                }
+            }
+            if (effectCount == 0) {
+                ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+                    baseNormal, baseBlinking, baseFlashing, guiTicks);
+            }
+        }
     }
 }

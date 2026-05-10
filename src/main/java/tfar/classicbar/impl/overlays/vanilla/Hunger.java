@@ -1,9 +1,9 @@
 package tfar.classicbar.impl.overlays.vanilla;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import java.util.List;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import tfar.classicbar.client.HudRenderContext;
@@ -218,68 +218,16 @@ public class Hunger extends BarOverlayImpl {
         boolean hasNourishment = ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat;
         boolean hasSatiatedShield = ModCompat.hasSatiatedShield(player) && ConfigCache.enableSatiatedShieldCompat;
 
-        // Effect count (hunger + nourishment + satiated shield)
-        int effectCount = 0;
-        if (hasHunger) effectCount++;
-        if (hasNourishment) effectCount++;
-        if (hasSatiatedShield) effectCount++;
-
-        final int OVERLAP = 4;
         boolean baseFlashing = foodUpdateCounter > (long) guiTicks;
 
-        // Base FOOD icon is always closest to the bar (topmost layer)
-        if (rightHandSide()) {
-            // === RHS: base at far left, effects extend right ===
-            // Draw order right-to-left (bottom → top):
-            // satiated shield → nourishment → hunger → base
-            int startX = baseX + effectCount * OVERLAP;
-            int currentX = startX;
-
-            if (hasSatiatedShield) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.FOOD_SATIATED_SHIELD, BarIcons.FOOD_SATIATED_SHIELD, false, guiTicks);
-                currentX -= OVERLAP;
-            }
-            if (hasNourishment) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.FOOD_NOURISHMENT, BarIcons.FOOD_NOURISHMENT, false, guiTicks);
-                currentX -= OVERLAP;
-            }
-            if (hasHunger) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.FOOD_HUNGER, BarIcons.FOOD_HUNGER_BLINKING, baseFlashing, guiTicks);
-                currentX -= OVERLAP;
-            }
-            // Base FOOD (far left, top layer)
-            ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
-                BarIcons.FOOD, BarIcons.FOOD_BLINKING, baseFlashing, guiTicks);
-
-        } else {
-            // === LHS: base at far right, effects extend left ===
-            // Draw order left-to-right (bottom → top):
-            // satiated shield → nourishment → hunger → base
-            int startX = baseX - effectCount * OVERLAP;
-            int currentX = startX;
-
-            if (hasSatiatedShield) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.FOOD_SATIATED_SHIELD, BarIcons.FOOD_SATIATED_SHIELD, false, guiTicks);
-                currentX += OVERLAP;
-            }
-            if (hasNourishment) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.FOOD_NOURISHMENT, BarIcons.FOOD_NOURISHMENT, false, guiTicks);
-                currentX += OVERLAP;
-            }
-            if (hasHunger) {
-                ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                    BarIcons.FOOD_HUNGER, BarIcons.FOOD_HUNGER_BLINKING, baseFlashing, guiTicks);
-                currentX += OVERLAP;
-            }
-            // Base FOOD (far right, top layer)
-            ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
-                BarIcons.FOOD, BarIcons.FOOD_BLINKING, baseFlashing, guiTicks);
-        }
+        ModUtils.renderEffectIcons(graphics, baseX, yStart, rightHandSide(), baseFlashing, guiTicks,
+            BarIcons.FOOD, BarIcons.FOOD_BLINKING,
+            List.of(
+                new ModUtils.EffectIcon(() -> hasNourishment, BarIcons.FOOD_NOURISHMENT, BarIcons.FOOD_NOURISHMENT),
+                new ModUtils.EffectIcon(() -> hasSatiatedShield, BarIcons.FOOD_SATIATED_SHIELD, BarIcons.FOOD_SATIATED_SHIELD),
+                new ModUtils.EffectIcon(() -> hasHunger, BarIcons.FOOD_HUNGER, BarIcons.FOOD_HUNGER_BLINKING)
+            )
+        );
     }
 
 }

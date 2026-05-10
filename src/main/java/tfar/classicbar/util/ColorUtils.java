@@ -3,6 +3,7 @@ package tfar.classicbar.util;
 import net.minecraft.util.Mth;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
+import tfar.classicbar.impl.overlays.vanilla.HarmType;
 
 import java.util.List;
 
@@ -52,13 +53,13 @@ public class ColorUtils {
         }
     }
 
-    public static Color calculateScaledColor(double d1, double d2, HealthEffect effect) {
+    public static Color calculateScaledColor(double d1, double d2, HarmType harmType) {
         double d3 = (d1 / d2);
 
         List<Color> colorCodes;
         List<? extends Double> colorFractions;
 
-        switch (effect) {
+        switch (harmType) {
             case NONE: colorCodes = ConfigCache.normal;
             colorFractions = ClassicBarsConfig.normalFractions.get(); break;
             case POISON: colorCodes = ConfigCache.poison;

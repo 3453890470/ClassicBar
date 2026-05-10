@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.5.3 — 2026-05-11
+
+### Feat
+- 口渴值三态变种图标接入工作链（thirst_hunger、thirst_nourishment、thirst_blinking）
+- 变种图标替代逻辑：有效果激活时不再同时绘制基础图标
+
+### Refactor
+- renderIcon 骨架统一提取至 ModUtils.renderEffectIcons，消除三文件重复
+- 配置注册 builder 链 helper 化（generalBool / generalColor / debugBool / generalList）
+- HealthEffect 迁移至 impl/overlays/vanilla 并重命名为 HarmType，移除死代码字段
+
+### Fix
+- 食物值 satiated_shield 与 nourishment 渲染序号调换
+
 ## v1.5.2 - 2026-05-07
 
 ### Fix

@@ -3,9 +3,11 @@ package tfar.classicbar.impl.overlays.mod;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import tfar.classicbar.client.HudRenderContext;
+import tfar.classicbar.compat.ModCompat;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
 import tfar.classicbar.impl.BarOverlayImpl;
@@ -189,8 +191,24 @@ public class Thirst extends BarOverlayImpl {
         ThirstData data = getThirstData(player);
         int baseX = width / 2 + getIconOffset();
         int yStart = height - vOffset;
-        boolean hasDebuff = player.hasEffect(MobEffects.HUNGER) || player.hasEffect(MobEffects.POISON);
-        textHelper(graphics, baseX, yStart, data.thirst(), 20,
+
+        // Calculate effect icon count to adjust text position
+        boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
+        boolean hasNourishment = ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat;
+        int effectCount = 0;
+        if (hasHunger) effectCount++;
+        if (hasNourishment) effectCount++;
+
+        // Text follows the end of icon stack
+        int textX;
+        if (rightHandSide()) {
+            textX = baseX + effectCount * 4;
+        } else {
+            textX = baseX - effectCount * 4;
+        }
+
+        boolean hasDebuff = hasHunger || player.hasEffect(MobEffects.POISON);
+        textHelper(graphics, textX, yStart, data.thirst(), 20,
                 getConfiguredTextColor(hasDebuff ? ConfigCache.thirstDebuff : ConfigCache.thirst),
                 barSettings.textFormat);
     }
@@ -206,11 +224,19 @@ public class Thirst extends BarOverlayImpl {
         int baseX = width / 2 + getIconOffset();
         int yStart = height - vOffset;
         int guiTicks = ModUtils.getGuiTicks();
-        boolean flashing = thirstUpdateCounter > (long) guiTicks;
 
-        // flash icon on thirst decrease; normal & blinking use same texture until BarIcons.THIRST_BLINKING is added
-        ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
-                BarIcons.THIRST, BarIcons.THIRST, flashing, guiTicks);
+        boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
+        boolean hasNourishment = ModCompat.hasNourishment(player) && ConfigCache.enableNourishmentCompat;
+
+        boolean baseFlashing = thirstUpdateCounter > (long) guiTicks;
+
+        ModUtils.renderEffectIcons(graphics, baseX, yStart, rightHandSide(), baseFlashing, guiTicks,
+            BarIcons.THIRST, BarIcons.THIRST_BLINKING,
+            List.of(
+                new ModUtils.EffectIcon(() -> hasNourishment, BarIcons.THIRST_NOURISHMENT, BarIcons.THIRST_NOURISHMENT),
+                new ModUtils.EffectIcon(() -> hasHunger, BarIcons.THIRST_HUNGER, BarIcons.THIRST_HUNGER_BLINKING)
+            )
+        );
     }
 
     // ========================================================================
