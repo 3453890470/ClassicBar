@@ -341,13 +341,7 @@ public class ClassicBarsConfig {
         if (configuredBar != null) {
             return configuredBar.toBarSettings();
         }
-        // food ↔ blood mutual exclusion: blood active → food disabled
-        if ("food".equals(overlayName)) {
-            BarSettings bloodSettings = getBarSettings("blood");
-            if (bloodSettings.rendersClassicBar()) {
-                return new BarSettings(false, BarIcons.FOOD, BarMode.DISABLED, BarColorOverlay.none());
-            }
-        }
+        // food↔blood mutual exclusion is handled at render layer by Hunger.shouldRender()
         return FALLBACK_SETTINGS.getOrDefault(overlayName, NULL_SETTINGS).copy();
     }
 

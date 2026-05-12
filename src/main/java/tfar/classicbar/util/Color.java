@@ -11,11 +11,6 @@ public record Color(int r,int g,int b) {
     public static Color from(int red, int green, int blue) {
         return new Color(red, green, blue);
     }
-
-    public static Color from(String s) {
-        return BLACK;
-    }
-
     public void color2Gl() {
         color2Gla(1);
     }

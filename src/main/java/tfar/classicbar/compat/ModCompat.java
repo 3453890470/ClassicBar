@@ -110,4 +110,19 @@ public class ModCompat {
             return false;
         }
     }
+
+    /**
+     * 设置玩家的禁忌诅咒状态（仅调试/开发用）。
+     *
+     * @param player 目标玩家
+     * @param cursed 是否设为禁忌诅咒状态
+     */
+    public static void setForbiddenCurse(Player player, boolean cursed) {
+        if (!isEnigmaticLegacyPlusLoaded()) return;
+        try {
+            player.getData(auviotre.enigmatic.legacy.registries.EnigmaticAttachments.ENIGMATIC_DATA).setForbiddenCursed(cursed);
+        } catch (Throwable t) {
+            // silent
+        }
+    }
 }

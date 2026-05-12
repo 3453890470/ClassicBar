@@ -23,8 +23,7 @@ import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarSettings;
 import tfar.classicbar.config.ClassicBarsConfig;
 import tfar.classicbar.config.ConfigCache;
-import auviotre.enigmatic.legacy.contents.item.food.ForbiddenFruit;
-import auviotre.enigmatic.legacy.registries.EnigmaticAttachments;
+
 import tfar.classicbar.register.ModOverlays;
 import tfar.classicbar.util.ModUtils;
 
@@ -175,13 +174,8 @@ public final class EventHandler {
     }
 
     private static boolean isForbiddenHungerActive(Player player) {
-        if (!ModList.get().isLoaded("enigmaticlegacyplus")) return false;
         if (!ClassicBarsConfig.isReservedModSupportEnabled("enigmaticlegacyplus")) return false;
-        try {
-            return ForbiddenFruit.isForbiddenCursed(player);
-        } catch (Throwable t) {
-            return false;
-        }
+        return ModCompat.hasForbiddenCurse(player);
     }
 
     private static boolean isBloodActive(Player player) {
@@ -354,11 +348,11 @@ public final class EventHandler {
         if (ModList.get().isLoaded("enigmaticlegacyplus")) {
             try {
                 boolean wantCurse = ClassicBarsConfig.debugForbiddenCurseEnabled.get();
-                boolean hasCurse = ForbiddenFruit.isForbiddenCursed(player);
+                boolean hasCurse = ModCompat.hasForbiddenCurse(player);
                 if (wantCurse && !hasCurse) {
-                    player.getData(EnigmaticAttachments.ENIGMATIC_DATA).setForbiddenCursed(true);
+                    ModCompat.setForbiddenCurse(player, true);
                 } else if (!wantCurse && hasCurse) {
-                    player.getData(EnigmaticAttachments.ENIGMATIC_DATA).setForbiddenCursed(false);
+                    ModCompat.setForbiddenCurse(player, false);
                 }
             } catch (Throwable t) {
                 // Debug feature — silent fail

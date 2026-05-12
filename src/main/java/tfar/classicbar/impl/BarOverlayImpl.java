@@ -24,6 +24,7 @@ public abstract class BarOverlayImpl implements BarOverlay {
     public static final int BAR_U = 2;
     public static final int BAR_V = 11;
     public static final ResourceLocation ICON_BAR = ResourceLocation.fromNamespaceAndPath(ClassicBar.MODID, "textures/gui/health.png");
+    public static final int MAX_STAT = 20;
 
     public static final ResourceLocation GUI_ICONS_LOCATION = BarIcons.FALLBACK;
     protected String name;
@@ -172,6 +173,7 @@ public abstract class BarOverlayImpl implements BarOverlay {
         }
     }
     protected int computeWrapIndex(double stat, double maxStat, int colorListSize) {
+        if (stat <= 0) return 0;
         return Math.min((int) Math.ceil(stat / maxStat), colorListSize) - 1;
     }
 

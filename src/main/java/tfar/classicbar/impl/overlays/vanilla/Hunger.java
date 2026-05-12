@@ -48,7 +48,7 @@ public class Hunger extends BarOverlayImpl {
     @Override
     public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
         double hunger = player.getFoodData().getFoodLevel();
-        double maxHunger = 20;//HungerHelper.getMaxHunger(player);
+        double maxHunger = BarOverlayImpl.MAX_STAT; // modifiable max food level, default to vanilla MAX_STAT
 
         // Detect third-party mod buff effects
         boolean hasNourishment = ModCompat.hasNourishment(player);
@@ -105,8 +105,8 @@ public class Hunger extends BarOverlayImpl {
 
                 // Expected saturation after eating — capped at 20
                 double satFromFood = nutrition * satMod * 2.0f;
-                double cappedCurrentSat = Math.min(20, currentSat);
-                double cappedNewSaturation = Math.min(20, cappedCurrentSat + satFromFood);
+                double cappedCurrentSat = Math.min(BarOverlayImpl.MAX_STAT, currentSat);
+                double cappedNewSaturation = Math.min(BarOverlayImpl.MAX_STAT, cappedCurrentSat + satFromFood);
                 double satPreview = Math.max(0, cappedNewSaturation - cappedCurrentSat);
 
                 if (hungerPreview > 0 || satPreview > 0) {
@@ -144,13 +144,13 @@ public class Hunger extends BarOverlayImpl {
     @Override
     public double getBarWidth(Player player) {
         double hunger = player.getFoodData().getFoodLevel();
-        double maxHunger = 20;
+        double maxHunger = BarOverlayImpl.MAX_STAT;
         return Math.min(BarOverlayImpl.WIDTH, ModUtils.getWidth(hunger, maxHunger));
     }
 
     public int getSatBarWidth(Player player) {
         double saturation = player.getFoodData().getSaturationLevel();
-        double maxSat = 20;
+        double maxSat = BarOverlayImpl.MAX_STAT;
         return Math.min(BarOverlayImpl.WIDTH, (int) ModUtils.getWidth(saturation, maxSat));
     }
     //saturation

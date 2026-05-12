@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.5.4 — 2026-05-12
+
+### Chore
+- 清理死代码：ClassicBarsConfig.getBarSettings 中不可达的 food-blood 互斥逻辑
+- 集中化兼容层：EventHandler 直接引用 EnigmaticLegacy+ API 迁移至 ModCompat 封装
+- 防御性编程：computeWrapIndex 添加 stat≤0 越界守卫
+- 常量提取：食物/口渴最大值 20 → BarOverlayImpl.MAX_STAT
+- 清理遗留注释代码：ModUtils.drawStringOnHUD 移除已注释的 Forge 缩放代码
+- 移除无操作存根：Color.from(String) 未使用的误导性方法
+
+### Fix
+- 编译修复：isForbiddenHungerActive 遗漏 ForbiddenFruit 引用未同步迁移至 ModCompat
+
 ## v1.5.3 — 2026-05-11
 
 ### Feat

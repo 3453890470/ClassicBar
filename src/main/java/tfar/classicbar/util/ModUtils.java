@@ -67,15 +67,6 @@ public class ModUtils {
     }
 
     public static void drawStringOnHUD(GuiGraphics stack, String string, int xOffset, int yOffset, int color) {
-   /* double scale = numbers.numberScale;
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(scale, scale, 1);
-        xOffset /= scale;
-        yOffset /= scale;
-        int l = fontRenderer.getStringWidth(string);
-        xOffset += (left) ? .4*l * (1 - scale) / scale : 0;
-        GlStateManager.translate(16 * (1 - scale) / scale, 14 * (1 - scale) / scale, 0);*/
-
         xOffset += 2;
         yOffset += 2;
         net.minecraft.network.chat.Component component = net.minecraft.network.chat.Component.literal(string)

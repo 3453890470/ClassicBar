@@ -117,7 +117,7 @@ public class Thirst extends BarOverlayImpl {
     public void renderBar(HudRenderContext context, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
         ThirstData data = getThirstData(player);
         double thirst = data.thirst();
-        double maxThirst = 20;
+        double maxThirst = BarOverlayImpl.MAX_STAT;
         double hydration = data.hydration();
 
         double barWidthT = getBarWidth(player);
@@ -166,8 +166,8 @@ public class Thirst extends BarOverlayImpl {
                     double thirstPreview = Math.max(0, newThirstVal - currentThirstVal);
 
                     double currentQuenched = data.hydration();
-                    double cappedCurrentQuenched = Math.min(20, currentQuenched);
-                    double cappedNewQuenched = Math.min(20, cappedCurrentQuenched + previewQuenched);
+                    double cappedCurrentQuenched = Math.min(BarOverlayImpl.MAX_STAT, currentQuenched);
+                    double cappedNewQuenched = Math.min(BarOverlayImpl.MAX_STAT, cappedCurrentQuenched + previewQuenched);
                     double quenchedPreview = Math.max(0, cappedNewQuenched - cappedCurrentQuenched);
 
                     if (thirstPreview > 0 || quenchedPreview > 0) {
@@ -216,7 +216,7 @@ public class Thirst extends BarOverlayImpl {
     @Override
     public double getBarWidth(Player player) {
         ThirstData data = getThirstData(player);
-        return Math.min(BarOverlayImpl.WIDTH, ModUtils.getWidth(data.thirst(), 20));
+        return Math.min(BarOverlayImpl.WIDTH, ModUtils.getWidth(data.thirst(), BarOverlayImpl.MAX_STAT));
     }
 
     @Override
