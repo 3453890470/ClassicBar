@@ -1,0 +1,126 @@
+plugins {
+    id 'java-library'
+    alias libs.plugins.neoforge.moddev
+    alias libs.plugins.accesstransformers
+    id 'com.diffplug.spotless' version '7.2.1'
+}
+
+version = "${libs.versions.minecraft.get()}-${libs.versions.mod.version.get()}"
+group = project.mod_group_id
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
+        name = "JEI"
+        url = "https://maven.blamejared.com"
+    }
+}
+
+def resourceProperties = [
+        minecraft_version      : libs.versions.minecraft.get(),
+        minecraft_version_range: project.minecraft_version_range,
+        neo_version            : libs.versions.neo.version.get(),
+        loader_version_range   : project.loader_version_range,
+        mod_id                 : project.mod_id,
+        mod_name               : project.mod_name,
+        mod_license            : project.mod_license,
+        mod_version            : libs.versions.mod.version.get(),
+        mod_group_id           : project.mod_group_id,
+        project_version        : project.version,
+]
+
+base {
+    archivesName = project.mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'src/generated/resources'
+        }
+        java {
+            // TASK-04 compat quarantine: mod overlay sources retained but compile-safe
+            // (ModList.get().isLoaded() guards ensure safe runtime skip).
+            // Each remaining integration stays isolated until a separate recovery
+            // task proves the NeoForge port.
+        }
+    }
+}
+
+neoForge {
+    version = libs.versions.neo.version.get()
+
+    runs {
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        client {
+            client()
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+        }
+
+        clientData {
+            clientData()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+dependencies {
+
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly libs.junit.platform.launcher
+
+    // === Optional mod compatibility — all removed ===
+    // MC 26.1.2 has no compatible third-party mod versions available.
+    // Users have authorized removal.
+    // This comment block documents the removal to prevent accidental re-addition.
+    // Removed: farmersdelight, kaleidoscope_cookery, vampirism,
+    // enigmaticlegacyplus, thirst-was-taken, tough-as-nails,
+    // curios, caelus, patchouli
+    // === End optional mod compatibility ===
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    systemProperty 'classicbar.projectDir', project.projectDir.absolutePath
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.properties(resourceProperties)
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand(resourceProperties)
+    }
+}
+
+spotless {
+    java {
+        target 'src/*/java/**/*.java'
+        trimTrailingWhitespace()
+        removeUnusedImports()
+        endWithNewline()
+    }
+}

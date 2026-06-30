@@ -1,0 +1,42 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+classes
+
+# Files from Forge MDK
+forge*changelog.txt
+
+# IDE
+.vscode/
+
+# Local run scripts
+runClient.bat
+runServer.bat
+
+# Development plans
+plans/
+
+# Local dev scripts
+scripts/
+
+# Runtime logs
+logs/
