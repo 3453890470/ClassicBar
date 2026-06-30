@@ -316,6 +316,9 @@
   "classicbar.config.debug.nourishment.tooltip": "Applies Farmer's Delight Nourishment every minute",
   "classicbar.config.debug.satiated_shield": "Satiated Shield (every 1min, 2min duration)",
   "classicbar.config.debug.satiated_shield.tooltip": "Applies Kaleidoscope Cookery Satiated Shield every minute",
+  "classicbar.config.debug.buff_interval": "Buff Interval",
+  "classicbar.config.debug.buff_interval.tooltip": "Interval between debug buff applications in ticks. 20 ticks = 1 second. Default 1200 = 1 minute. Range: 20\u201372000.",
+
   "classicbar.config.debug.vampire": "Vampire Level 1",
   "classicbar.config.debug.vampire.tooltip": "Sets vampire level to 1, disable to revert to human. Currently unavailable in MC 26.1.2 — requires Vampirism API port.",
   "classicbar.config.debug.forbidden_curse": "Forbidden Curse",

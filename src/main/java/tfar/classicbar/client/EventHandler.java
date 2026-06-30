@@ -305,25 +305,34 @@ public final class EventHandler {
     @SubscribeEvent
     public static void onDebugPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide()) return;
-        // skip debug effects in production — FMLLoader.isProduction() changed to instance method in 26.1.2
-        if (FMLLoader.getCurrent().isProduction()) return;
+        boolean isClientSide = player.level().isClientSide();
+        boolean isProduction = FMLLoader.getCurrent().isProduction();
 
-        // Period effects: every 1 minute (1200 ticks)
-        boolean isIntervalTick = (player.tickCount % 1200 == 0);
+        // Periodic effects — applied at configurable intervals (default 1200 ticks = 1 minute at 20 TPS)
+        int intervalTicks = ClassicBarsConfig.debugBuffIntervalTicks.get();
+        if (DebugBuffScheduler.shouldApplyDebugEffects(player.tickCount, isClientSide, isProduction, intervalTicks)) {
+            ClassicBar.logger.info(
+                "[DebugBuff] Applying debug effects: tickCount={}, intervalTicks={}, isClientSide={}, isProduction={}, " +
+                "enabled=[wither:{}, poison:{}, hunger:{}, frozen:{}, nourishment:{}, satiatedShield:{}]",
+                player.tickCount, intervalTicks, isClientSide, isProduction,
+                ClassicBarsConfig.debugWitherEnabled.get(),
+                ClassicBarsConfig.debugPoisonEnabled.get(),
+                ClassicBarsConfig.debugHungerEnabled.get(),
+                ClassicBarsConfig.debugFrozenEnabled.get(),
+                ClassicBarsConfig.debugNourishmentEnabled.get(),
+                ClassicBarsConfig.debugSatiatedShieldEnabled.get()
+            );
 
-        // 1-6: Periodic effects
-        if (isIntervalTick) {
-            debugEffect(player, ClassicBarsConfig.debugWitherEnabled, MobEffects.WITHER, 2400);
-            debugEffect(player, ClassicBarsConfig.debugPoisonEnabled, MobEffects.POISON, 2400);
-            debugEffect(player, ClassicBarsConfig.debugHungerEnabled, MobEffects.HUNGER, 2400);
-            debugModEffect(player, ClassicBarsConfig.debugNourishmentEnabled, "farmersdelight", ModCompat.getNourishmentEffect(), 2400);
-            debugModEffect(player, ClassicBarsConfig.debugSatiatedShieldEnabled, "kaleidoscope_cookery", ModCompat.getSatiatedShieldEffect(), 2400);
-        }
-
-        // frozen — handled independently (burn-like mechanic, needs per-tick maintenance)
-        if (ClassicBarsConfig.debugFrozenEnabled.get()) {
+            // Frozen — intentionally gated by the same interval scheduler for consistency
+            if (ClassicBarsConfig.debugFrozenEnabled.get()) {
                 player.setTicksFrozen(player.getTicksRequiredToFreeze());
+            }
+
+            debugEffect(player, ClassicBarsConfig.debugWitherEnabled, MobEffects.WITHER, DebugBuffScheduler.DEBUG_EFFECT_DURATION_TICKS);
+            debugEffect(player, ClassicBarsConfig.debugPoisonEnabled, MobEffects.POISON, DebugBuffScheduler.DEBUG_EFFECT_DURATION_TICKS);
+            debugEffect(player, ClassicBarsConfig.debugHungerEnabled, MobEffects.HUNGER, DebugBuffScheduler.DEBUG_EFFECT_DURATION_TICKS);
+            debugModEffect(player, ClassicBarsConfig.debugNourishmentEnabled, "farmersdelight", ModCompat.getNourishmentEffect(), DebugBuffScheduler.DEBUG_EFFECT_DURATION_TICKS);
+            debugModEffect(player, ClassicBarsConfig.debugSatiatedShieldEnabled, "kaleidoscope_cookery", ModCompat.getSatiatedShieldEffect(), DebugBuffScheduler.DEBUG_EFFECT_DURATION_TICKS);
         }
 
         // 7. Vampire level — checked every tick for immediate enable/disable

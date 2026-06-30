@@ -149,6 +149,9 @@ public class ClassicBarsConfig {
     public static ModConfigSpec.BooleanValue debugVampireEnabled;
     public static ModConfigSpec.BooleanValue debugForbiddenCurseEnabled;
 
+    /** Interval (in ticks) between debug buff applications. Default 1200 = 1 minute at 20 TPS. */
+    public static ModConfigSpec.IntValue debugBuffIntervalTicks;
+
     // === Config builder helpers ===
 
     private static ModConfigSpec.BooleanValue generalBool(ModConfigSpec.Builder builder, String key, boolean defaultValue) {
@@ -317,6 +320,9 @@ public class ClassicBarsConfig {
         debugSatiatedShieldEnabled = debugBool(builder, "satiated_shield");
         debugVampireEnabled = debugBool(builder, "vampire");
         debugForbiddenCurseEnabled = debugBool(builder, "forbidden_curse");
+        debugBuffIntervalTicks = builder.translation(debugKey("buff_interval"))
+                        .comment("Interval between debug buff applications in ticks. 20 ticks = 1 second. Default 1200 = 1 minute. Range: 20\u201372000.")
+                        .defineInRange("buff_interval", 1200, 20, 72000);
         builder.pop();
 
         registerFallbackBarSettings();

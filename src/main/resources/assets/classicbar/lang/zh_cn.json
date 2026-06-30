@@ -312,6 +312,9 @@
   "classicbar.config.debug.nourishment.tooltip": "每1分钟给予农夫乐事滋养效果",
   "classicbar.config.debug.satiated_shield": "饱腹代偿（每1分钟，持续2分钟）",
   "classicbar.config.debug.satiated_shield.tooltip": "每1分钟给予森罗物语饱腹代偿效果",
+  "classicbar.config.debug.buff_interval": "Buff 间隔",
+  "classicbar.config.debug.buff_interval.tooltip": "Debug 效果应用的间隔 tick 数。20 ticks = 1 秒，默认 1200 = 1 分钟。范围：20\u201372000。",
+
   "classicbar.config.debug.vampire": "吸血鬼等级1",
   "classicbar.config.debug.vampire.tooltip": "设置为1级吸血鬼，关闭恢复为人类。当前在 MC 26.1.2 中不可用——需要 Vampirism API 移植。",
   "classicbar.config.debug.forbidden_curse": "禁忌诅咒",
