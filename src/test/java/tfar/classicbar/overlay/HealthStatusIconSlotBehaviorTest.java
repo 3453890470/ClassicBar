@@ -9,22 +9,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Verifies that status effect icons (poison/wither/frozen) that replace
- * the base red heart icon are drawn at the CORRECT slot position.
+ * the base red heart icon are drawn at the CORRECT slot position and
+ * stack in the correct direction relative to the health bar.
  * <p>
- * Root cause (2026-06, third pass): {@code ModUtils.renderEffectIcons()}
- * offsets the first effect icon by {@code effectCount * OVERLAP} from
- * {@code baseX} (e.g., baseX+4 for 1 effect on RHS), instead of drawing
- * it at {@code baseX} where the base heart icon would be. This causes the
- * replacement icon to appear at an offset position (described by user as
- * "the second heart position").
+ * Root cause: the previous fix ({@code renderEffectIcons()} →
+ * {@code int currentX = baseX}) correctly anchored the first effect
+ * at {@code baseX}, but reversed the stacking direction relative to
+ * the original code. Effects now stack TOWARD the health bar (covering it)
+ * instead of AWAY from it.
  * <p>
- * The previous two passes incorrectly focused on
- * {@code Absorption.renderBar()} bar coordinates — that fix addressed bar
- * xStart alignment, not icon slot positioning. This test directly verifies
- * the icon coordinate calculation.
- * <p>
- * The fix changes {@code renderEffectIcons()} to start the first effect
- * at {@code baseX}, with additional effects stacked inward.
+ * Layout semantics:
+ * <ul>
+ *   <li><b>RHS</b>: icon is to the right of the bar; bar extends LEFT from icon.</li>
+ *   <li><b>LHS</b>: icon is to the left of the bar; bar extends RIGHT from icon.</li>
+ * </ul>
+ * Therefore:
+ * <ul>
+ *   <li><b>RHS</b>: effects stack RIGHTWARD (away from bar → screen edge) — step = {@code +OVERLAP}</li>
+ *   <li><b>LHS</b>: effects stack LEFTWARD (away from bar → screen edge) — step = {@code -OVERLAP}</li>
+ * </ul>
  */
 class HealthStatusIconSlotBehaviorTest {
 
@@ -35,8 +38,6 @@ class HealthStatusIconSlotBehaviorTest {
     @Test
     @DisplayName("RHS with 1 effect: effect icon must be at baseX (same as base heart)")
     void rhsSingleEffectIconAtBaseX() {
-        // Current (buggy) behavior: effect at baseX + 4
-        // Expected (fixed):       effect at baseX
         int[] expected = {BASE_X};
         assertArrayEquals(expected,
             BarPositionMath.effectIconPositions(BASE_X, true, 1));
@@ -51,33 +52,35 @@ class HealthStatusIconSlotBehaviorTest {
     }
 
     @Test
-    @DisplayName("RHS with 2 effects: first at baseX, second at baseX - OVERLAP")
-    void rhsTwoEffectsStackLeftFromBaseX() {
-        int[] expected = {BASE_X, BASE_X - BarPositionMath.EFFECT_ICON_OVERLAP};
+    @DisplayName("RHS with 2 effects: first at baseX, second at baseX + OVERLAP (away from bar)")
+    void rhsTwoEffectsStackRightAwayFromBar() {
+        // RHS: bar is LEFT of icon, effects stack RIGHT (away from bar)
+        int[] expected = {BASE_X, BASE_X + BarPositionMath.EFFECT_ICON_OVERLAP};
         assertArrayEquals(expected,
             BarPositionMath.effectIconPositions(BASE_X, true, 2));
     }
 
     @Test
-    @DisplayName("LHS with 2 effects: first at baseX, second at baseX + OVERLAP")
-    void lhsTwoEffectsStackRightFromBaseX() {
-        int[] expected = {BASE_X, BASE_X + BarPositionMath.EFFECT_ICON_OVERLAP};
+    @DisplayName("LHS with 2 effects: first at baseX, second at baseX - OVERLAP (away from bar)")
+    void lhsTwoEffectsStackLeftAwayFromBar() {
+        // LHS: bar is RIGHT of icon, effects stack LEFT (away from bar)
+        int[] expected = {BASE_X, BASE_X - BarPositionMath.EFFECT_ICON_OVERLAP};
         assertArrayEquals(expected,
             BarPositionMath.effectIconPositions(BASE_X, false, 2));
     }
 
     @Test
-    @DisplayName("RHS with 3 effects: correct stacking order")
-    void rhsThreeEffectsStackLeft() {
-        int[] expected = {BASE_X, BASE_X - 4, BASE_X - 8};
+    @DisplayName("RHS with 3 effects: correct stacking order (rightward, away from bar)")
+    void rhsThreeEffectsStackRightAwayFromBar() {
+        int[] expected = {BASE_X, BASE_X + 4, BASE_X + 8};
         assertArrayEquals(expected,
             BarPositionMath.effectIconPositions(BASE_X, true, 3));
     }
 
     @Test
-    @DisplayName("LHS with 3 effects: correct stacking order")
-    void lhsThreeEffectsStackRight() {
-        int[] expected = {BASE_X, BASE_X + 4, BASE_X + 8};
+    @DisplayName("LHS with 3 effects: correct stacking order (leftward, away from bar)")
+    void lhsThreeEffectsStackLeftAwayFromBar() {
+        int[] expected = {BASE_X, BASE_X - 4, BASE_X - 8};
         assertArrayEquals(expected,
             BarPositionMath.effectIconPositions(BASE_X, false, 3));
     }
@@ -109,5 +112,27 @@ class HealthStatusIconSlotBehaviorTest {
         assertEquals(BASE_X, BarPositionMath.healthTextX(BASE_X, false, 1));
         assertEquals(BASE_X, BarPositionMath.healthTextX(BASE_X, false, 2));
         assertEquals(BASE_X, BarPositionMath.healthTextX(BASE_X, false, 3));
+    }
+
+    // ============ Stacking direction integration: ModUtils.renderEffectIcons must match ============
+
+    @Test
+    @DisplayName("RHS: renderEffectIcons step must be +OVERLAP (rightward, away from bar)")
+    void rhsRenderEffectIconsStepIsPositive() {
+        int[] pos2 = BarPositionMath.effectIconPositions(BASE_X, true, 2);
+        int step = pos2[1] - pos2[0];
+        assertEquals(BarPositionMath.EFFECT_ICON_OVERLAP, step,
+            "RHS effects must stack RIGHTWARD (away from bar). " +
+            "Step is " + step + " but expected +" + BarPositionMath.EFFECT_ICON_OVERLAP);
+    }
+
+    @Test
+    @DisplayName("LHS: renderEffectIcons step must be -OVERLAP (leftward, away from bar)")
+    void lhsRenderEffectIconsStepIsNegative() {
+        int[] pos2 = BarPositionMath.effectIconPositions(BASE_X, false, 2);
+        int step = pos2[1] - pos2[0];
+        assertEquals(-BarPositionMath.EFFECT_ICON_OVERLAP, step,
+            "LHS effects must stack LEFTWARD (away from bar). " +
+            "Step is " + step + " but expected -" + BarPositionMath.EFFECT_ICON_OVERLAP);
     }
 }

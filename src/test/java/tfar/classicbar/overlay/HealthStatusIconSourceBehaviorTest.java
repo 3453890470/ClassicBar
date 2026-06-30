@@ -15,17 +15,18 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Source-structure test verifying that {@code Health.renderText()} and
- * {@code ModUtils.renderEffectIcons()} use the correct icon slot coordinates.
+ * {@code ModUtils.renderEffectIcons()} use the correct icon slot coordinates
+ * and stacking direction.
  * <p>
- * RED phase: with the current (buggy) code, {@code Health.renderText()}
- * computes {@code textX = baseX + effectCount * 4} (RHS), which shifts
- * the text by the effect count even though the replacement icon should be
- * at {@code baseX}. This test asserts the FIXED pattern.
- * <p>
- * The bug: in {@code ModUtils.renderEffectIcons()}, when effects replace
- * the base icon, the first effect starts at {@code baseX + effectCount * OVERLAP}
- * instead of {@code baseX}, causing a 4px shift (for 1 effect) that places
- * the icon in "the second heart position."
+ * This test checks that:
+ * <ul>
+ *   <li>{@code Health.renderText()} uses {@code textX = baseX} (not shifted by effectCount)</li>
+ *   <li>{@code ModUtils.renderEffectIcons()} starts the first effect at {@code baseX}</li>
+ *   <li>{@code ModUtils.renderEffectIcons()} stacks effects AWAY from the health bar
+ *       (RHS: rightward, LHS: leftward)</li>
+ * </ul>
+ * Layout semantics: RHS bar extends LEFT from the icon, so effects stack RIGHTWARD.
+ * LHS bar extends RIGHT from the icon, so effects stack LEFTWARD.
  */
 class HealthStatusIconSourceBehaviorTest {
 
@@ -70,6 +71,11 @@ class HealthStatusIconSourceBehaviorTest {
     /**
      * {@code ModUtils.renderEffectIcons()} must start the first effect
      * at {@code baseX}, not at {@code baseX +/- effectCount * OVERLAP}.
+     * <p>
+     * Note: Stacking direction is verified by
+     * {@link HealthStatusIconSlotBehaviorTest} at the pure-coordinate level
+     * ({@code BarPositionMath.effectIconPositions}); this source test only
+     * ensures the render method invokes the first effect at {@code baseX}.
      */
     @Test
     @DisplayName("RED: renderEffectIcons must start first effect at baseX")
@@ -82,7 +88,8 @@ class HealthStatusIconSourceBehaviorTest {
 
         // The buggy code computes currentX = baseX +/- effectCount * OVERLAP
         // The fixed code should compute currentX = baseX
-        boolean startsWithBaseXOnly = body.contains("int currentX = baseX;");
+        boolean startsWithBaseXOnly = body.contains("int currentX = baseX;")
+                                   || body.contains("int currentX=baseX;");
 
         assertTrue(startsWithBaseXOnly,
             "renderEffectIcons() must start first effect at baseX (currentX = baseX).\n"

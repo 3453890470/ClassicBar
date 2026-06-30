@@ -32,12 +32,20 @@ public final class BarPositionMath {
      * Computes the x-positions for status effect icons that replace the base icon.
      * <p>
      * The first effect icon occupies the same slot as the base icon ({@code baseX}),
-     * with each subsequent effect offset by {@link #EFFECT_ICON_OVERLAP} inward.
-     * This ensures the replacement icon renders at the base icon's position
-     * rather than being shifted right (RHS) or left (LHS).
+     * with each subsequent effect offset by {@link #EFFECT_ICON_OVERLAP} AWAY from
+     * the health bar (to avoid covering it).
+     * <p>
+     * Layout semantics:
+     * <ul>
+     *   <li><b>RHS</b> ({@code rightSide = true}): bar extends LEFT from the icon;
+     *       icons stack RIGHTWARD (step = {@code +OVERLAP}, away from bar).</li>
+     *   <li><b>LHS</b> ({@code rightSide = false}): bar extends RIGHT from the icon;
+     *       icons stack LEFTWARD (step = {@code -OVERLAP}, away from bar).</li>
+     * </ul>
      *
      * @param baseX       the base x position of the icon
-     * @param rightSide   true for RHS (icons extend left), false for LHS (icons extend right)
+     * @param rightSide   true for RHS (bar left of icon, icons extend right),
+     *                    false for LHS (bar right of icon, icons extend left)
      * @param effectCount number of active effects (0 returns empty array)
      * @return array of x-positions for each effect, in draw order
      */
@@ -45,7 +53,9 @@ public final class BarPositionMath {
         if (effectCount <= 0) return new int[0];
         int[] positions = new int[effectCount];
         int currentX = baseX;
-        int step = rightSide ? -EFFECT_ICON_OVERLAP : EFFECT_ICON_OVERLAP;
+        // RHS: step +OVERLAP (rightward, away from bar)
+        // LHS: step -OVERLAP (leftward, away from bar)
+        int step = rightSide ? EFFECT_ICON_OVERLAP : -EFFECT_ICON_OVERLAP;
         for (int i = 0; i < effectCount; i++) {
             positions[i] = currentX;
             currentX += step;

@@ -90,24 +90,7 @@ public class ModUtils {
             if (e.condition.getAsBoolean()) effectCount++;
         }
         if (rightHandSide) {
-            // Start first effect at baseX (same slot as the base heart icon)
-            // Additional effects stack leftward by OVERLAP
-            int currentX = baseX;
-            for (EffectIcon e : effects) {
-                if (e.condition.getAsBoolean()) {
-                    Identifier blink = e.blinking != null ? e.blinking : e.normal;
-                    ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
-                        e.normal, blink, baseFlashing, guiTicks);
-                    currentX -= OVERLAP;
-                }
-            }
-            if (effectCount == 0) {
-                ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
-                    baseNormal, baseBlinking, baseFlashing, guiTicks);
-            }
-        } else {
-            // Start first effect at baseX (same slot as the base heart icon)
-            // Additional effects stack rightward by OVERLAP
+            // RHS: bar extends LEFT from icon. Stack RIGHTWARD (away from bar).
             int currentX = baseX;
             for (EffectIcon e : effects) {
                 if (e.condition.getAsBoolean()) {
@@ -115,6 +98,21 @@ public class ModUtils {
                     ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
                         e.normal, blink, baseFlashing, guiTicks);
                     currentX += OVERLAP;
+                }
+            }
+            if (effectCount == 0) {
+                ModUtils.drawIconWithFlash(graphics, baseX, yStart, 9,
+                    baseNormal, baseBlinking, baseFlashing, guiTicks);
+            }
+        } else {
+            // LHS: bar extends RIGHT from icon. Stack LEFTWARD (away from bar).
+            int currentX = baseX;
+            for (EffectIcon e : effects) {
+                if (e.condition.getAsBoolean()) {
+                    Identifier blink = e.blinking != null ? e.blinking : e.normal;
+                    ModUtils.drawIconWithFlash(graphics, currentX, yStart, 9,
+                        e.normal, blink, baseFlashing, guiTicks);
+                    currentX -= OVERLAP;
                 }
             }
             if (effectCount == 0) {
